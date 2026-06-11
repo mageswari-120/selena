@@ -1,0 +1,43 @@
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+-%}
+
+<div
+  class="product-subtotal"
+  {{ block.shopify_attributes }}
+  data-subtotal
+>
+  <span class="product-subtotal__label">
+    {{ block.settings.label | default: 'Subtotal' }}
+  </span>
+  <span class="product-subtotal__price" id="subtotal-price-{{ section.id }}">
+    {{ current_variant.price | money }}
+  </span>
+</div>
+
+{% stylesheet %}
+  .product-subtotal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-top: 1px solid rgba(0,0,0,0.1);
+    font-size: 1rem;
+  }
+  .product-subtotal__label { opacity: 0.7; }
+  .product-subtotal__price { font-weight: 700; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Subtotal",
+  "settings": [
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Label",
+      "default": "Subtotal"
+    }
+  ]
+}
+{% endschema %}

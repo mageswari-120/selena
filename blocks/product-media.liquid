@@ -1,0 +1,364 @@
+{%- comment -%}
+  Block: product_media
+  Handles all product media — carousel or grid display,
+  navigation style, zoom, video autoplay/loop, border, radius.
+  Used via: {% content_for 'block', type: 'product-media', id: 'product_media' %}
+{%- endcomment -%}
+
+{%- liquid
+  assign current_variant  = product.selected_or_first_available_variant
+  assign display_type     = block.settings.display_type
+  assign nav_style        = block.settings.carousel_nav_style
+  assign media_width_pct  = block.settings.media_width | append: '%'
+  assign media_pos        = block.settings.media_position
+  assign media_sizes      = '(max-width:768px) 100vw, ' | append: block.settings.media_width | append: 'vw'
+-%}
+
+<div
+  class="product-media product-media--{{ display_type }} product-media--{{ media_pos }}"
+  {{ block.shopify_attributes }}
+  style="
+    --product-media-width: {{ media_width_pct }};
+    --media-radius: {{ block.settings.border_radius }}px;
+    {% if block.settings.show_border %}--media-border: 1px solid rgba(0,0,0,0.1);{% else %}--media-border: none;{% endif %}
+  "
+  data-zoom="{{ block.settings.zoom_type }}"
+>
+
+  {%- if display_type == 'carousel' -%}
+
+    {%- comment -%}── Carousel ──{%- endcomment -%}
+    <div class="product-media__stage" data-product-carousel>
+
+      <div class="product-media__slides">
+        {%- for media in product.media -%}
+          <div
+            class="product-media__slide{% if forloop.first %} is-active{% endif %}"
+            data-slide="{{ forloop.index0 }}"
+          >
+            {%- case media.media_type -%}
+
+              {%- when 'image' -%}
+                {{ media | image_url: width: 1200
+                  | image_tag:
+                    class: 'product-media__img',
+                    widths: '480,600,800,1000,1200',
+                    sizes: media_sizes,
+                    loading: forloop.first | default: 'lazy',
+                    fetchpriority: forloop.first | default: 'auto',
+                    data-zoom-src: media | image_url: width: 2400
+                }}
+
+              {%- when 'video' -%}
+                {{ media | video_tag:
+                  class: 'product-media__video',
+                  autoplay: block.settings.video_autoplay,
+                  loop: block.settings.video_loop,
+                  muted: block.settings.video_autoplay,
+                  controls: true,
+                  preload: 'none'
+                }}
+
+              {%- when 'external_video' -%}
+                {{ media | external_video_tag: class: 'product-media__video' }}
+
+              {%- when 'model' -%}
+                {{ media | model_viewer_tag: class: 'product-media__model' }}
+
+            {%- endcase -%}
+          </div>
+        {%- endfor -%}
+      </div>
+
+      {%- comment -%}── Arrow nav ──{%- endcomment -%}
+      {%- if nav_style == 'arrows' or nav_style == 'arrows_dots' -%}
+        <button class="product-media__arrow product-media__arrow--prev" data-carousel-prev aria-label="Previous">
+          &#8592;
+        </button>
+        <button class="product-media__arrow product-media__arrow--next" data-carousel-next aria-label="Next">
+          &#8594;
+        </button>
+      {%- endif -%}
+
+      {%- comment -%}── Dot nav ──{%- endcomment -%}
+      {%- if nav_style == 'dots' or nav_style == 'arrows_dots' -%}
+        <div class="product-media__dots" role="tablist" aria-label="Media slides">
+          {%- for media in product.media -%}
+            <button
+              class="product-media__dot{% if forloop.first %} is-active{% endif %}"
+              data-dot="{{ forloop.index0 }}"
+              role="tab"
+              aria-label="Slide {{ forloop.index }}"
+              aria-selected="{{ forloop.first }}"
+            ></button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
+    </div>{%- comment -%}/.product-media__stage{%- endcomment -%}
+
+    {%- comment -%}── Thumbnail strip ──{%- endcomment -%}
+    {%- if nav_style == 'thumbnails' -%}
+      <div class="product-media__thumbs" data-thumbs>
+        {%- for media in product.media -%}
+          <button
+            class="product-media__thumb{% if forloop.first %} is-active{% endif %}"
+            data-thumb="{{ forloop.index0 }}"
+            aria-label="Thumbnail {{ forloop.index }}"
+          >
+            {{ media.preview_image
+              | image_url: width: 120
+              | image_tag: width: 120, height: 120, loading: 'lazy'
+            }}
+          </button>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+  {%- else -%}
+
+    {%- comment -%}── Grid display ──{%- endcomment -%}
+    <div class="product-media__grid">
+      {%- for media in product.media -%}
+        <div class="product-media__grid-item{% if forloop.first %} product-media__grid-item--featured{% endif %}">
+          {%- case media.media_type -%}
+            {%- when 'image' -%}
+              {{ media | image_url: width: 1200
+                | image_tag:
+                  class: 'product-media__img',
+                  widths: '480,600,800,1000,1200',
+                  sizes: '(max-width:768px) 100vw, 40vw',
+                  loading: forloop.first | default: 'lazy'
+              }}
+            {%- when 'video' -%}
+              {{ media | video_tag:
+                class: 'product-media__video',
+                autoplay: block.settings.video_autoplay,
+                loop: block.settings.video_loop,
+                muted: block.settings.video_autoplay,
+                controls: true,
+                preload: 'none'
+              }}
+            {%- when 'external_video' -%}
+              {{ media | external_video_tag: class: 'product-media__video' }}
+          {%- endcase -%}
+        </div>
+      {%- endfor -%}
+    </div>
+
+  {%- endif -%}
+
+</div>
+
+{% stylesheet %}
+  /* ── Wrapper ── */
+  .product-media {
+    border: var(--media-border, none);
+    border-radius: var(--media-radius, 0px);
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+  }
+
+  /* ── Images / videos ── */
+  .product-media__img,
+  .product-media__video {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: inherit;
+  }
+
+  /* ── Carousel ── */
+  .product-media__stage { position: relative; }
+  .product-media__slides { overflow: hidden; }
+  .product-media__slide  { display: none; }
+  .product-media__slide.is-active { display: block; }
+
+  /* Arrows */
+  .product-media__arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.88);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.15s;
+  }
+  .product-media__arrow:hover { background: #fff; }
+  .product-media__arrow--prev { left: 0.75rem; }
+  .product-media__arrow--next { right: 0.75rem; }
+
+  /* Dots */
+  .product-media__dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    padding: 0.65rem 0 0.2rem;
+  }
+  .product-media__dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    padding: 0;
+    border: 1.5px solid rgba(0,0,0,0.25);
+    background: transparent;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .product-media__dot.is-active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+
+  /* Thumbnails */
+  .product-media__thumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .product-media__thumb {
+    width: 64px; height: 64px;
+    padding: 0;
+    background: none;
+    border: 2px solid transparent;
+    border-radius: var(--media-radius, 0px);
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .product-media__thumb img {
+    width: 100%; height: 100%; object-fit: cover;
+    display: block;
+  }
+  .product-media__thumb.is-active { border-color: var(--color-primary); }
+
+  /* ── Grid ── */
+  .product-media__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .product-media__grid-item--featured {
+    grid-column: 1 / -1;
+  }
+
+  /* ── Right-position: push media to col 2 visually ── */
+  .product-media--right {
+    order: 2;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Media",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Position & size"
+    },
+    {
+      "type": "select",
+      "id": "media_position",
+      "label": "Media position",
+      "options": [
+        { "value": "left",  "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "media_width",
+      "label": "Media width",
+      "options": [
+        { "value": "45", "label": "45%" },
+        { "value": "50", "label": "50%" },
+        { "value": "55", "label": "55%" },
+        { "value": "60", "label": "60%" },
+        { "value": "65", "label": "65%" }
+      ],
+      "default": "55"
+    },
+    {
+      "type": "header",
+      "content": "Frame"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_border",
+      "label": "Show border",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0, "max": 40, "step": 2, "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Display type"
+    },
+    {
+      "type": "select",
+      "id": "display_type",
+      "label": "Media display",
+      "options": [
+        { "value": "carousel", "label": "Carousel" },
+        { "value": "grid",     "label": "Grid" }
+      ],
+      "default": "carousel"
+    },
+    {
+      "type": "select",
+      "id": "carousel_nav_style",
+      "label": "Carousel navigation style",
+      "options": [
+        { "value": "thumbnails",  "label": "Thumbnails" },
+        { "value": "dots",        "label": "Dots" },
+        { "value": "arrows",      "label": "Arrows" },
+        { "value": "arrows_dots", "label": "Arrows + Dots" },
+        { "value": "none",        "label": "None" }
+      ],
+      "default": "thumbnails"
+    },
+    {
+      "type": "select",
+      "id": "zoom_type",
+      "label": "Image zoom",
+      "options": [
+        { "value": "none",     "label": "None" },
+        { "value": "hover",    "label": "Hover" },
+        { "value": "lightbox", "label": "Lightbox" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "header",
+      "content": "Video"
+    },
+    {
+      "type": "checkbox",
+      "id": "video_autoplay",
+      "label": "Autoplay video",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "video_loop",
+      "label": "Loop video",
+      "default": false
+    }
+  ]
+}
+{% endschema %}

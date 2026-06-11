@@ -1,0 +1,91 @@
+<div class="product-share" {{ block.shopify_attributes }}>
+  {%- if block.settings.label != blank -%}
+    <span class="product-share__label">{{ block.settings.label }}</span>
+  {%- endif -%}
+
+  <div class="product-share__buttons">
+    {%- if block.settings.show_facebook -%}
+      <a
+        class="product-share__btn product-share__btn--facebook"
+        href="https://www.facebook.com/sharer/sharer.php?u={{ shop.url | append: product.url | url_encode }}"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Share on Facebook"
+      >Facebook</a>
+    {%- endif -%}
+
+    {%- if block.settings.show_twitter -%}
+      <a
+        class="product-share__btn product-share__btn--twitter"
+        href="https://twitter.com/intent/tweet?url={{ shop.url | append: product.url | url_encode }}&text={{ product.title | url_encode }}"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Share on X (Twitter)"
+      >X</a>
+    {%- endif -%}
+
+    {%- if block.settings.show_pinterest -%}
+      <a
+        class="product-share__btn product-share__btn--pinterest"
+        href="https://pinterest.com/pin/create/button/?url={{ shop.url | append: product.url | url_encode }}&media={{ product.featured_image | image_url: width: 1200 | url_encode }}&description={{ product.title | url_encode }}"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Share on Pinterest"
+      >Pinterest</a>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .product-share {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    font-size: 0.85rem;
+  }
+  .product-share__label { opacity: 0.6; }
+  .product-share__buttons { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  .product-share__btn {
+    padding: 0.22rem 0.7rem;
+    border: 1px solid rgba(0,0,0,0.18);
+    border-radius: 2rem;
+    text-decoration: none;
+    color: currentColor;
+    font-size: 0.8rem;
+    transition: background 0.15s;
+  }
+  .product-share__btn:hover { background: rgba(0,0,0,0.06); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Share",
+  "settings": [
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Label",
+      "default": "Share:"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_facebook",
+      "label": "Facebook",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_twitter",
+      "label": "X (Twitter)",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_pinterest",
+      "label": "Pinterest",
+      "default": false
+    }
+  ]
+}
+{% endschema %}

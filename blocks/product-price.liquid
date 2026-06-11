@@ -1,0 +1,68 @@
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign has_discount = false
+  if current_variant.compare_at_price > current_variant.price
+    assign has_discount = true
+  endif
+-%}
+
+<div class="product-price" id="product-price-{{ section.id }}" {{ block.shopify_attributes }}>
+
+  {%- if has_discount -%}
+    <s class="product-price__compare">
+      {{ current_variant.compare_at_price | money }}
+    </s>
+  {%- endif -%}
+
+  <span class="product-price__current {% if has_discount %}product-price__current--sale{% endif %}">
+    {{ current_variant.price | money }}
+  </span>
+
+  {%- if has_discount -%}
+    <span class="product-price__badge">
+      {%- assign saved = current_variant.compare_at_price | minus: current_variant.price -%}
+      {{ 'products.save' | t | default: 'Save' }} {{ saved | money }}
+    </span>
+  {%- endif -%}
+
+</div>
+
+{% stylesheet %}
+  .product-price {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .product-price__current {
+    font-size: 1.35rem;
+    font-weight: 700;
+  }
+  .product-price__current--sale {
+    color: var(--badge-sale-bg, #d9534f);
+  }
+  .product-price__compare {
+    font-size: 1rem;
+    opacity: 0.45;
+    text-decoration: line-through;
+    font-weight: 400;
+  }
+  .product-price__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2em 0.55em;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: var(--badge-border-radius, 4px);
+    background: var(--badge-sale-bg, #d9534f);
+    color: var(--badge-sale-color, #fff);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Price"
+}
+{% endschema %}

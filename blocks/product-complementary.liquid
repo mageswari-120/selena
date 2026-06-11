@@ -1,0 +1,60 @@
+<div
+  class="product-complementary"
+  {{ block.shopify_attributes }}
+  data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&intent=complementary&limit={{ block.settings.products_to_show }}"
+>
+  {%- comment -%}
+    This div is intentionally empty on page load.
+    JavaScript fetches complementary product recommendations
+    from the Shopify Product Recommendations API and injects them here.
+  {%- endcomment -%}
+</div>
+
+{% stylesheet %}
+  .product-complementary { min-height: 1px; }
+  .product-complementary .complementary-products { display: flex; flex-direction: column; gap: 0.5rem; }
+  .product-complementary .complementary-products__title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.6;
+    margin: 0 0 0.4rem;
+  }
+  .product-complementary .complementary-product {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    color: currentColor;
+  }
+  .product-complementary .complementary-product img {
+    width: 3rem; height: 3rem;
+    object-fit: cover;
+    border-radius: var(--input-border-radius, 0px);
+    flex-shrink: 0;
+  }
+  .product-complementary .complementary-product__title { font-size: 0.85rem; font-weight: 500; }
+  .product-complementary .complementary-product__price { font-size: 0.82rem; opacity: 0.65; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Complementary products",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Products to show",
+      "min": 1, "max": 10, "step": 1,
+      "default": 4
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "You might also like"
+    }
+  ]
+}
+{% endschema %}

@@ -5,16 +5,24 @@
     {% render 'css-variables' %}
 
     {% comment %}
-      Font preloading:
-      1. Preconnect to font CDN for faster connection
-      2. Preload only the critical font variant (base weight)
-      3. Additional variants load on-demand via @font-face
+      Font preloading — both heading and body fonts.
+      Guard every font_url call with .system? so nil/system fonts
+      don't crash with "font_url can only be used with a font drop".
     {% endcomment %}
-    {% unless settings.type_primary_font.system? %}
-      <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+    {% assign needs_preconnect = false %}
+    {% unless settings.type_heading_font.system? %}{% assign needs_preconnect = true %}{% endunless %}
+    {% unless settings.type_body_font.system? %}{% assign needs_preconnect = true %}{% endunless %}
 
-      {% comment %} Preload the base font variant for initial page render {% endcomment %}
-      {{ settings.type_primary_font | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
+    {% if needs_preconnect %}
+      <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+    {% endif %}
+
+    {% unless settings.type_heading_font.system? %}
+      {{ settings.type_heading_font | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
+    {% endunless %}
+
+    {% unless settings.type_body_font.system? %}
+      {{ settings.type_body_font | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
     {% endunless %}
 
     {% # Load and preload the critical CSS %}

@@ -1,0 +1,212 @@
+{%- unless product.has_only_default_variant -%}
+  <div
+    class="product-variant-picker variant-picker--{{ block.settings.picker_style }}"
+    {{ block.shopify_attributes }}
+  >
+    {%- for option in product.options_with_values -%}
+      <div class="variant-picker__option">
+
+        <div class="variant-picker__option-header">
+          <p class="variant-picker__option-name">{{ option.name }}</p>
+          {%- if block.settings.show_selected_value -%}
+            <p class="variant-picker__option-value">{{ option.selected_value }}</p>
+          {%- endif -%}
+        </div>
+
+        {%- case block.settings.picker_style -%}
+
+          {%- when 'dropdown' -%}
+            <select
+              class="variant-picker__select"
+              name="options[{{ option.name | escape }}]"
+              data-option-index="{{ forloop.index0 }}"
+            >
+              {%- for value in option.values -%}
+                <option
+                  value="{{ value | escape }}"
+                  {% if option.selected_value == value %}selected{% endif %}
+                >{{ value }}</option>
+              {%- endfor -%}
+            </select>
+
+          {%- when 'swatch_color' -%}
+            <div class="variant-picker__swatches" role="radiogroup" aria-label="{{ option.name }}">
+              {%- for value in option.values -%}
+                <label class="variant-picker__swatch-label{% if option.selected_value == value %} is-selected{% endif %}">
+                  <input
+                    type="radio"
+                    class="visually-hidden"
+                    name="options[{{ option.name | escape }}]"
+                    value="{{ value | escape }}"
+                    data-option-index="{{ forloop.index0 }}"
+                    {% if option.selected_value == value %}checked{% endif %}
+                  >
+                  <span
+                    class="swatch swatch--color"
+                    style="background-color: {{ value | downcase | replace: ' ', '' }};"
+                    title="{{ value }}"
+                    aria-label="{{ value }}"
+                  ></span>
+                </label>
+              {%- endfor -%}
+            </div>
+
+          {%- when 'swatch_image' -%}
+            <div class="variant-picker__swatches" role="radiogroup" aria-label="{{ option.name }}">
+              {%- for value in option.values -%}
+                {%- liquid
+                  assign swatch_file = value | downcase | replace: ' ', '-' | append: '.png'
+                  assign swatch_src  = swatch_file | file_url
+                -%}
+                <label class="variant-picker__swatch-label{% if option.selected_value == value %} is-selected{% endif %}">
+                  <input
+                    type="radio"
+                    class="visually-hidden"
+                    name="options[{{ option.name | escape }}]"
+                    value="{{ value | escape }}"
+                    data-option-index="{{ forloop.index0 }}"
+                    {% if option.selected_value == value %}checked{% endif %}
+                  >
+                  <span
+                    class="swatch swatch--image"
+                    style="background-image: url('{{ swatch_src }}');"
+                    title="{{ value }}"
+                    aria-label="{{ value }}"
+                  ></span>
+                </label>
+              {%- endfor -%}
+            </div>
+
+          {%- else -%}
+            {%- comment -%} Pill (default) {%- endcomment -%}
+            <div class="variant-picker__pills" role="radiogroup" aria-label="{{ option.name }}">
+              {%- for value in option.values -%}
+                <label class="variant-picker__pill{% if option.selected_value == value %} is-selected{% endif %}">
+                  <input
+                    type="radio"
+                    class="visually-hidden"
+                    name="options[{{ option.name | escape }}]"
+                    value="{{ value | escape }}"
+                    data-option-index="{{ forloop.index0 }}"
+                    {% if option.selected_value == value %}checked{% endif %}
+                  >
+                  <span class="variant-picker__pill-label">{{ value }}</span>
+                </label>
+              {%- endfor -%}
+            </div>
+
+        {%- endcase -%}
+
+      </div>
+    {%- endfor -%}
+  </div>
+{%- endunless -%}
+
+{% stylesheet %}
+  .product-variant-picker { display: flex; flex-direction: column; gap: 0.85rem; }
+
+  .variant-picker__option-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.45rem;
+  }
+  .variant-picker__option-name {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0;
+  }
+  .variant-picker__option-value {
+    font-size: 0.8rem;
+    opacity: 0.6;
+    margin: 0;
+  }
+
+  /* Dropdown */
+  .variant-picker__select {
+    width: 100%;
+    padding: 0.55rem 0.8rem;
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: var(--input-border-radius, 0px);
+    background: var(--color-background);
+    color: var(--color-foreground);
+    cursor: pointer;
+  }
+
+  /* Pills */
+  .variant-picker__pills { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .variant-picker__pill  { cursor: pointer; }
+  .variant-picker__pill-label {
+    display: inline-block;
+    padding: 0.3rem 0.85rem;
+    border: 1px solid rgba(0,0,0,0.18);
+    border-radius: var(--button-border-radius, 0px);
+    font-size: 0.85rem;
+    transition: border-color 0.15s, background 0.15s, color 0.15s;
+  }
+  .variant-picker__pill.is-selected .variant-picker__pill-label {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: var(--color-background);
+  }
+
+  /* Swatches */
+  .variant-picker__swatches { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .variant-picker__swatch-label { cursor: pointer; }
+  .swatch {
+    display: block;
+    width: 2rem; height: 2rem;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    transition: outline-color 0.15s, border-color 0.15s;
+  }
+  .variant-picker__swatch-label.is-selected .swatch {
+    border-color: #fff;
+    outline-color: var(--color-primary);
+  }
+  .swatch--image {
+    background-size: cover;
+    background-position: center;
+  }
+
+  /* Visually hidden radio */
+  .visually-hidden {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Variant picker",
+  "settings": [
+    {
+      "type": "select",
+      "id": "picker_style",
+      "label": "Swatch type",
+      "options": [
+        { "value": "pill",         "label": "Pill" },
+        { "value": "dropdown",     "label": "Dropdown" },
+        { "value": "swatch_color", "label": "Color swatch" },
+        { "value": "swatch_image", "label": "Image swatch" }
+      ],
+      "default": "pill"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_selected_value",
+      "label": "Show selected value next to option name",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

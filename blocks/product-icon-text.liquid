@@ -1,0 +1,85 @@
+<div class="product-icon-text" {{ block.shopify_attributes }}>
+  {%- for i in (1..4) -%}
+    {%- liquid
+      assign icon_key = 'icon_' | append: i
+      assign text_key = 'text_' | append: i
+      assign icon_val = block.settings[icon_key]
+      assign text_val = block.settings[text_key]
+    -%}
+    {%- if text_val != blank -%}
+      <div class="product-icon-text__item">
+        {%- if icon_val != blank -%}
+          <span class="product-icon-text__icon" aria-hidden="true">{{ icon_val }}</span>
+        {%- endif -%}
+        <span class="product-icon-text__text">{{ text_val }}</span>
+      </div>
+    {%- endif -%}
+  {%- endfor -%}
+</div>
+
+{% stylesheet %}
+  .product-icon-text { display: flex; flex-direction: column; gap: 0.5rem; }
+  .product-icon-text__item {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 0.88rem;
+  }
+  .product-icon-text__icon { font-size: 1.05rem; line-height: 1; flex-shrink: 0; }
+  .product-icon-text__text { opacity: 0.85; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Icon with text",
+  "settings": [
+    {
+      "type": "text",
+      "id": "icon_1",
+      "label": "Icon 1",
+      "default": "🚚",
+      "info": "Use an emoji or short text"
+    },
+    {
+      "type": "text",
+      "id": "text_1",
+      "label": "Text 1",
+      "default": "Free shipping over $50"
+    },
+    {
+      "type": "text",
+      "id": "icon_2",
+      "label": "Icon 2",
+      "default": "🔒"
+    },
+    {
+      "type": "text",
+      "id": "text_2",
+      "label": "Text 2",
+      "default": "Secure checkout"
+    },
+    {
+      "type": "text",
+      "id": "icon_3",
+      "label": "Icon 3",
+      "default": "↩️"
+    },
+    {
+      "type": "text",
+      "id": "text_3",
+      "label": "Text 3",
+      "default": "30-day returns"
+    },
+    {
+      "type": "text",
+      "id": "icon_4",
+      "label": "Icon 4"
+    },
+    {
+      "type": "text",
+      "id": "text_4",
+      "label": "Text 4"
+    }
+  ]
+}
+{% endschema %}

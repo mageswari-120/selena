@@ -1,0 +1,74 @@
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign inv_qty    = current_variant.inventory_quantity
+  assign inv_policy = current_variant.inventory_policy
+  assign inv_mgmt   = current_variant.inventory_management
+  assign threshold  = block.settings.low_stock_threshold
+
+  assign inv_state = 'in'
+  if inv_mgmt != blank
+    if inv_qty <= 0 and inv_policy != 'continue'
+      assign inv_state = 'out'
+    elsif inv_qty <= threshold and inv_qty > 0
+      assign inv_state = 'low'
+    endif
+  endif
+-%}
+
+{%- if inv_mgmt != blank -%}
+  <p
+    class="product-inventory product-inventory--{{ inv_state }}"
+    id="product-inventory-{{ section.id }}"
+    {{ block.shopify_attributes }}
+  >
+    {%- case inv_state -%}
+      {%- when 'in' -%}
+        <span class="product-inventory__dot" aria-hidden="true"></span>
+        {{ 'products.in_stock' | t | default: 'In stock' }}
+      {%- when 'low' -%}
+        <span class="product-inventory__dot" aria-hidden="true"></span>
+        {{ 'products.low_stock' | t | default: 'Low stock' }} — {{ inv_qty }} left
+      {%- when 'out' -%}
+        <span class="product-inventory__dot" aria-hidden="true"></span>
+        {{ 'products.sold_out' | t | default: 'Sold out' }}
+    {%- endcase -%}
+  </p>
+{%- endif -%}
+
+{% stylesheet %}
+  .product-inventory {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    margin: 0;
+  }
+  .product-inventory__dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .product-inventory--in  .product-inventory__dot { background: #2a7a2a; }
+  .product-inventory--low .product-inventory__dot { background: #c97a00; }
+  .product-inventory--out .product-inventory__dot { background: rgba(0,0,0,0.3); }
+  .product-inventory--in  { color: #2a7a2a; }
+  .product-inventory--low { color: #c97a00; }
+  .product-inventory--out { opacity: 0.55; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Inventory status",
+  "settings": [
+    {
+      "type": "range",
+      "id": "low_stock_threshold",
+      "label": "Low stock threshold",
+      "min": 1, "max": 20, "step": 1,
+      "default": 5,
+      "info": "Show 'Low stock' when quantity is at or below this number."
+    }
+  ]
+}
+{% endschema %}

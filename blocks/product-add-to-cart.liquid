@@ -1,0 +1,104 @@
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+-%}
+
+<div class="product-add-to-cart" {{ block.shopify_attributes }}>
+
+  <button
+    type="submit"
+    name="add"
+    class="btn-atc"
+    {% unless current_variant.available %}disabled{% endunless %}
+    aria-label="{{ 'products.add_to_cart' | t }}"
+  >
+    {%- if current_variant.available -%}
+      {{ 'products.add_to_cart' | t }}
+    {%- else -%}
+      {{ 'products.sold_out' | t | default: 'Sold out' }}
+    {%- endif -%}
+  </button>
+
+  {%- if block.settings.show_buy_now -%}
+    <button
+      type="button"
+      class="btn-buy-now"
+      data-buy-now="{{ current_variant.id }}"
+      {% unless current_variant.available %}disabled{% endunless %}
+    >
+      {{ block.settings.buy_now_text | default: 'Buy it now' }}
+    </button>
+  {%- endif -%}
+
+  {%- if block.settings.show_dynamic_checkout -%}
+    {{ form | payment_button }}
+  {%- endif -%}
+
+</div>
+
+{% stylesheet %}
+  .product-add-to-cart {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .btn-atc,
+  .btn-buy-now {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: var(--button-padding-vertical, 14px) var(--button-padding-horizontal, 28px);
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: var(--button-border-radius, 0px);
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .btn-atc {
+    background: var(--color-primary);
+    color: var(--color-background);
+    border: 1px solid var(--color-primary-border);
+  }
+  .btn-atc:hover:not(:disabled) { background: var(--color-primary-hover); border-color: var(--color-primary-hover); }
+  .btn-atc:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  .btn-buy-now {
+    background: transparent;
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary-border);
+  }
+  .btn-buy-now:hover:not(:disabled) {
+    background: var(--color-primary);
+    color: var(--color-background);
+  }
+  .btn-buy-now:disabled { opacity: 0.45; cursor: not-allowed; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Add to cart",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_buy_now",
+      "label": "Show Buy now button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "buy_now_text",
+      "label": "Buy now button text",
+      "default": "Buy it now"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dynamic_checkout",
+      "label": "Show dynamic checkout buttons",
+      "info": "Displays Shop Pay, PayPal, Google Pay, etc.",
+      "default": false
+    }
+  ]
+}
+{% endschema %}

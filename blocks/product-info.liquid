@@ -1,0 +1,63 @@
+{%- comment -%}
+  Block: product_info
+  The product information column on the product page.
+  Uses {% content_for 'blocks' %} internally — all info sub-blocks
+  (title, price, vendor, variant picker, ATC, etc.) are child blocks
+  that the merchant can freely add, remove, and reorder.
+  Used via: {% content_for 'block', type: 'product-info', id: 'product_info' %}
+{%- endcomment -%}
+
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+-%}
+
+<div
+  class="product-info"
+  {{ block.shopify_attributes }}
+  data-product-id="{{ product.id }}"
+  data-variant-id="{{ current_variant.id }}"
+>
+  {%- comment -%}
+    Each child block (title, price, vendor, variant_picker, etc.)
+    is a standalone file in /blocks/ and renders itself here.
+    Merchant controls order, visibility, and settings of each.
+  {%- endcomment -%}
+  {% content_for 'blocks' %}
+</div>
+
+{% stylesheet %}
+  .product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: sticky;
+    top: 2rem;
+  }
+  @media (max-width: 768px) {
+    .product-info { position: static; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Product information",
+  "blocks": [
+    { "type": "product-vendor" },
+    { "type": "product-title" },
+    { "type": "product-price" },
+    { "type": "product-separator" },
+    { "type": "product-inventory" },
+    { "type": "product-deal-counter" },
+    { "type": "product-variant-picker" },
+    { "type": "product-quantity" },
+    { "type": "product-add-to-cart" },
+    { "type": "product-description" },
+    { "type": "product-icon-text" },
+    { "type": "product-pickup" },
+    { "type": "product-complementary" },
+    { "type": "product-size-guide" },
+    { "type": "product-share" },
+    { "type": "product-subtotal" }
+  ]
+}
+{% endschema %}

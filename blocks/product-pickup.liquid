@@ -1,0 +1,28 @@
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+-%}
+
+{%- if block.settings.show_pickup -%}
+  <div class="product-pickup" {{ block.shopify_attributes }}>
+    {{ product | pickup_availability_preview: variant: current_variant }}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .product-pickup { font-size: 0.88rem; }
+  .product-pickup .pickup-availability-preview { margin: 0; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Pickup availability",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_pickup",
+      "label": "Show pickup availability",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,87 @@
+<div class="product-quantity" {{ block.shopify_attributes }}>
+  <label for="Qty-{{ section.id }}" class="product-quantity__label">
+    {{ 'products.quantity' | t }}
+  </label>
+  <div class="qty-stepper">
+    <button
+      type="button"
+      class="qty-stepper__btn"
+      data-qty-minus
+      aria-label="Decrease quantity"
+    >
+      {{- 'icon-minus.svg' | inline_asset_content -}}
+    </button>
+    <input
+      id="Qty-{{ section.id }}"
+      class="qty-stepper__input"
+      type="number"
+      name="quantity"
+      min="1"
+      value="1"
+      aria-label="{{ 'products.quantity' | t }}"
+    >
+    <button
+      type="button"
+      class="qty-stepper__btn"
+      data-qty-plus
+      aria-label="Increase quantity"
+    >
+      {{- 'icon-plus.svg' | inline_asset_content -}}
+    </button>
+  </div>
+</div>
+
+{% stylesheet %}
+  .product-quantity__label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.45rem;
+  }
+  .qty-stepper {
+    display: inline-flex;
+    align-items: center;
+    height: 2.75rem;
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: var(--input-border-radius, 0px);
+    overflow: hidden;
+  }
+  .qty-stepper__btn {
+    width: 2.75rem;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: currentColor;
+    transition: background 0.15s;
+    padding: 0;
+  }
+  .qty-stepper__btn:hover { background: rgba(0,0,0,0.05); }
+  .qty-stepper__btn svg   { width: 0.9rem; height: 0.9rem; }
+  .qty-stepper__input {
+    width: 3.25rem;
+    height: 100%;
+    text-align: center;
+    border: none;
+    border-inline: 1px solid rgba(0,0,0,0.15);
+    background: none;
+    color: currentColor;
+    font: inherit;
+    font-size: 0.95rem;
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+  .qty-stepper__input::-webkit-outer-spin-button,
+  .qty-stepper__input::-webkit-inner-spin-button { -webkit-appearance: none; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Quantity selector"
+}
+{% endschema %}

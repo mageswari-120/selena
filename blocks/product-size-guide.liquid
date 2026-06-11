@@ -1,0 +1,68 @@
+{%- if block.settings.page_url != blank -%}
+  <div class="product-size-guide" {{ block.shopify_attributes }}>
+    <a
+      href="{{ block.settings.page_url }}"
+      class="product-size-guide__btn"
+      {% if block.settings.open_in_modal %}
+        data-size-guide-modal
+      {% else %}
+        target="_blank" rel="noopener"
+      {% endif %}
+    >
+      {%- if block.settings.icon != blank -%}
+        <span class="product-size-guide__icon" aria-hidden="true">{{ block.settings.icon }}</span>
+      {%- endif -%}
+      {{ block.settings.label | default: 'Size guide' }}
+    </a>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .product-size-guide__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: none;
+    border: none;
+    font: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    color: currentColor;
+    padding: 0;
+  }
+  .product-size-guide__icon { font-size: 1rem; line-height: 1; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Size guide",
+  "settings": [
+    {
+      "type": "url",
+      "id": "page_url",
+      "label": "Size guide page link"
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Button label",
+      "default": "Size guide"
+    },
+    {
+      "type": "text",
+      "id": "icon",
+      "label": "Icon (emoji or text)",
+      "default": "📏"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_in_modal",
+      "label": "Open in modal/drawer",
+      "default": false,
+      "info": "Requires custom JS to handle the modal display."
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,21 @@
+{%- if product.vendor != blank -%}
+  <p class="product-vendor" {{ block.shopify_attributes }}>
+    {{ product.vendor }}
+  </p>
+{%- endif -%}
+
+{% stylesheet %}
+  .product-vendor {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.55;
+    margin: 0;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Vendor"
+}
+{% endschema %}

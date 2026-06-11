@@ -1,0 +1,72 @@
+<div
+  class="product-deal-counter"
+  {{ block.shopify_attributes }}
+  data-deal-end="{{ block.settings.end_time }}"
+>
+  <span class="product-deal-counter__label">
+    {{ block.settings.label | default: 'Deal ends in' }}
+  </span>
+  <span class="product-deal-counter__timer" aria-live="polite">
+    <span data-deal-hours>--</span>:<span data-deal-minutes>--</span>:<span data-deal-seconds>--</span>
+  </span>
+</div>
+
+<script>
+  (function () {
+    const el = document.querySelector('[data-deal-end="{{ block.settings.end_time }}"]');
+    if (!el) return;
+    const end = new Date('{{ block.settings.end_time }}').getTime();
+    function pad(n) { return String(n).padStart(2, '0'); }
+    function tick() {
+      const diff = end - Date.now();
+      if (diff <= 0) { el.querySelector('[data-deal-hours]').textContent = '00'; el.querySelector('[data-deal-minutes]').textContent = '00'; el.querySelector('[data-deal-seconds]').textContent = '00'; return; }
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      el.querySelector('[data-deal-hours]').textContent   = pad(h);
+      el.querySelector('[data-deal-minutes]').textContent = pad(m);
+      el.querySelector('[data-deal-seconds]').textContent = pad(s);
+    }
+    tick();
+    setInterval(tick, 1000);
+  })();
+</script>
+
+{% stylesheet %}
+  .product-deal-counter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.9rem;
+    background: rgba(0,0,0,0.04);
+    padding: 0.5rem 0.85rem;
+    border-radius: var(--input-border-radius, 0px);
+  }
+  .product-deal-counter__label { opacity: 0.65; }
+  .product-deal-counter__timer {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.06em;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Deal counter",
+  "settings": [
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Label",
+      "default": "Deal ends in"
+    },
+    {
+      "type": "text",
+      "id": "end_time",
+      "label": "End date & time",
+      "placeholder": "2025-12-31T23:59:59",
+      "info": "ISO 8601 format: YYYY-MM-DDTHH:MM:SS"
+    }
+  ]
+}
+{% endschema %}

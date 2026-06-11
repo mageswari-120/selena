@@ -1,0 +1,19 @@
+<h1 class="product-title" {{ block.shopify_attributes }}>
+  {{ product.title }}
+</h1>
+
+{% stylesheet %}
+  .product-title {
+    font-family: var(--font-heading--family, inherit);
+    font-weight: var(--font-heading--weight, 700);
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    line-height: 1.15;
+    margin: 0;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Title"
+}
+{% endschema %}
