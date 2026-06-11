@@ -39,14 +39,24 @@
             {%- case media.media_type -%}
 
               {%- when 'image' -%}
-                {{ media | image_url: width: 1200
+                {%- liquid
+                  assign img_loading = 'lazy'
+                  assign img_priority = 'auto'
+                  if forloop.first
+                    assign img_loading = 'eager'
+                    assign img_priority = 'high'
+                  endif
+                  assign zoom_src = media | image_url: width: 2400
+                -%}
+                {{ media
+                  | image_url: width: 1200
                   | image_tag:
                     class: 'product-media__img',
                     widths: '480,600,800,1000,1200',
                     sizes: media_sizes,
-                    loading: forloop.first | default: 'lazy',
-                    fetchpriority: forloop.first | default: 'auto',
-                    data-zoom-src: media | image_url: width: 2400
+                    loading: img_loading,
+                    fetchpriority: img_priority,
+                    data-zoom-src: zoom_src
                 }}
 
               {%- when 'video' -%}
@@ -123,12 +133,15 @@
         <div class="product-media__grid-item{% if forloop.first %} product-media__grid-item--featured{% endif %}">
           {%- case media.media_type -%}
             {%- when 'image' -%}
-              {{ media | image_url: width: 1200
+              {%- assign grid_loading = 'lazy' -%}
+              {%- if forloop.first -%}{%- assign grid_loading = 'eager' -%}{%- endif -%}
+              {{ media
+                | image_url: width: 1200
                 | image_tag:
                   class: 'product-media__img',
                   widths: '480,600,800,1000,1200',
                   sizes: '(max-width:768px) 100vw, 40vw',
-                  loading: forloop.first | default: 'lazy'
+                  loading: grid_loading
               }}
             {%- when 'video' -%}
               {{ media | video_tag:

@@ -1,0 +1,6 @@
+# Editor / atomic-save temp files (avoid "Must have a .json file extension" upload errors)
+*.tmp
+*.tmp.*
+*~
+*.swp
+.DS_Store

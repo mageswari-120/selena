@@ -166,6 +166,28 @@
       "free_shipping_threshold": "Free shipping threshold",
       "free_shipping_threshold_info": "Amount in your store currency."
     },
+    "product_card": {
+      "name": "Product card",
+      "image_header": "Image",
+      "image_ratio": "Image ratio",
+      "ratio_square": "Square (1:1)",
+      "ratio_portrait": "Portrait (3:4)",
+      "ratio_landscape": "Landscape (4:3)",
+      "ratio_natural": "Natural (as uploaded)",
+      "layout_header": "Card layout",
+      "info_layout": "Info position",
+      "layout_below": "Below image",
+      "layout_overlay": "Overlaid on image",
+      "layout_side": "Side by side",
+      "elements_header": "Elements",
+      "show_vendor": "Show vendor",
+      "show_rating": "Show rating",
+      "show_rating_info": "Requires a reviews app that writes to product.metafields.reviews.rating",
+      "show_swatches": "Show color swatches",
+      "show_swatches_info": "Reads variants with option name 'Color' or 'Colour'",
+      "show_wishlist": "Show wishlist button",
+      "show_quick_add": "Show quick add on hover"
+    },
     "social_profiles": {
       "name": "Social profiles",
       "accounts_header": "Social media accounts",

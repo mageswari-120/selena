@@ -1,0 +1,653 @@
+{% doc %}
+  Renders a product card used across collection, search, and featured product sections.
+
+  @param {product} product          - The product object to render
+  @param {string}  [info_layout]    - Card layout: 'below' | 'overlay' | 'side' (default: 'below')
+  @param {string}  [image_ratio]    - Image aspect ratio: 'square' | 'portrait' | 'landscape' | 'natural' (default: 'square')
+  @param {boolean} [show_vendor]    - Show vendor name (default: false)
+  @param {boolean} [show_rating]    - Show star rating if metafield exists (default: false)
+  @param {boolean} [show_swatches]  - Show color variant swatches (default: false)
+  @param {boolean} [show_wishlist]  - Show wishlist toggle button (default: false)
+  @param {boolean} [show_quick_add] - Show quick add button on image hover (default: true)
+  @param {string}  [lazy]           - Image loading: 'lazy' | 'eager' (default: 'lazy')
+
+  @example
+  {% render 'product-card', product: product %}
+  {% render 'product-card',
+    product: product,
+    info_layout: 'overlay',
+    image_ratio: 'portrait',
+    show_vendor: true,
+    show_swatches: true,
+    show_wishlist: true,
+    show_quick_add: true
+  %}
+{% enddoc %}
+
+{%- liquid
+  comment
+    Each param falls back to the global theme setting so merchant
+    controls defaults from Theme Settings > Product card,
+    and individual sections can override per-instance.
+  endcomment
+  assign info_layout    = info_layout    | default: settings.card_info_layout  | default: 'below'
+  assign image_ratio    = image_ratio    | default: settings.card_image_ratio   | default: 'square'
+  assign show_vendor    = show_vendor    | default: settings.card_show_vendor   | default: false
+  assign show_rating    = show_rating    | default: settings.card_show_rating   | default: false
+  assign show_swatches  = show_swatches  | default: settings.card_show_swatches | default: false
+  assign show_wishlist  = show_wishlist  | default: settings.card_show_wishlist | default: false
+  assign show_quick_add = show_quick_add | default: settings.card_show_quick_add | default: true
+  assign lazy           = lazy           | default: 'lazy'
+
+  assign first_variant  = product.selected_or_first_available_variant
+  assign on_sale        = false
+  if first_variant.compare_at_price > first_variant.price
+    assign on_sale = true
+  endif
+
+  assign sold_out = true
+  if product.available
+    assign sold_out = false
+  endif
+
+  assign is_new = false
+  if product.tags contains 'new'
+    assign is_new = true
+  endif
+
+  assign secondary_image = nil
+  if product.images.size > 1
+    assign secondary_image = product.images[1]
+  endif
+
+  assign ratio_class = 'pc-media__ratio--square'
+  if image_ratio == 'portrait'
+    assign ratio_class = 'pc-media__ratio--portrait'
+  elsif image_ratio == 'landscape'
+    assign ratio_class = 'pc-media__ratio--landscape'
+  elsif image_ratio == 'natural'
+    assign ratio_class = 'pc-media__ratio--natural'
+  endif
+-%}
+
+<div
+  class="product-card product-card--{{ info_layout }}"
+  data-product-id="{{ product.id }}"
+  data-product-url="{{ product.url }}"
+>
+
+  {%- comment -%}━━━━━━ MEDIA ━━━━━━{%- endcomment -%}
+  <div class="pc-media {{ ratio_class }}">
+
+    <a
+      href="{{ product.url }}"
+      class="pc-media__link"
+      aria-label="{{ product.title | escape }}"
+      tabindex="-1"
+    >
+      {%- comment -%} Primary image {%- endcomment -%}
+      {%- if product.featured_image -%}
+        {{- product.featured_image
+          | image_url: width: 800
+          | image_tag:
+            class: 'pc-media__img pc-media__img--primary',
+            widths: '360,480,600,800',
+            sizes: '(max-width: 480px) 100vw, (max-width: 768px) 50vw, 33vw',
+            loading: lazy,
+            fetchpriority: lazy | default: 'auto',
+            alt: product.featured_image.alt | escape | default: product.title | escape
+        -}}
+      {%- else -%}
+        <div class="pc-media__placeholder">{{ 'product-1' | placeholder_svg_tag: 'pc-media__svg' }}</div>
+      {%- endif -%}
+
+      {%- comment -%} Secondary image on hover {%- endcomment -%}
+      {%- if secondary_image -%}
+        {{- secondary_image
+          | image_url: width: 800
+          | image_tag:
+            class: 'pc-media__img pc-media__img--secondary',
+            widths: '360,480,600,800',
+            sizes: '(max-width: 480px) 100vw, (max-width: 768px) 50vw, 33vw',
+            loading: 'lazy',
+            alt: secondary_image.alt | escape | default: product.title | escape
+        -}}
+      {%- endif -%}
+    </a>
+
+    {%- comment -%}━━ Badges ━━{%- endcomment -%}
+    <div class="pc-badges" aria-label="Product badges">
+      {%- if sold_out -%}
+        <span class="pc-badge pc-badge--sold-out">{{ 'products.sold_out' | t | default: 'Sold out' }}</span>
+      {%- elsif on_sale -%}
+        <span class="pc-badge pc-badge--sale">{{ 'products.sale' | t | default: 'Sale' }}</span>
+      {%- endif -%}
+      {%- if is_new and sold_out == false -%}
+        <span class="pc-badge pc-badge--new">{{ 'products.new' | t | default: 'New' }}</span>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%}━━ Wishlist ━━{%- endcomment -%}
+    {%- if show_wishlist -%}
+      <button
+        class="pc-wishlist"
+        type="button"
+        aria-label="{{ 'products.wishlist_add' | t | default: 'Add to wishlist' }}"
+        aria-pressed="false"
+        data-wishlist-toggle="{{ product.id }}"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true" focusable="false">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+      </button>
+    {%- endif -%}
+
+    {%- comment -%}━━ Quick add — hover overlay ━━{%- endcomment -%}
+    {%- if show_quick_add -%}
+      <div class="pc-quick-add" aria-hidden="true">
+        {%- if product.variants.size == 1 and product.variants.first.id -%}
+          <button
+            class="pc-quick-add__btn"
+            type="button"
+            data-quick-add-id="{{ product.variants.first.id }}"
+            {% unless product.available %}disabled{% endunless %}
+          >
+            {%- if product.available -%}
+              {{ 'products.quick_add' | t | default: 'Quick add' }}
+            {%- else -%}
+              {{ 'products.sold_out' | t | default: 'Sold out' }}
+            {%- endif -%}
+          </button>
+        {%- else -%}
+          <a
+            href="{{ product.url }}"
+            class="pc-quick-add__btn"
+          >
+            {{ 'products.choose_options' | t | default: 'Choose options' }}
+          </a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+  </div>{%- comment -%}/.pc-media{%- endcomment -%}
+
+
+  {%- comment -%}━━━━━━ INFO ━━━━━━{%- endcomment -%}
+  <div class="pc-info">
+
+    {%- comment -%}━━ Vendor ━━{%- endcomment -%}
+    {%- if show_vendor and product.vendor != blank -%}
+      <p class="pc-info__vendor">
+        <a href="{{ product.vendor | url_for_vendor }}" class="pc-info__vendor-link">
+          {{- product.vendor | escape -}}
+        </a>
+      </p>
+    {%- endif -%}
+
+    {%- comment -%}━━ Title ━━{%- endcomment -%}
+    <h3 class="pc-info__title">
+      <a href="{{ product.url }}" class="pc-info__title-link">
+        {{- product.title | escape -}}
+      </a>
+    </h3>
+
+    {%- comment -%}━━ Rating ━━{%- endcomment -%}
+    {%- if show_rating -%}
+      {%- liquid
+        assign rating_value = product.metafields.reviews.rating.value
+        assign rating_count = product.metafields.reviews.rating_count.value
+      -%}
+      {%- if rating_value != blank -%}
+        <div
+          class="pc-info__rating"
+          aria-label="{{ rating_value }} out of 5 stars, {{ rating_count }} reviews"
+        >
+          <span class="pc-info__stars" style="--rating: {{ rating_value }};" aria-hidden="true">
+            <span class="pc-info__stars-fill"></span>
+          </span>
+          {%- if rating_count != blank -%}
+            <span class="pc-info__rating-count">({{ rating_count }})</span>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- comment -%}━━ Price ━━{%- endcomment -%}
+    <div class="pc-info__price">
+      {%- if on_sale -%}
+        <s class="pc-info__price-compare">
+          {{- first_variant.compare_at_price | money -}}
+        </s>
+      {%- endif -%}
+      <span class="pc-info__price-current{% if on_sale %} pc-info__price-current--sale{% endif %}">
+        {{- first_variant.price | money -}}
+      </span>
+      {%- if on_sale -%}
+        {%- liquid
+          assign saved_amount  = first_variant.compare_at_price | minus: first_variant.price
+          assign saved_percent = saved_amount | times: 100 | divided_by: first_variant.compare_at_price
+        -%}
+        <span class="pc-info__price-save">-{{ saved_percent }}%</span>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%}━━ Color swatches (variant preview) ━━{%- endcomment -%}
+    {%- if show_swatches -%}
+      {%- liquid
+        assign color_option_index = nil
+        for option in product.options_with_values
+          assign option_down = option.name | downcase
+          if option_down == 'color' or option_down == 'colour'
+            assign color_option_index = forloop.index0
+            break
+          endif
+        endfor
+      -%}
+      {%- if color_option_index != nil -%}
+        {%- assign color_option = product.options_with_values[color_option_index] -%}
+        <div class="pc-info__swatches" aria-label="{{ color_option.name }}">
+          {%- for value in color_option.values limit: 6 -%}
+            {%- liquid
+              assign swatch_file = value | downcase | replace: ' ', '-' | append: '.png'
+              assign swatch_src  = swatch_file | file_url
+              assign is_selected = false
+              if color_option.selected_value == value
+                assign is_selected = true
+              endif
+            -%}
+            <span
+              class="pc-swatch{% if is_selected %} is-selected{% endif %}"
+              title="{{ value | escape }}"
+              style="
+                background-color: {{ value | downcase | replace: ' ', '' }};
+                background-image: url('{{ swatch_src }}');
+              "
+              data-swatch-value="{{ value | escape }}"
+              data-product-url="{{ product.url }}?variant={{ value | escape }}"
+            ></span>
+          {%- endfor -%}
+          {%- if color_option.values.size > 6 -%}
+            <span class="pc-swatch__more">+{{ color_option.values.size | minus: 6 }}</span>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    {%- endif -%}
+
+  </div>{%- comment -%}/.pc-info{%- endcomment -%}
+
+</div>{%- comment -%}/.product-card{%- endcomment -%}
+
+{% stylesheet %}
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     Product card — base
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  .product-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ─── Layout: side by side ─── */
+  .product-card--side {
+    flex-direction: row;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  .product-card--side .pc-media { flex: 0 0 45%; }
+  .product-card--side .pc-info  { flex: 1; padding-top: 0; }
+
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     Media
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  .pc-media {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    background: rgba(0,0,0,0.04);
+  }
+
+  /* Aspect ratios */
+  .pc-media__ratio--square    { aspect-ratio: 1 / 1; }
+  .pc-media__ratio--portrait  { aspect-ratio: 3 / 4; }
+  .pc-media__ratio--landscape { aspect-ratio: 4 / 3; }
+  .pc-media__ratio--natural   { aspect-ratio: auto; }
+
+  .pc-media__link {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Images */
+  .pc-media__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.35s ease, transform 0.45s ease;
+  }
+
+  /* Primary / secondary swap */
+  .pc-media__img--primary  { position: relative; z-index: 1; }
+  .pc-media__img--secondary {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    opacity: 0;
+  }
+  .pc-media:hover .pc-media__img--secondary { opacity: 1; }
+  .pc-media:hover .pc-media__img--primary   { opacity: 0; }
+
+  /* Subtle zoom on hover when no secondary image */
+  .pc-media:not(:has(.pc-media__img--secondary)):hover .pc-media__img--primary {
+    transform: scale(1.04);
+  }
+
+  /* Placeholder */
+  .pc-media__placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.06);
+  }
+  .pc-media__svg { width: 100%; height: 100%; opacity: 0.4; }
+
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     Badges
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  .pc-badges {
+    position: absolute;
+    top: 0.6rem;
+    left: 0.6rem;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    pointer-events: none;
+  }
+
+  .pc-badge {
+    display: inline-block;
+    padding: 0.2em 0.55em;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-radius: var(--badge-border-radius, 4px);
+    line-height: 1.4;
+  }
+
+  .pc-badge--sale {
+    background: var(--badge-sale-bg, #d9534f);
+    color: var(--badge-sale-color, #fff);
+  }
+  .pc-badge--new {
+    background: var(--badge-new-bg, #1a1a1a);
+    color: var(--badge-new-color, #fff);
+  }
+  .pc-badge--sold-out {
+    background: var(--badge-sold-out-bg, #aaa);
+    color: var(--badge-sold-out-color, #fff);
+  }
+
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     Wishlist
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  .pc-wishlist {
+    position: absolute;
+    top: 0.55rem;
+    right: 0.55rem;
+    z-index: 3;
+    width: 2.2rem;
+    height: 2.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.9);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--color-foreground);
+    transition: color 0.2s, background 0.2s;
+    padding: 0;
+  }
+
+  .pc-wishlist svg {
+    width: 1rem;
+    height: 1rem;
+    pointer-events: none;
+  }
+
+  .pc-wishlist:hover,
+  .pc-wishlist[aria-pressed="true"] {
+    color: var(--badge-sale-bg, #d9534f);
+    background: #fff;
+  }
+
+  .pc-wishlist[aria-pressed="true"] svg {
+    fill: currentColor;
+  }
+
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     Quick add — hover overlay
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  .pc-quick-add {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 4;
+    padding: 0 0.75rem 0.75rem;
+    transform: translateY(100%);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  .pc-media:hover .pc-quick-add,
+  .product-card:focus-within .pc-quick-add {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .pc-quick-add__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0.65rem 1rem;
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    background: var(--color-background, #fff);
+    color: var(--color-foreground, #1a1a1a);
+    border: 1px solid rgba(0,0,0,0.12);
+    border-radius: var(--button-border-radius, 0px);
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .pc-quick-add__btn:hover:not(:disabled) {
+    background: var(--color-primary, #1a1a1a);
+    color: var(--color-background, #fff);
+    border-color: var(--color-primary, #1a1a1a);
+  }
+
+  .pc-quick-add__btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     Info — below (default)
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  .pc-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 0.75rem 0 0;
+  }
+
+  /* Info — overlay (positioned inside .pc-media) */
+  .product-card--overlay .pc-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 3;
+    padding: 1rem 0.85rem 0.85rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 100%);
+    color: #fff;
+  }
+  .product-card--overlay .pc-info__title-link,
+  .product-card--overlay .pc-info__vendor-link,
+  .product-card--overlay .pc-info__price-compare {
+    color: rgba(255,255,255,0.75);
+  }
+  .product-card--overlay .pc-info__price-save {
+    background: rgba(255,255,255,0.2);
+  }
+
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     Info elements
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+  /* Vendor */
+  .pc-info__vendor {
+    margin: 0;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.55;
+  }
+  .pc-info__vendor-link {
+    text-decoration: none;
+    color: inherit;
+  }
+  .pc-info__vendor-link:hover { text-decoration: underline; }
+
+  /* Title */
+  .pc-info__title {
+    margin: 0;
+    font-size: 0.92rem;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+  .pc-info__title-link {
+    text-decoration: none;
+    color: var(--color-foreground, #1a1a1a);
+  }
+  .pc-info__title-link:hover { text-decoration: underline; }
+
+  /* Rating */
+  .pc-info__rating {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .pc-info__stars {
+    --star-size: 0.85rem;
+    --star-color-empty: rgba(0,0,0,0.15);
+    --star-color-fill: #f5a623;
+    display: inline-block;
+    position: relative;
+    font-size: var(--star-size);
+    line-height: 1;
+    width: calc(var(--star-size) * 5 + 0.4rem);
+    color: var(--star-color-empty);
+  }
+  .pc-info__stars::before {
+    content: '★★★★★';
+    letter-spacing: 0.08rem;
+  }
+  .pc-info__stars-fill {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    width: calc(var(--rating) / 5 * 100%);
+    color: var(--star-color-fill);
+  }
+  .pc-info__stars-fill::before {
+    content: '★★★★★';
+    letter-spacing: 0.08rem;
+    white-space: nowrap;
+  }
+  .pc-info__rating-count {
+    font-size: 0.75rem;
+    opacity: 0.6;
+  }
+
+  /* Price */
+  .pc-info__price {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.1rem;
+  }
+  .pc-info__price-current {
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+  .pc-info__price-current--sale {
+    color: var(--badge-sale-bg, #d9534f);
+  }
+  .pc-info__price-compare {
+    font-size: 0.85rem;
+    font-weight: 400;
+    opacity: 0.45;
+    text-decoration: line-through;
+  }
+  .pc-info__price-save {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 0.15em 0.45em;
+    border-radius: var(--badge-border-radius, 4px);
+    background: var(--badge-sale-bg, #d9534f);
+    color: var(--badge-sale-color, #fff);
+  }
+
+  /* Swatches */
+  .pc-info__swatches {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: 0.25rem;
+  }
+  .pc-swatch {
+    display: block;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    border: 1.5px solid rgba(0,0,0,0.12);
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+    transition: border-color 0.15s, outline-color 0.15s;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+  }
+  .pc-swatch.is-selected,
+  .pc-swatch:hover {
+    border-color: var(--color-primary, #1a1a1a);
+    outline-color: var(--color-primary, #1a1a1a);
+  }
+  .pc-swatch__more {
+    font-size: 0.72rem;
+    opacity: 0.55;
+  }
+
+{% endstylesheet %}
