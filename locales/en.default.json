@@ -17,7 +17,34 @@
     "checkout": "Checkout",
     "title": "Cart",
     "update": "Update",
-    "remove": "Remove"
+    "remove": "Remove",
+    "close": "Close cart drawer",
+    "empty": "Your cart is empty",
+    "continue_shopping": "Continue shopping",
+    "view_cart": "View cart",
+    "subtotal": "Subtotal",
+    "taxes_and_shipping": "Taxes and shipping calculated at checkout",
+    "quantity": "Quantity",
+    "quantity_for": "Quantity for {{ product }}",
+    "remove_item": "Remove {{ product }}",
+    "increase_quantity": "Increase quantity for {{ product }}",
+    "decrease_quantity": "Decrease quantity for {{ product }}",
+    "note": "Order note",
+    "note_placeholder": "Add a note to your order",
+    "item_count": {
+      "one": "{{ count }} item",
+      "other": "{{ count }} items"
+    },
+    "added": "{{ product }} added to your cart",
+    "updated": "Cart updated",
+    "error": "There was a problem updating your cart. Please try again.",
+    "free_shipping_progress_html": "You're {{ amount }} away from free shipping",
+    "free_shipping_reached": "Congratulations! You've earned free shipping",
+    "open": "Open cart drawer"
+  },
+  "products": {
+    "add_to_cart": "Add to cart",
+    "quantity": "Quantity"
   },
   "customers": {
     "login": {
