@@ -1,17 +1,84 @@
-{% comment %}
-  This section is used in the page template to render store pages like About us
-  or Contact us.
-
+﻿{% comment %}
+  Page section — for static pages like About, Contact, etc.
   https://shopify.dev/docs/storefronts/themes/architecture/templates/page
 {% endcomment %}
 
-<h1>{{ page.title }}</h1>
+<div class="page-section" data-section-id="{{ section.id }}">
 
-{{ page.content }}
+  {% if section.settings.show_title %}
+    <h1 class="page-section__title">{{ page.title }}</h1>
+  {% endif %}
+
+  <div class="page-section__content rte">
+    {{ page.content }}
+  </div>
+
+</div>
+
+{% stylesheet %}
+  .page-section {
+    max-width: {% raw %}{{ section.settings.content_width }}{% endraw %};
+    margin-inline: auto;
+    padding-inline: var(--page-margin, 20px);
+    padding-block: var(--section-padding-fluid, 3rem);
+  }
+  .page-section__title { margin-bottom: 1.5rem; }
+  .page-section__content { line-height: 1.75; }
+  .page-section__content h2,
+  .page-section__content h3 { margin-top: 2rem; }
+  .page-section__content img { max-width: 100%; height: auto; }
+  .page-section__content a { color: var(--color-primary); }
+{% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.page",
-  "settings": []
+  "tag": "section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_title",
+      "label": "Show page title",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "content_width",
+      "label": "Content width",
+      "options": [
+        { "value": "48rem", "label": "Narrow (reading width)" },
+        { "value": "72rem", "label": "Medium" },
+        { "value": "var(--page-width, 1400px)", "label": "Full page width" }
+      ],
+      "default": "48rem"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 150,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 150,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  }
 }
 {% endschema %}

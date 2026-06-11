@@ -1,18 +1,86 @@
 {% style %}
-  {% # Loads all font variantions with display: swap %}
-  {{ settings.type_primary_font | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
+  {% comment %} Load all font variants with display: swap {% endcomment %}
+  {{ settings.type_heading_font | font_face: font_display: 'swap' }}
+  {{ settings.type_heading_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
+  {{ settings.type_heading_font | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
+
+  {{ settings.type_body_font | font_face: font_display: 'swap' }}
+  {{ settings.type_body_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
+  {{ settings.type_body_font | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
 
   :root {
-    --font-primary--family: {{ settings.type_primary_font.family }}, {{ settings.type_primary_font.fallback_families }};
-    --font-primary--style: {{ settings.type_primary_font.style }};
-    --font-primary--weight: {{ settings.type_primary_font.weight }};
-    --page-width: {{ settings.max_page_width }};
+    {% comment %} ── Typography ── {% endcomment %}
+    --font-heading--family: {{ settings.type_heading_font.family }}, {{ settings.type_heading_font.fallback_families }};
+    --font-heading--style:  {{ settings.type_heading_font.style }};
+    --font-heading--weight: {{ settings.type_heading_font.weight }};
+    --font-heading--scale:  {{ settings.type_heading_scale | divided_by: 100.0 }};
+
+    --font-body--family: {{ settings.type_body_font.family }}, {{ settings.type_body_font.fallback_families }};
+    --font-body--style:  {{ settings.type_body_font.style }};
+    --font-body--weight: {{ settings.type_body_font.weight }};
+    --font-body--scale:  {{ settings.type_body_scale | divided_by: 100.0 }};
+
+    {% comment %} ── Layout ── {% endcomment %}
+    --page-width:  {{ settings.max_page_width }};
     --page-margin: {{ settings.min_page_margin }}px;
-    --color-background: {{ settings.background_color }};
-    --color-foreground: {{ settings.foreground_color }};
-    --style-border-radius-inputs: {{ settings.input_corner_radius }}px;
+
+    {% comment %} ── Colors ── {% endcomment %}
+    --color-primary:        {{ settings.color_primary }};
+    --color-primary-hover:  {{ settings.color_primary_hover }};
+    --color-primary-border: {{ settings.color_primary_border }};
+    --color-secondary:      {{ settings.color_secondary }};
+    --color-secondary-hover: {{ settings.color_secondary_hover }};
+    --color-background:     {{ settings.color_background }};
+    --color-foreground:     {{ settings.color_foreground }};
+
+    {% comment %} ── Buttons ── {% endcomment %}
+    --button-border-radius:      {{ settings.button_border_radius }}px;
+    --button-padding-vertical:   {{ settings.button_padding_vertical }}px;
+    --button-padding-horizontal: {{ settings.button_padding_horizontal }}px;
+
+    {% comment %} Solid button colours (primary) {% endcomment %}
+    --button-primary-bg:           {{ settings.color_primary }};
+    --button-primary-color:        {{ settings.color_background }};
+    --button-primary-border:       {{ settings.color_primary_border }};
+    --button-primary-hover-bg:     {{ settings.color_primary_hover }};
+    --button-primary-hover-color:  {{ settings.color_background }};
+    --button-primary-hover-border: {{ settings.color_primary_hover }};
+
+    {% comment %} Outline button colours (secondary outline) {% endcomment %}
+    --button-outline-bg:           transparent;
+    --button-outline-color:        {{ settings.color_primary }};
+    --button-outline-border:       {{ settings.color_primary_border }};
+    --button-outline-hover-bg:     {{ settings.color_primary_hover }};
+    --button-outline-hover-color:  {{ settings.color_background }};
+    --button-outline-hover-border: {{ settings.color_primary_hover }};
+
+    {% comment %} ── Inputs ── {% endcomment %}
+    --input-border-radius: {{ settings.input_border_radius }}px;
+
+    {% comment %} ── Badges ── {% endcomment %}
+    --badge-sale-bg:         {{ settings.badge_sale_background }};
+    --badge-sale-color:      {{ settings.badge_sale_color }};
+    --badge-new-bg:          {{ settings.badge_new_background }};
+    --badge-new-color:       {{ settings.badge_new_color }};
+    --badge-sold-out-bg:     {{ settings.badge_sold_out_background }};
+    --badge-sold-out-color:  {{ settings.badge_sold_out_color }};
+    --badge-border-radius:   {{ settings.badge_border_radius }}px;
+
+    {% comment %} ── Carousel / Section padding scale ── {% endcomment %}
+    {% comment %}
+      Fluid scale: 1 at 1920px down to 0.33 at 320px.
+      Responsive multiplier is applied via clamp() where sections use it.
+      Section padding base: 200px  → clamp(66px, …, 200px)
+      Block padding base:   30px   → clamp(10px, …, 30px)
+      Block padding alt:    50px   → clamp(17px, …, 50px)
+    {% endcomment %}
+    --section-padding:       200px;
+    --block-padding-sm:      30px;
+    --block-padding-md:      50px;
+
+    {% comment %} Fluid clamp values matching spreadsheet breakpoints {% endcomment %}
+    --section-padding-fluid: clamp(66px, 10.42vw, 200px);
+    --block-padding-sm-fluid: clamp(10px, 1.56vw, 30px);
+    --block-padding-md-fluid: clamp(17px, 2.60vw, 50px);
   }
 {% endstyle %}

@@ -1,47 +1,283 @@
-{% comment %}
-  This section is used in the collection template to render collection page
-  listing all products within a collection.
-
+﻿{% comment %}
+  Collection page section — title, filters, product grid, and pagination.
   https://shopify.dev/docs/storefronts/themes/architecture/templates/collection
 {% endcomment %}
 
-<h1>{{ collection.title }}</h1>
+<div class="collection" data-section-id="{{ section.id }}">
 
-<div class="collection-products">
-  {% paginate collection.products by 20 %}
-    {% for product in collection.products %}
-      <div class="collection-product">
-        {% if product.featured_image %}
-          {% render 'image',
-            class: 'collection-product__image',
-            image: product.featured_image,
-            url: product.url,
-            width: 400,
-            height: 400,
-            crop: 'center'
-          %}
-        {% endif %}
-        <div class="collection-product__content">
-          <p>{{ product.title | escape | link_to: product.url }}</p>
-          <p>{{ product.price | money }}</p>
-        </div>
+  {% if section.settings.show_collection_image and collection.image %}
+    <div class="collection__banner">
+      {% render 'image',
+        class: 'collection__banner-image',
+        image: collection.image,
+        width: 2000,
+        height: 600,
+        crop: 'center'
+      %}
+    </div>
+  {% endif %}
+
+  <div class="collection__header">
+    {% if section.settings.show_title %}
+      <h1 class="collection__title">{{ collection.title }}</h1>
+    {% endif %}
+
+    {% if section.settings.show_description and collection.description != blank %}
+      <div class="collection__description">{{ collection.description }}</div>
+    {% endif %}
+  </div>
+
+  <div class="collection__body">
+
+    {% if section.settings.enable_sorting %}
+      <div class="collection__sort">
+        <label for="SortBy-{{ section.id }}">Sort by</label>
+        <select id="SortBy-{{ section.id }}" name="sort_by">
+          <option value="manual">Featured</option>
+          <option value="best-selling" {% if collection.sort_by == 'best-selling' %}selected{% endif %}>Best selling</option>
+          <option value="title-ascending" {% if collection.sort_by == 'title-ascending' %}selected{% endif %}>A–Z</option>
+          <option value="title-descending" {% if collection.sort_by == 'title-descending' %}selected{% endif %}>Z–A</option>
+          <option value="price-ascending" {% if collection.sort_by == 'price-ascending' %}selected{% endif %}>Price: low to high</option>
+          <option value="price-descending" {% if collection.sort_by == 'price-descending' %}selected{% endif %}>Price: high to low</option>
+          <option value="created-descending" {% if collection.sort_by == 'created-descending' %}selected{% endif %}>Newest</option>
+        </select>
       </div>
-    {% endfor %}
+    {% endif %}
 
-    {{ paginate | default_pagination }}
-  {% endpaginate %}
+    {% paginate collection.products by section.settings.products_per_page %}
+
+      <div
+        class="collection__grid"
+        style="--cols: {{ section.settings.columns_desktop }};"
+      >
+        {% for product in collection.products %}
+          <div class="product-card">
+
+            {% if product.featured_image %}
+              {% render 'image',
+                class: 'product-card__image',
+                image: product.featured_image,
+                url: product.url,
+                width: 600,
+                height: 600,
+                crop: 'center'
+              %}
+            {% endif %}
+
+            <div class="product-card__info">
+
+              {% if section.settings.show_vendor %}
+                <p class="product-card__vendor">{{ product.vendor }}</p>
+              {% endif %}
+
+              <p class="product-card__title">
+                <a href="{{ product.url }}">{{ product.title | escape }}</a>
+              </p>
+
+              <p class="product-card__price">
+                {{ product.price | money }}
+                {% if product.compare_at_price > product.price %}
+                  <s class="product-card__price--compare">{{ product.compare_at_price | money }}</s>
+                {% endif %}
+              </p>
+
+              {% if section.settings.show_add_to_cart and product.available %}
+                <a href="{{ product.url }}" class="product-card__cta button button--primary">
+                  {{ 'products.add_to_cart' | t }}
+                </a>
+              {% endif %}
+
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      {% if section.settings.pagination_style == 'default' %}
+        {{ paginate | default_pagination }}
+      {% endif %}
+
+    {% endpaginate %}
+
+  </div>
 </div>
 
 {% stylesheet %}
-  .collection-products {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+  .collection {
+    max-width: var(--page-width, 1400px);
+    margin-inline: auto;
+    padding-inline: var(--page-margin, 20px);
   }
+  .collection__banner { margin-bottom: 2rem; }
+  .collection__banner-image { width: 100%; height: 300px; object-fit: cover; }
+  .collection__header { margin-bottom: 2rem; }
+  .collection__sort {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .collection__sort select {
+    border-radius: var(--input-border-radius, 0px);
+    padding: 0.4rem 0.75rem;
+    border: 1px solid currentColor;
+    background: var(--color-background);
+    color: var(--color-foreground);
+  }
+  .collection__grid {
+    display: grid;
+    grid-template-columns: repeat(var(--cols, 3), 1fr);
+    gap: 1.5rem;
+  }
+  @media (max-width: 768px) {
+    .collection__grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 480px) {
+    .collection__grid { grid-template-columns: 1fr; }
+  }
+  .product-card__image { width: 100%; aspect-ratio: 1; object-fit: cover; }
+  .product-card__info { padding: 0.75rem 0; }
+  .product-card__vendor {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    opacity: 0.5;
+    margin: 0 0 0.25rem;
+  }
+  .product-card__title a {
+    text-decoration: none;
+    color: var(--color-foreground);
+  }
+  .product-card__price {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    margin: 0.25rem 0 0.75rem;
+  }
+  .product-card__price--compare { opacity: 0.5; text-decoration: line-through; }
+  .product-card__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--button-padding-vertical, 10px) var(--button-padding-horizontal, 20px);
+    background-color: var(--color-primary);
+    color: var(--color-background);
+    border-radius: var(--button-border-radius, 0px);
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .product-card__cta:hover { background-color: var(--color-primary-hover); }
 {% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.collection",
-  "settings": []
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Collection header"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_title",
+      "label": "Show collection title",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Show collection description",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_image",
+      "label": "Show collection banner image",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Product grid"
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Products per page",
+      "min": 4,
+      "max": 48,
+      "step": 4,
+      "default": 20
+    },
+    {
+      "type": "select",
+      "id": "columns_desktop",
+      "label": "Columns on desktop",
+      "options": [
+        { "value": "2", "label": "2 columns" },
+        { "value": "3", "label": "3 columns" },
+        { "value": "4", "label": "4 columns" }
+      ],
+      "default": "3"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show product vendor",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_add_to_cart",
+      "label": "Show Add to cart button",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Sorting & filtering"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sorting",
+      "label": "Enable sorting",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Pagination"
+    },
+    {
+      "type": "select",
+      "id": "pagination_style",
+      "label": "Pagination style",
+      "options": [
+        { "value": "default", "label": "Page numbers" },
+        { "value": "none", "label": "None" }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 150,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 150,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    }
+  ]
 }
 {% endschema %}

@@ -78,6 +78,103 @@
       "title": "Title",
       "subtitle": "Subtitle",
       "normal": "Normal text"
+    }
+  },
+  "settings_schema": {
+    "favicon": {
+      "name": "Favicon",
+      "label": "Favicon image",
+      "info": "Will be scaled down to 32×32px. Supported formats: .ico, .png, .svg"
     },
+    "layout": {
+      "name": "Layout",
+      "page_width": "Page width",
+      "page_margin": "Page margin"
+    },
+    "typography": {
+      "name": "Typography",
+      "heading_font": "Heading font",
+      "heading_scale": "Heading size scale",
+      "body_font": "Body font",
+      "body_scale": "Body size scale"
+    },
+    "colors": {
+      "name": "Colors",
+      "primary_header": "Primary",
+      "primary": "Primary color",
+      "primary_hover": "Primary hover color",
+      "primary_border": "Primary border color",
+      "secondary_header": "Secondary",
+      "secondary": "Secondary color",
+      "secondary_hover": "Secondary hover color",
+      "page_header": "Page",
+      "background": "Background color",
+      "foreground": "Text color"
+    },
+    "currency_format": {
+      "name": "Currency format",
+      "show_currency_codes": "Show currency codes (e.g. USD, EUR)"
+    },
+    "buttons": {
+      "name": "Buttons",
+      "style_header": "Button style",
+      "primary_style": "Primary button style",
+      "secondary_style": "Secondary button style",
+      "style_solid": "Solid",
+      "style_outline": "Outline",
+      "style_link": "Link",
+      "shape_header": "Shape",
+      "border_radius": "Border radius",
+      "padding_header": "Padding",
+      "padding_vertical": "Vertical padding",
+      "padding_horizontal": "Horizontal padding"
+    },
+    "inputs": {
+      "name": "Inputs",
+      "border_radius": "Border radius",
+      "border_style": "Border style",
+      "border_solid": "All sides",
+      "border_bottom_only": "Bottom only"
+    },
+    "badges": {
+      "name": "Badges",
+      "sale_header": "Sale badge",
+      "new_header": "New badge",
+      "sold_out_header": "Sold out badge",
+      "background": "Background color",
+      "text_color": "Text color",
+      "shape_header": "Shape",
+      "border_radius": "Border radius"
+    },
+    "drawers": {
+      "name": "Drawers",
+      "position": "Drawer position",
+      "position_left": "Left",
+      "position_right": "Right",
+      "overlay": "Show overlay behind drawer"
+    },
+    "cart": {
+      "name": "Cart",
+      "type": "Cart type",
+      "type_drawer": "Drawer",
+      "type_page": "Page",
+      "type_notification": "Notification",
+      "show_note": "Enable order note",
+      "show_payment_icons": "Show payment icons",
+      "free_shipping_header": "Free shipping bar",
+      "free_shipping_bar": "Show free shipping progress bar",
+      "free_shipping_threshold": "Free shipping threshold",
+      "free_shipping_threshold_info": "Amount in your store currency."
+    },
+    "social_profiles": {
+      "name": "Social profiles",
+      "accounts_header": "Social media accounts",
+      "instagram": "Instagram URL",
+      "facebook": "Facebook URL",
+      "tiktok": "TikTok URL",
+      "twitter": "X (Twitter) URL",
+      "youtube": "YouTube URL",
+      "pinterest": "Pinterest URL"
+    }
   }
 }
