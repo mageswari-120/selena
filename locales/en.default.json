@@ -58,6 +58,8 @@
   },
   "collections": {
     "title": "Collections",
+    "items": "items",
+    "placeholder_title": "Collection",
     "empty": "No products found.",
     "sort_by": "Sort by",
     "sort": {

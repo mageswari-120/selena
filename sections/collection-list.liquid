@@ -76,6 +76,7 @@
     --cl-fashion-bg:    {{ fashion_bg }};
     --cl-card-min-h:    {{ card_min_h }}px;
     --cl-head-color:    {{ head_color }};
+    --cl-img-fit:       {{ image_fit }};
   }
 </style>
 
@@ -188,8 +189,7 @@
               {%- if show_count -%}
                 <p class="cl-fashion-card__count">
                   {%- if count_text != blank -%}
-                    {%- assign count_placeholder = '{{' | append: 'count' | append: '}}' -%}
-                    {{ count_text | replace: count_placeholder, col_count }}
+                    {{ count_text | replace: '[count]', col_count }}
                   {%- else -%}
                     {{ col_count }} {{ 'collections.items' | t | default: 'items' }}
                   {%- endif -%}
@@ -250,8 +250,7 @@
               {%- if show_count -%}
                 <p class="cl-age-card__count">
                   {%- if count_text != blank -%}
-                    {%- assign count_placeholder = '{{' | append: 'count' | append: '}}' -%}
-                    {{ count_text | replace: count_placeholder, col_count }}
+                    {{ count_text | replace: '[count]', col_count }}
                   {%- else -%}
                     {{ col_count }} {{ 'collections.items' | t | default: 'items' }}
                   {%- endif -%}
@@ -502,7 +501,7 @@
 .cl-fashion-card__img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: var(--cl-img-fit, cover);
   display: block;
 }
 
@@ -579,7 +578,7 @@
 .cl-age-card__img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: var(--cl-img-fit, cover);
   object-position: center;
   display: block;
   transition: transform 0.4s ease;
@@ -1076,8 +1075,8 @@
       "type": "text",
       "id": "item_count_text",
       "label": "Item count text",
-      "default": "{{count}} items",
-      "info": "Use {{count}} as a placeholder for the number of products."
+      "default": "[count] items",
+      "info": "Use [count] as a placeholder for the number of products."
     },
     {
       "type": "header",
