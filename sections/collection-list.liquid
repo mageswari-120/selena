@@ -1,0 +1,1333 @@
+{%- comment -%}
+  ============================================================
+  Section: Collection List
+  Layouts: fashion_style | card_style
+  Author:  SHThemes / Selena
+  ============================================================
+{%- endcomment -%}
+
+{%- liquid
+  assign layout        = section.settings.layout_style
+  assign sec_width     = section.settings.section_width
+  assign bg_color      = section.settings.bg_color
+  assign pt            = section.settings.padding_top
+  assign pb            = section.settings.padding_bottom
+  assign mt            = section.settings.margin_top
+  assign mb            = section.settings.margin_bottom
+  assign gap_desktop   = section.settings.gap_desktop
+  assign gap_mobile    = section.settings.gap_mobile
+
+  assign heading       = section.settings.heading
+  assign subheading    = section.settings.subheading
+  assign head_align    = section.settings.heading_alignment
+  assign head_color    = section.settings.heading_color
+
+  assign cols_desktop  = section.settings.cols_desktop
+  assign cols_tablet   = section.settings.cols_tablet
+  assign cols_mobile   = section.settings.cols_mobile
+
+  assign enable_slider = section.settings.enable_slider_mobile
+  assign enable_swipe  = section.settings.enable_swipe
+
+  assign image_ratio   = section.settings.image_ratio
+  assign image_fit     = section.settings.image_fit
+  assign card_radius   = section.settings.card_border_radius
+  assign card_padding  = section.settings.card_padding
+  assign hover_effect  = section.settings.hover_effect
+  assign show_count    = section.settings.show_item_count
+  assign count_text    = section.settings.item_count_text
+
+  comment — Layout 1 specific
+  endcomment
+  assign img_shape     = section.settings.image_shape
+  assign img_size      = section.settings.image_size
+  assign title_align   = section.settings.content_alignment
+  assign fashion_bg    = section.settings.fashion_bg_color
+
+  comment — Layout 2 specific
+  endcomment
+  assign show_desc     = section.settings.show_description
+  assign show_cta      = section.settings.show_cta
+  assign cta_icon      = section.settings.cta_icon_style
+  assign card_shadow   = section.settings.card_shadow
+  assign card_min_h    = section.settings.card_min_height
+  assign content_pos   = section.settings.content_position
+  assign img_align     = section.settings.image_alignment
+
+  assign sid           = section.id | prepend: 'cl-'
+-%}
+
+<style>
+  /* ─── Section token layer ─── */
+  #shopify-section-{{ section.id }} {
+    --cl-bg:            {{ bg_color }};
+    --cl-pt:            {{ pt }}px;
+    --cl-pb:            {{ pb }}px;
+    --cl-mt:            {{ mt }}px;
+    --cl-mb:            {{ mb }}px;
+    --cl-gap-desktop:   {{ gap_desktop }}px;
+    --cl-gap-mobile:    {{ gap_mobile }}px;
+    --cl-cols-desktop:  {{ cols_desktop }};
+    --cl-cols-tablet:   {{ cols_tablet }};
+    --cl-cols-mobile:   {{ cols_mobile }};
+    --cl-card-radius:   {{ card_radius }}px;
+    --cl-card-padding:  {{ card_padding }}px;
+    --cl-img-size:      {{ img_size }}px;
+    --cl-fashion-bg:    {{ fashion_bg }};
+    --cl-card-min-h:    {{ card_min_h }}px;
+    --cl-head-color:    {{ head_color }};
+  }
+</style>
+
+<section
+  id="{{ sid }}"
+  class="collection-list collection-list--{{ layout }}{% if sec_width == 'full' %} collection-list--full-width{% endif %}"
+  aria-label="{{ heading | escape | default: 'Collection list' }}"
+  style="
+    background-color: var(--cl-bg);
+    padding-top: var(--cl-pt);
+    padding-bottom: var(--cl-pb);
+    margin-top: var(--cl-mt);
+    margin-bottom: var(--cl-mb);
+  "
+>
+  {%- comment -%}━━━━━━ Section header ━━━━━━{%- endcomment -%}
+  {%- if heading != blank or subheading != blank -%}
+    <header class="cl-header cl-header--{{ head_align }}">
+      {%- if heading != blank -%}
+        <h2 class="cl-header__heading">{{ heading | escape }}</h2>
+      {%- endif -%}
+      {%- if subheading != blank -%}
+        <p class="cl-header__subheading">{{ subheading | escape }}</p>
+      {%- endif -%}
+    </header>
+  {%- endif -%}
+
+  {%- comment -%}━━━━━━ Grid wrapper ━━━━━━{%- endcomment -%}
+  <div
+    class="cl-grid{% if enable_slider %} cl-grid--slider{% endif %}"
+    role="list"
+    {% if enable_slider %}
+      data-cl-slider="true"
+      data-swipe="{{ enable_swipe }}"
+    {% endif %}
+  >
+    {%- for block in section.blocks -%}
+      {%- liquid
+        comment — Resolve collection data
+        endcomment
+        assign col        = block.settings.collection
+        assign col_image  = block.settings.custom_image
+        assign col_title  = block.settings.custom_title
+        assign col_link   = block.settings.custom_link
+        assign badge_text = block.settings.badge_text
+        assign badge_bg   = block.settings.badge_bg_color
+        assign badge_tc   = block.settings.badge_text_color
+        assign block_desc = block.settings.description
+        assign block_bg   = block.settings.card_bg_color
+
+        if col_image == blank and col != blank
+          assign col_image = col.featured_image
+        endif
+        if col_title == blank and col != blank
+          assign col_title = col.title
+        endif
+        if col_link == blank and col != blank
+          assign col_link = col.url
+        endif
+        if col_link == blank
+          assign col_link = '#'
+        endif
+
+        assign col_count = 0
+        if col != blank
+          assign col_count = col.all_products_count
+        endif
+      -%}
+
+      {%- comment -%}━━ Block outer ━━{%- endcomment -%}
+      <div
+        class="cl-item{% if hover_effect %} cl-item--hover{% endif %}"
+        role="listitem"
+        {{ block.shopify_attributes }}
+        {% if block_bg != blank and layout == 'card_style' %}
+          style="--cl-item-bg: {{ block_bg }};"
+        {% endif %}
+      >
+
+        {%- if layout == 'fashion_style' -%}
+          {%- comment -%}╔══════════════════════════════╗
+                          LAYOUT 1: FASHION STYLE
+                        ╚══════════════════════════════╝{%- endcomment -%}
+          <a
+            href="{{ col_link }}"
+            class="cl-fashion-card"
+            aria-label="{{ col_title | escape }}"
+          >
+            <div class="cl-fashion-card__media cl-fashion-card__media--{{ img_shape }}">
+              {%- if col_image != blank -%}
+                {{- col_image
+                  | image_url: width: 600
+                  | image_tag:
+                    class: 'cl-fashion-card__img',
+                    widths: '160,240,320,480,600',
+                    sizes: '(max-width: 480px) 40vw, (max-width: 768px) 22vw, 14vw',
+                    loading: 'lazy',
+                    alt: col_title | escape
+                -}}
+              {%- else -%}
+                <div class="cl-fashion-card__placeholder">
+                  {{ 'collection-1' | placeholder_svg_tag: 'cl-fashion-card__svg' }}
+                </div>
+              {%- endif -%}
+            </div>
+
+            <div class="cl-fashion-card__info cl-fashion-card__info--{{ title_align }}">
+              <h3 class="cl-fashion-card__title">{{ col_title | escape }}</h3>
+
+              {%- if show_count -%}
+                <p class="cl-fashion-card__count">
+                  {%- if count_text != blank -%}
+                    {%- assign count_placeholder = '{{' | append: 'count' | append: '}}' -%}
+                    {{ count_text | replace: count_placeholder, col_count }}
+                  {%- else -%}
+                    {{ col_count }} {{ 'collections.items' | t | default: 'items' }}
+                  {%- endif -%}
+                </p>
+              {%- endif -%}
+            </div>
+          </a>
+
+        {%- elsif layout == 'card_style' -%}
+          {%- comment -%}╔══════════════════════════════╗
+                          LAYOUT 2: CARD STYLE
+                        ╚══════════════════════════════╝{%- endcomment -%}
+          <a
+            href="{{ col_link }}"
+            class="cl-age-card cl-age-card--img-{{ img_align }} cl-age-card--content-{{ content_pos }}{% if card_shadow %} cl-age-card--shadow{% endif %}"
+            aria-label="{{ col_title | escape }}"
+            style="
+              {% if block_bg != blank %}background-color: {{ block_bg }};{% endif %}
+              border-radius: var(--cl-card-radius);
+            "
+          >
+            {%- comment -%}── Badge ──{%- endcomment -%}
+            {%- if badge_text != blank -%}
+              <span
+                class="cl-age-card__badge"
+                style="
+                  background-color: {{ badge_bg }};
+                  color: {{ badge_tc }};
+                "
+              >
+                {{ badge_text | escape }}
+              </span>
+            {%- endif -%}
+
+            {%- comment -%}── Image ──{%- endcomment -%}
+            <div class="cl-age-card__media cl-age-card__media--{{ image_ratio }}">
+              {%- if col_image != blank -%}
+                {{- col_image
+                  | image_url: width: 800
+                  | image_tag:
+                    class: 'cl-age-card__img',
+                    widths: '240,360,480,640,800',
+                    sizes: '(max-width: 480px) 90vw, (max-width: 768px) 45vw, 22vw',
+                    loading: 'lazy',
+                    alt: col_title | escape
+                -}}
+              {%- else -%}
+                <div class="cl-age-card__placeholder">
+                  {{ 'collection-2' | placeholder_svg_tag: 'cl-age-card__svg' }}
+                </div>
+              {%- endif -%}
+            </div>
+
+            {%- comment -%}── Content ──{%- endcomment -%}
+            <div class="cl-age-card__body">
+              <h3 class="cl-age-card__title">{{ col_title | escape }}</h3>
+
+              {%- if show_count -%}
+                <p class="cl-age-card__count">
+                  {%- if count_text != blank -%}
+                    {%- assign count_placeholder = '{{' | append: 'count' | append: '}}' -%}
+                    {{ count_text | replace: count_placeholder, col_count }}
+                  {%- else -%}
+                    {{ col_count }} {{ 'collections.items' | t | default: 'items' }}
+                  {%- endif -%}
+                </p>
+              {%- endif -%}
+
+              {%- if show_desc and block_desc != blank -%}
+                <p class="cl-age-card__desc">{{ block_desc | escape }}</p>
+              {%- endif -%}
+
+              {%- if show_cta -%}
+                <span class="cl-age-card__cta" aria-hidden="true">
+                  {%- if cta_icon == 'arrow' -%}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                      <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                  {%- elsif cta_icon == 'arrow_up_right' -%}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                      <path d="M7 17L17 7M7 7h10v10"/>
+                    </svg>
+                  {%- elsif cta_icon == 'plus' -%}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                      <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                  {%- endif -%}
+                </span>
+              {%- endif -%}
+            </div>
+          </a>
+
+        {%- endif -%}
+      </div>
+    {%- endfor -%}
+
+    {%- if section.blocks.size == 0 -%}
+      {%- comment -%} Placeholder state for theme editor {%- endcomment -%}
+      {%- for i in (1..4) -%}
+        <div class="cl-item cl-item--placeholder">
+          {%- if layout == 'fashion_style' -%}
+            <div class="cl-fashion-card">
+              <div class="cl-fashion-card__media cl-fashion-card__media--oval">
+                {{ 'collection-' | append: i | placeholder_svg_tag: 'cl-fashion-card__svg' }}
+              </div>
+              <div class="cl-fashion-card__info cl-fashion-card__info--center">
+                <h3 class="cl-fashion-card__title">{{ 'collections.placeholder_title' | t | default: 'Collection' }}</h3>
+              </div>
+            </div>
+          {%- else -%}
+            <div class="cl-age-card">
+              <div class="cl-age-card__media cl-age-card__media--portrait">
+                {{ 'collection-' | append: i | placeholder_svg_tag: 'cl-age-card__svg' }}
+              </div>
+              <div class="cl-age-card__body">
+                <h3 class="cl-age-card__title">{{ 'collections.placeholder_title' | t | default: 'Collection' }}</h3>
+              </div>
+            </div>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    {%- endif -%}
+  </div>
+
+  {%- comment -%}━━━━━━ Slider dots ━━━━━━{%- endcomment -%}
+  {%- if enable_slider and section.blocks.size > 0 -%}
+    <div class="cl-dots" aria-hidden="true" id="{{ sid }}-dots"></div>
+  {%- endif -%}
+</section>
+
+{% stylesheet %}
+
+/* ══════════════════════════════════════════════════════════
+   Collection List — base layout
+══════════════════════════════════════════════════════════ */
+.collection-list {
+  width: 100%;
+  padding-left: var(--page-margin, 20px);
+  padding-right: var(--page-margin, 20px);
+}
+
+.collection-list--full-width {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Section header */
+.cl-header {
+  margin-bottom: 2.5rem;
+}
+.cl-header--left   { text-align: left; }
+.cl-header--center { text-align: center; }
+.cl-header--right  { text-align: right; }
+
+.cl-header__heading {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  font-weight: 700;
+  color: var(--cl-head-color, var(--color-foreground));
+  line-height: 1.2;
+}
+
+.cl-header__subheading {
+  margin: 0;
+  font-size: 1rem;
+  opacity: 0.65;
+  color: var(--cl-head-color, var(--color-foreground));
+  max-width: 55ch;
+}
+
+.cl-header--center .cl-header__subheading { margin-inline: auto; }
+
+/* ── Grid ── */
+.cl-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cl-cols-mobile, 2), 1fr);
+  gap: var(--cl-gap-mobile, 16px);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  .cl-grid {
+    grid-template-columns: repeat(var(--cl-cols-tablet, 3), 1fr);
+    gap: var(--cl-gap-desktop, 24px);
+  }
+}
+
+@media (min-width: 1024px) {
+  .cl-grid {
+    grid-template-columns: repeat(var(--cl-cols-desktop, 5), 1fr);
+  }
+}
+
+/* Mobile slider mode */
+@media (max-width: 767px) {
+  .cl-grid--slider {
+    grid-template-columns: unset;
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 0.5rem;
+    gap: var(--cl-gap-mobile, 14px);
+  }
+
+  .cl-grid--slider::-webkit-scrollbar { display: none; }
+
+  .cl-grid--slider .cl-item {
+    flex: 0 0 calc((100% - var(--cl-gap-mobile, 14px) * (var(--cl-cols-mobile, 2) - 1)) / var(--cl-cols-mobile, 2));
+    scroll-snap-align: start;
+  }
+}
+
+/* ── Grid item ── */
+.cl-item {
+  position: relative;
+}
+
+.cl-item--hover .cl-fashion-card,
+.cl-item--hover .cl-age-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cl-item--hover:hover .cl-fashion-card {
+  transform: translateY(-4px);
+}
+
+.cl-item--hover:hover .cl-age-card {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.14);
+}
+
+/* ── Slider dots ── */
+.cl-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+.cl-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.2);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.25s, transform 0.25s;
+}
+
+.cl-dot.is-active {
+  background: var(--color-foreground, #1a1a1a);
+  transform: scale(1.25);
+}
+
+@media (min-width: 768px) {
+  .cl-dots { display: none; }
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   LAYOUT 1 — Fashion Style
+══════════════════════════════════════════════════════════ */
+
+.collection-list--fashion_style {
+  background-color: var(--cl-fashion-bg, #f5f0ea);
+}
+
+.cl-fashion-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: var(--color-foreground);
+  cursor: pointer;
+}
+
+/* ── Media shapes ── */
+.cl-fashion-card__media {
+  position: relative;
+  overflow: hidden;
+  width: var(--cl-img-size, 120px);
+  height: var(--cl-img-size, 120px);
+  flex-shrink: 0;
+  background: rgba(0,0,0,0.05);
+  transition: transform 0.35s ease;
+}
+
+.cl-fashion-card:hover .cl-fashion-card__media {
+  transform: scale(1.06);
+}
+
+.cl-fashion-card__media--oval {
+  border-radius: 50% / 45%;
+}
+
+.cl-fashion-card__media--circle {
+  border-radius: 50%;
+}
+
+.cl-fashion-card__media--rounded {
+  border-radius: var(--cl-card-radius, 16px);
+}
+
+.cl-fashion-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.cl-fashion-card__placeholder,
+.cl-fashion-card__svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0.35;
+}
+
+/* ── Info ── */
+.cl-fashion-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.cl-fashion-card__info--left   { align-items: flex-start; text-align: left; }
+.cl-fashion-card__info--center { align-items: center;     text-align: center; }
+.cl-fashion-card__info--right  { align-items: flex-end;   text-align: right; }
+
+.cl-fashion-card__title {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--color-foreground);
+}
+
+.cl-fashion-card__count {
+  margin: 0;
+  font-size: 0.75rem;
+  opacity: 0.55;
+  line-height: 1.2;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   LAYOUT 2 — Card Style (Age/Category Cards)
+══════════════════════════════════════════════════════════ */
+
+.cl-age-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--cl-card-radius, 16px);
+  overflow: hidden;
+  min-height: var(--cl-card-min-h, 280px);
+  padding: var(--cl-card-padding, 20px);
+  text-decoration: none;
+  color: var(--color-foreground);
+  background-color: var(--cl-item-bg, #e8f4f8);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cl-age-card--shadow {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+/* Image position variants */
+.cl-age-card__media {
+  position: relative;
+  overflow: hidden;
+  border-radius: calc(var(--cl-card-radius, 16px) - 6px);
+  flex-shrink: 0;
+}
+
+.cl-age-card__media--portrait  { aspect-ratio: 3 / 4; }
+.cl-age-card__media--square    { aspect-ratio: 1 / 1; }
+.cl-age-card__media--landscape { aspect-ratio: 4 / 3; }
+.cl-age-card__media--adapt     { aspect-ratio: auto; }
+
+.cl-age-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.cl-age-card:hover .cl-age-card__img {
+  transform: scale(1.05);
+}
+
+.cl-age-card__placeholder,
+.cl-age-card__svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0.3;
+}
+
+/* Image alignment variants */
+.cl-age-card--img-top    { flex-direction: column; }
+.cl-age-card--img-bottom { flex-direction: column-reverse; }
+.cl-age-card--img-right  { flex-direction: row-reverse; align-items: stretch; }
+.cl-age-card--img-left   { flex-direction: row;         align-items: stretch; }
+
+.cl-age-card--img-right .cl-age-card__media,
+.cl-age-card--img-left .cl-age-card__media {
+  width: 45%;
+  aspect-ratio: unset;
+}
+
+.cl-age-card--img-right .cl-age-card__body,
+.cl-age-card--img-left .cl-age-card__body {
+  flex: 1;
+}
+
+/* Badge */
+.cl-age-card__badge {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 0.3em 0.75em;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 100px;
+  line-height: 1.5;
+  margin-bottom: 0.75rem;
+}
+
+/* Body */
+.cl-age-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.75rem 0 0;
+  flex: 1;
+}
+
+.cl-age-card--img-bottom .cl-age-card__body { padding: 0 0 0.75rem; }
+
+/* Content position */
+.cl-age-card--content-top    .cl-age-card__body { justify-content: flex-start; }
+.cl-age-card--content-center .cl-age-card__body { justify-content: center; }
+.cl-age-card--content-bottom .cl-age-card__body { justify-content: flex-end; }
+
+.cl-age-card__title {
+  margin: 0;
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
+  font-weight: 700;
+  line-height: 1.2;
+  color: inherit;
+}
+
+.cl-age-card__count {
+  margin: 0;
+  font-size: 0.78rem;
+  opacity: 0.6;
+}
+
+.cl-age-card__desc {
+  margin: 0;
+  font-size: 0.85rem;
+  opacity: 0.7;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* CTA button */
+.cl-age-card__cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.1);
+  color: inherit;
+  margin-top: auto;
+  transition: background 0.2s, transform 0.2s;
+  flex-shrink: 0;
+}
+
+.cl-age-card:hover .cl-age-card__cta {
+  background: var(--color-foreground, #1a1a1a);
+  color: var(--color-background, #fff);
+  transform: scale(1.1);
+}
+
+.cl-age-card__cta svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  display: block;
+}
+
+/* ── Responsive for card_style layout ── */
+@media (max-width: 767px) {
+  .collection-list--card_style .cl-grid:not(.cl-grid--slider) {
+    grid-template-columns: repeat(var(--cl-cols-mobile, 1), 1fr);
+  }
+
+  .cl-age-card--img-right,
+  .cl-age-card--img-left {
+    flex-direction: column;
+  }
+
+  .cl-age-card--img-right .cl-age-card__media,
+  .cl-age-card--img-left .cl-age-card__media {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+  }
+}
+
+/* ── Placeholder state in editor ── */
+.cl-item--placeholder {
+  pointer-events: none;
+}
+
+{% endstylesheet %}
+
+{% javascript %}
+
+(function () {
+  'use strict';
+
+  /* ─────────────────────────────────────────
+     Collection List — Slider Init
+     Activates on mobile when data-cl-slider="true"
+  ───────────────────────────────────────── */
+  function initSlider(section) {
+    var grid = section.querySelector('[data-cl-slider]');
+    if (!grid) return;
+
+    var dotsContainer = section.querySelector('.cl-dots');
+    var items = grid.querySelectorAll('.cl-item');
+    if (!items.length) return;
+
+    var allowSwipe = grid.dataset.swipe !== 'false';
+    var dots = [];
+    var activeIndex = 0;
+
+    /* Build dot indicators */
+    if (dotsContainer) {
+      Array.from(items).forEach(function (_, i) {
+        var dot = document.createElement('button');
+        dot.className = 'cl-dot';
+        dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+        dot.addEventListener('click', function () { scrollToItem(i); });
+        dotsContainer.appendChild(dot);
+        dots.push(dot);
+      });
+      updateDots(0);
+    }
+
+    /* Scroll to a given item index */
+    function scrollToItem(index) {
+      var target = items[index];
+      if (!target) return;
+      grid.scrollTo({
+        left: target.offsetLeft - grid.offsetLeft,
+        behavior: 'smooth'
+      });
+    }
+
+    /* Keep dots in sync during scroll */
+    function onScroll() {
+      var scrollLeft = grid.scrollLeft;
+      var closestIndex = 0;
+      var minDist = Infinity;
+
+      Array.from(items).forEach(function (item, i) {
+        var dist = Math.abs(item.offsetLeft - grid.offsetLeft - scrollLeft);
+        if (dist < minDist) {
+          minDist = dist;
+          closestIndex = i;
+        }
+      });
+
+      if (closestIndex !== activeIndex) {
+        activeIndex = closestIndex;
+        updateDots(activeIndex);
+      }
+    }
+
+    function updateDots(index) {
+      dots.forEach(function (d, i) {
+        d.classList.toggle('is-active', i === index);
+      });
+    }
+
+    grid.addEventListener('scroll', onScroll, { passive: true });
+
+    /* Touch swipe support */
+    if (allowSwipe) {
+      var startX = 0;
+      var isDragging = false;
+
+      grid.addEventListener('touchstart', function (e) {
+        startX = e.touches[0].clientX;
+        isDragging = true;
+      }, { passive: true });
+
+      grid.addEventListener('touchend', function (e) {
+        if (!isDragging) return;
+        isDragging = false;
+        var deltaX = e.changedTouches[0].clientX - startX;
+        if (Math.abs(deltaX) < 40) return;
+        if (deltaX < 0) {
+          scrollToItem(Math.min(activeIndex + 1, items.length - 1));
+        } else {
+          scrollToItem(Math.max(activeIndex - 1, 0));
+        }
+      }, { passive: true });
+    }
+  }
+
+  /* Init on DOMContentLoaded and on Shopify section:load (theme editor) */
+  function initAll() {
+    document.querySelectorAll('[data-cl-slider]').forEach(function (grid) {
+      var section = grid.closest('section');
+      if (section) initSlider(section);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAll);
+  } else {
+    initAll();
+  }
+
+  document.addEventListener('shopify:section:load', function (e) {
+    var section = e.target.querySelector('section');
+    if (section) initSlider(section);
+  });
+
+})();
+
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Collection List",
+  "tag": "div",
+  "class": "shopify-section--collection-list",
+  "max_blocks": 20,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },  
+    {
+      "type": "select",
+      "id": "layout_style",
+      "label": "Layout style",
+      "options": [
+        { "value": "fashion_style", "label": "Fashion style (oval cards)" },
+        { "value": "card_style", "label": "Card style (age/category)" }
+      ],
+      "default": "fashion_style",
+      "info": "Choose which visual layout to use for this section."
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Section width",
+      "options": [
+        { "value": "container", "label": "Container (centered)" },
+        { "value": "full", "label": "Full width" }
+      ],
+      "default": "container"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Section background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "label": "Margin top",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "label": "Margin bottom",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Shop by Collection"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        { "value": "left",   "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right",  "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading / subheading color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "header",
+      "content": "Grid settings"
+    },
+    {
+      "type": "range",
+      "id": "cols_desktop",
+      "label": "Items per row — desktop",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "cols_tablet",
+      "label": "Items per row — tablet",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "cols_mobile",
+      "label": "Items per row — mobile",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "gap_desktop",
+      "label": "Gap between cards — desktop",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "gap_mobile",
+      "label": "Gap between cards — mobile",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_slider_mobile",
+      "label": "Enable slider on mobile",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_swipe",
+      "label": "Enable touch swipe",
+      "default": true,
+      "info": "Applies only when mobile slider is enabled."
+    },
+    {
+      "type": "header",
+      "content": "Card — shared settings"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image aspect ratio",
+      "options": [
+        { "value": "portrait",  "label": "Portrait (3:4)" },
+        { "value": "square",    "label": "Square (1:1)" },
+        { "value": "landscape", "label": "Landscape (4:3)" },
+        { "value": "adapt",     "label": "Adapt to image" }
+      ],
+      "default": "portrait"
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Image fit",
+      "options": [
+        { "value": "cover",   "label": "Cover (fill)" },
+        { "value": "contain", "label": "Contain (show full image)" }
+      ],
+      "default": "cover"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card border radius",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Card padding (card style)",
+      "min": 0,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "checkbox",
+      "id": "hover_effect",
+      "label": "Enable hover lift effect",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_item_count",
+      "label": "Show item count below title",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "item_count_text",
+      "label": "Item count text",
+      "default": "{{count}} items",
+      "info": "Use {{count}} as a placeholder for the number of products."
+    },
+    {
+      "type": "header",
+      "content": "Layout 1 — Fashion style settings"
+    },
+    {
+      "type": "select",
+      "id": "image_shape",
+      "label": "Image shape",
+      "options": [
+        { "value": "oval",    "label": "Oval" },
+        { "value": "circle",  "label": "Circle" },
+        { "value": "rounded", "label": "Rounded rectangle" }
+      ],
+      "default": "oval"
+    },
+    {
+      "type": "range",
+      "id": "image_size",
+      "label": "Image size",
+      "min": 60,
+      "max": 280,
+      "step": 10,
+      "unit": "px",
+      "default": 130
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "Card content alignment",
+      "options": [
+        { "value": "left",   "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right",  "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "color",
+      "id": "fashion_bg_color",
+      "label": "Fashion container background",
+      "default": "#f5f0ea"
+    },
+    {
+      "type": "header",
+      "content": "Layout 2 — Card style settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Show card description",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cta",
+      "label": "Show CTA arrow button",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "cta_icon_style",
+      "label": "CTA icon style",
+      "options": [
+        { "value": "arrow",         "label": "Arrow right →" },
+        { "value": "arrow_up_right","label": "Arrow diagonal ↗" },
+        { "value": "plus",          "label": "Plus +" }
+      ],
+      "default": "arrow"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_shadow",
+      "label": "Enable card shadow",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "card_min_height",
+      "label": "Card minimum height",
+      "min": 160,
+      "max": 600,
+      "step": 20,
+      "unit": "px",
+      "default": 300
+    },
+    {
+      "type": "select",
+      "id": "content_position",
+      "label": "Card content vertical position",
+      "options": [
+        { "value": "top",    "label": "Top" },
+        { "value": "center", "label": "Center" },
+        { "value": "bottom", "label": "Bottom" }
+      ],
+      "default": "bottom"
+    },
+    {
+      "type": "select",
+      "id": "image_alignment",
+      "label": "Image position inside card",
+      "options": [
+        { "value": "top",    "label": "Top" },
+        { "value": "bottom", "label": "Bottom" },
+        { "value": "left",   "label": "Left" },
+        { "value": "right",  "label": "Right" }
+      ],
+      "default": "top"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Collection",
+      "type": "collection_item",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Collection source"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_image",
+          "label": "Custom image override",
+          "info": "Overrides the collection's featured image."
+        },
+        {
+          "type": "text",
+          "id": "custom_title",
+          "label": "Custom title override",
+          "info": "Overrides the collection title."
+        },
+        {
+          "type": "url",
+          "id": "custom_link",
+          "label": "Custom link override",
+          "info": "Overrides the collection URL."
+        },
+        {
+          "type": "header",
+          "content": "Badge (Layout 2)"
+        },
+        {
+          "type": "text",
+          "id": "badge_text",
+          "label": "Badge text",
+          "placeholder": "Ages 3–6"
+        },
+        {
+          "type": "color",
+          "id": "badge_bg_color",
+          "label": "Badge background color",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "badge_text_color",
+          "label": "Badge text color",
+          "default": "#1a1a1a"
+        },
+        {
+          "type": "header",
+          "content": "Card content"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Short description",
+          "info": "Shown in card style layout when 'Show description' is enabled."
+        },
+        {
+          "type": "color",
+          "id": "card_bg_color",
+          "label": "Card background color (Layout 2)",
+          "info": "Overrides the default card background for this block.",
+          "default": "#e8f4f8"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection List — Fashion",
+      "settings": {
+        "layout_style": "fashion_style",
+        "heading": "Shop by Category",
+        "subheading": "Discover our curated collections",
+        "cols_desktop": 5,
+        "cols_tablet": 3,
+        "cols_mobile": 2,
+        "image_shape": "oval",
+        "image_size": 130,
+        "enable_slider_mobile": true
+      },
+      "blocks": [
+        { "type": "collection_item" },
+        { "type": "collection_item" },
+        { "type": "collection_item" },
+        { "type": "collection_item" },
+        { "type": "collection_item" }
+      ]
+    },
+    {
+      "name": "Collection List — Card Style",
+      "settings": {
+        "layout_style": "card_style",
+        "heading": "Shop by Age",
+        "subheading": "Find the perfect gift",
+        "cols_desktop": 4,
+        "cols_tablet": 2,
+        "cols_mobile": 1,
+        "show_cta": true,
+        "card_shadow": true,
+        "enable_slider_mobile": true
+      },
+      "blocks": [
+        {
+          "type": "collection_item",
+          "settings": {
+            "badge_text": "Ages 0–2",
+            "card_bg_color": "#fde8d8"
+          }
+        },
+        {
+          "type": "collection_item",
+          "settings": {
+            "badge_text": "Ages 3–6",
+            "card_bg_color": "#d8f0e8"
+          }
+        },
+        {
+          "type": "collection_item",
+          "settings": {
+            "badge_text": "Ages 7–12",
+            "card_bg_color": "#d8e8fd"
+          }
+        },
+        {
+          "type": "collection_item",
+          "settings": {
+            "badge_text": "Ages 13+",
+            "card_bg_color": "#f0d8fd"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
