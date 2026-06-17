@@ -1,0 +1,1143 @@
+{%- comment -%}
+  ══════════════════════════════════════════════════════════════════════════════
+  Section  : testimonial.liquid
+  Theme    : Selena — SHThemes
+  Pattern  : OS 2.0  › {% for block in section.blocks %}
+  Prefix   : wdt-   (WeDesignTech)
+  Bootstrap: 5.x CDN  (loaded conditionally once per page via wdt-bs-loaded)
+  Blocks   :
+    • wdt-header   — section heading, description, CTA button
+    • wdt-content  — layout wrapper (grid / carousel)
+      └─ wdt-card     — repeatable card
+           ├─ image_static
+           ├─ card_heading
+           ├─ card_description
+           ├─ custom_rating
+           └─ client_details
+  ══════════════════════════════════════════════════════════════════════════════
+{%- endcomment -%} 
+
+{%- liquid
+  comment ── Resolve section-level variables ──
+  endcomment
+
+  assign sec_id          = section.id
+  assign enable_container = section.settings.enable_container
+  assign width_type      = section.settings.width_type
+  assign color_scheme    = section.settings.color_scheme
+  assign pt              = section.settings.padding_top
+  assign pb              = section.settings.padding_bottom
+
+  comment ── Container class ──
+  endcomment
+  if enable_container
+    if width_type == 'container_fluid'
+      assign wrap_class = 'container-fluid'
+    else
+      assign wrap_class = 'container'
+    endif
+  else
+    assign wrap_class = 'container'
+  endif
+
+  comment ── Locate the wdt-content block ──
+  endcomment
+  assign tc_block = nil
+  for block in section.blocks
+    if block.type == 'wdt-content'
+      assign tc_block = block
+      break
+    endif
+  endfor
+
+  comment ── Layout vars from testimonial_content block ──
+  endcomment
+  if tc_block != nil
+    assign layout_type      = tc_block.settings.layout_type
+    assign col_gap          = tc_block.settings.column_gap
+    assign row_gap          = tc_block.settings.row_gap
+    assign cols_desktop     = tc_block.settings.columns_desktop
+    assign cols_mobile      = tc_block.settings.columns_mobile
+    assign autoplay_speed   = tc_block.settings.autoplay_speed
+    assign carousel_loop    = tc_block.settings.carousel_loop
+    assign nav_style        = tc_block.settings.nav_style
+    assign tc_pt            = tc_block.settings.padding_top
+    assign tc_pb            = tc_block.settings.padding_bottom
+    assign tc_pl            = tc_block.settings.padding_left
+    assign tc_pr            = tc_block.settings.padding_right
+  else
+    assign layout_type      = 'carousel'
+    assign col_gap          = 20
+    assign row_gap          = 20
+    assign cols_desktop     = '3'
+    assign cols_mobile      = '1'
+    assign autoplay_speed   = 0
+    assign carousel_loop    = true
+    assign nav_style        = 'navigation'
+    assign tc_pt            = 20
+    assign tc_pb            = 20
+    assign tc_pl            = 20
+    assign tc_pr            = 20
+  endif
+
+  comment ── Unique ID for this carousel instance ──
+  endcomment
+  assign carousel_id = 'wdt-carousel-' | append: sec_id
+-%}
+
+{%- comment -%}── Bootstrap 5 CDN — load once per page ──{%- endcomment -%}
+{%- unless wdt_bs_loaded -%}
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    media="print"
+    onload="this.media='all'"
+    crossorigin="anonymous"
+  >
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    defer
+    crossorigin="anonymous"
+  ></script>
+  {%- assign wdt_bs_loaded = true -%}
+{%- endunless -%}
+
+{%- comment -%}── Section root ──{%- endcomment -%}
+<div
+  class="wdt-testimonial color-{{ color_scheme }}"
+  id="wdt-testimonial-{{ sec_id }}"
+  data-section-id="{{ sec_id }}"
+  style="
+    --wdt-sec-pt: {{ pt }}px;
+    --wdt-sec-pb: {{ pb }}px;
+    --wdt-col-gap: {{ col_gap }}px;
+    --wdt-row-gap: {{ row_gap }}px;
+    --wdt-cols-desktop: {{ cols_desktop }};
+    --wdt-cols-mobile: {{ cols_mobile }};
+    --wdt-tc-pt: {{ tc_pt }}px;
+    --wdt-tc-pb: {{ tc_pb }}px;
+    --wdt-tc-pl: {{ tc_pl }}px;
+    --wdt-tc-pr: {{ tc_pr }}px;
+  "
+>
+  <div class="{{ wrap_class }}">
+
+    {%- comment -%}══════════════════════════════════════════
+      BLOCK LOOP — render each block by type
+    ══════════════════════════════════════════{%- endcomment -%}
+
+    {%- for block in section.blocks -%}
+
+      {%- comment -%}────────────────────────────────────────
+        BLOCK: header_block
+      ────────────────────────────────────────{%- endcomment -%}
+      {%- if block.type == 'wdt-header' -%}
+        <div
+          class="wdt-testimonial__header text-center"
+          {{ block.shopify_attributes }}
+        >
+          {%- if block.settings.heading != blank -%}
+            <h2 class="wdt-testimonial__heading">
+              {{- block.settings.heading | escape -}}
+            </h2>
+          {%- endif -%}
+
+          {%- if block.settings.description != blank -%}
+            <div class="wdt-testimonial__desc rte">
+              {{- block.settings.description -}}
+            </div>
+          {%- endif -%}
+
+          {%- if block.settings.button_label != blank and block.settings.button_url != blank -%}
+            <a
+              href="{{ block.settings.button_url }}"
+              class="wdt-testimonial__btn btn"
+            >
+              {{- block.settings.button_label | escape -}}
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- comment -%}────────────────────────────────────────
+        BLOCK: testimonial_content  (layout wrapper)
+        Renders all testimonial_card blocks inside it
+      ────────────────────────────────────────{%- endcomment -%}
+      {%- if block.type == 'wdt-content' -%}
+
+        {%- comment -%}── Collect cards ──{%- endcomment -%}
+        {%- assign card_blocks = section.blocks | where: 'type', 'wdt-card' -%}
+
+        <div
+          class="wdt-testimonial__content"
+          {{ block.shopify_attributes }}
+        >
+
+          {%- if layout_type == 'carousel' -%}
+            {%- comment -%}══════════ CAROUSEL ══════════{%- endcomment -%}
+
+            <div
+              id="{{ carousel_id }}"
+              class="wdt-testimonial__carousel carousel slide"
+              data-bs-ride="{% if autoplay_speed > 0 %}carousel{% else %}false{% endif %}"
+              {% if autoplay_speed > 0 %}
+                data-bs-interval="{{ autoplay_speed | times: 1000 }}"
+              {% endif %}
+              {% if carousel_loop %}
+                data-bs-wrap="true"
+              {% else %}
+                data-bs-wrap="false"
+              {% endif %}
+            >
+
+              {%- comment -%}── Carousel inner track ──{%- endcomment -%}
+              <div class="carousel-inner wdt-testimonial__track">
+                {%- for card in card_blocks -%}
+                  <div class="carousel-item wdt-testimonial__slide{% if forloop.first %} active{% endif %}">
+                    {%- render 'testimonial-card', block: card -%}
+                  </div>
+                {%- else -%}
+                  <p class="wdt-testimonial__empty">{{ 'sections.testimonial.no_cards' | t | default: 'Add testimonial cards in the theme editor.' }}</p>
+                {%- endfor -%}
+              </div>
+
+              {%- comment -%}── Navigation ──{%- endcomment -%}
+              {%- if nav_style == 'navigation' or nav_style == 'both' -%}
+                <button
+                  class="wdt-testimonial__nav-btn wdt-testimonial__nav-btn--prev carousel-control-prev"
+                  type="button"
+                  data-bs-target="#{{ carousel_id }}"
+                  data-bs-slide="prev"
+                  aria-label="{{ 'sections.testimonial.prev' | t | default: 'Previous' }}"
+                >
+                  <span class="wdt-testimonial__nav-icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                  </span>
+                </button>
+                <button
+                  class="wdt-testimonial__nav-btn wdt-testimonial__nav-btn--next carousel-control-next"
+                  type="button"
+                  data-bs-target="#{{ carousel_id }}"
+                  data-bs-slide="next"
+                  aria-label="{{ 'sections.testimonial.next' | t | default: 'Next' }}"
+                >
+                  <span class="wdt-testimonial__nav-icon" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                  </span>
+                </button>
+              {%- endif -%}
+
+              {%- comment -%}── Pagination dots ──{%- endcomment -%}
+              {%- if nav_style == 'pagination' or nav_style == 'both' -%}
+                {%- if card_blocks.size > 1 -%}
+                  <div class="wdt-testimonial__dots carousel-indicators">
+                    {%- for card in card_blocks -%}
+                      <button
+                        type="button"
+                        class="wdt-testimonial__dot{% if forloop.first %} active{% endif %}"
+                        data-bs-target="#{{ carousel_id }}"
+                        data-bs-slide-to="{{ forloop.index0 }}"
+                        {% if forloop.first %}aria-current="true"{% endif %}
+                        aria-label="{{ 'sections.testimonial.slide' | t: index: forloop.index | default: 'Slide ' | append: forloop.index }}"
+                      ></button>
+                    {%- endfor -%}
+                  </div>
+                {%- endif -%}
+              {%- endif -%}
+
+            </div>
+            {%- comment -%}── /carousel ──{%- endcomment -%}
+
+          {%- else -%}
+            {%- comment -%}══════════ GRID ══════════{%- endcomment -%}
+
+            <div class="wdt-testimonial__grid row">
+              {%- for card in card_blocks -%}
+                <div class="wdt-testimonial__grid-item col-12 col-md-{{ 12 | divided_by: cols_desktop }} col-sm-{{ 12 | divided_by: cols_mobile }}">
+                  {%- render 'testimonial-card', block: card -%}
+                </div>
+              {%- else -%}
+                <p class="wdt-testimonial__empty">{{ 'sections.testimonial.no_cards' | t | default: 'Add testimonial cards in the theme editor.' }}</p>
+              {%- endfor -%}
+            </div>
+
+          {%- endif -%}
+
+        </div>
+        {%- comment -%}── /testimonial_content ──{%- endcomment -%}
+
+      {%- endif -%}
+
+    {%- endfor -%}
+
+  </div>
+  {%- comment -%}── /container ──{%- endcomment -%}
+</div>
+{%- comment -%}── /wdt-testimonial ──{%- endcomment -%}
+
+{% stylesheet %}
+
+/* ══════════════════════════════════════════════════════════════════
+   WDT Testimonial — Section
+   Prefix: wdt-   |   Bootstrap 5 augmentation
+══════════════════════════════════════════════════════════════════ */
+
+/* ── Section wrapper ── */
+.wdt-testimonial {
+  padding-top: var(--wdt-sec-pt, 40px);
+  padding-bottom: var(--wdt-sec-pb, 40px);
+  background-color: var(--color-background, #fff);
+  color: var(--color-foreground, #1a1a1a);
+}
+
+/* ── Header block ── */
+.wdt-testimonial__header {
+  margin-bottom: 2.5rem;
+}
+
+.wdt-testimonial__heading {
+  font-family: var(--font-heading--family, inherit);
+  font-weight: var(--font-heading--weight, 700);
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  line-height: 1.15;
+  margin-bottom: 0.75rem;
+  color: var(--color-foreground, #1a1a1a);
+}
+
+.wdt-testimonial__desc {
+  font-size: 1rem;
+  opacity: 0.75;
+  max-width: 600px;
+  margin-inline: auto;
+  margin-bottom: 1.25rem;
+  line-height: 1.7;
+}
+
+.wdt-testimonial__btn {
+  display: inline-block;
+  padding: var(--button-padding-vertical, 14px) var(--button-padding-horizontal, 28px);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  border-radius: var(--button-border-radius, 0px);
+  background: var(--button-primary-bg, #1a1a1a);
+  color: var(--button-primary-color, #fff);
+  border: 1px solid var(--button-primary-border, #1a1a1a);
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  margin-top: 0.5rem;
+}
+.wdt-testimonial__btn:hover {
+  background: var(--button-primary-hover-bg, #333);
+  color: var(--button-primary-hover-color, #fff);
+  border-color: var(--button-primary-hover-border, #333);
+}
+
+/* ── Content wrapper ── */
+.wdt-testimonial__content {
+  padding-top: var(--wdt-tc-pt, 20px);
+  padding-bottom: var(--wdt-tc-pb, 20px);
+  padding-left: var(--wdt-tc-pl, 0px);
+  padding-right: var(--wdt-tc-pr, 0px);
+}
+
+/* ── GRID layout ── */
+.wdt-testimonial__grid {
+  --bs-gutter-x: var(--wdt-col-gap, 20px);
+  --bs-gutter-y: var(--wdt-row-gap, 20px);
+}
+
+/* ── CAROUSEL layout ── */
+.wdt-testimonial__carousel {
+  position: relative;
+}
+
+.wdt-testimonial__track {
+  width: 100%;
+}
+
+.wdt-testimonial__slide {
+  padding-inline: 0;
+}
+
+/* ── Navigation buttons ── */
+.wdt-testimonial__nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--color-background, #fff);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  color: var(--color-foreground, #1a1a1a);
+  opacity: 1;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  padding: 0;
+  cursor: pointer;
+}
+.wdt-testimonial__nav-btn--prev { left: -22px; }
+.wdt-testimonial__nav-btn--next { right: -22px; }
+.wdt-testimonial__nav-btn:hover {
+  background: var(--color-primary, #1a1a1a);
+  color: var(--color-background, #fff);
+  border-color: var(--color-primary, #1a1a1a);
+}
+.wdt-testimonial__nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+/* Override Bootstrap carousel-control default opacity/color */
+.wdt-testimonial__nav-btn.carousel-control-prev,
+.wdt-testimonial__nav-btn.carousel-control-next {
+  width: 44px;
+  opacity: 1;
+}
+
+/* ── Pagination dots ── */
+.wdt-testimonial__dots {
+  position: static;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 1.25rem;
+  padding: 0;
+}
+.wdt-testimonial__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.2);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  flex-shrink: 0;
+}
+.wdt-testimonial__dot.active,
+.wdt-testimonial__dot:hover {
+  background: var(--color-primary, #1a1a1a);
+  transform: scale(1.25);
+}
+
+/* ── Empty state ── */
+.wdt-testimonial__empty {
+  text-align: center;
+  padding: 3rem 0;
+  opacity: 0.5;
+  font-size: 0.9rem;
+}
+
+/* ── Responsive nav offset ── */
+@media (max-width: 767.98px) {
+  .wdt-testimonial__nav-btn--prev { left: 0; }
+  .wdt-testimonial__nav-btn--next { right: 0; }
+}
+
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Testimonial",
+  "tag": "section",
+  "class": "shopify-section--testimonial",
+  "max_blocks": 50,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Container"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_container",
+      "label": "Enable container",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "width_type",
+      "label": "Width",
+      "options": [
+        { "value": "full_width",      "label": "Full Width" },
+        { "value": "container_fluid", "label": "Container Fluid" }
+      ],
+      "default": "full_width"
+    },
+    {
+      "type": "header",
+      "content": "Color Scheme"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding Top",
+      "min": 0, "max": 200, "step": 2, "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding Bottom",
+      "min": 0, "max": 200, "step": 2, "unit": "px",
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "wdt-header",
+      "name": "Header",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "What Our Customers Say"
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Description"
+        },
+        {
+          "type": "header",
+          "content": "Button"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button Label"
+        },
+        {
+          "type": "url",
+          "id": "button_url",
+          "label": "Button URL"
+        }
+      ]
+    },
+    {
+      "type": "wdt-content",
+      "name": "Testimonial Content",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "header",
+          "content": "Layout"
+        },
+        {
+          "type": "select",
+          "id": "layout_type",
+          "label": "Type",
+          "options": [
+            { "value": "grid",     "label": "Grid" },
+            { "value": "carousel", "label": "Carousel" }
+          ],
+          "default": "carousel"
+        },
+        {
+          "type": "range",
+          "id": "column_gap",
+          "label": "Column Gap",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 20
+        },
+        {
+          "type": "range",
+          "id": "row_gap",
+          "label": "Row Gap",
+          "info": "Applies when Layout = Grid",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 20,
+          "visible_if": "{{ block.settings.layout_type == 'grid' }}"
+        },
+        {
+          "type": "header",
+          "content": "Column Settings"
+        },
+        {
+          "type": "select",
+          "id": "columns_desktop",
+          "label": "Desktop Columns",
+          "options": [
+            { "value": "2", "label": "2" },
+            { "value": "3", "label": "3" },
+            { "value": "4", "label": "4" }
+          ],
+          "default": "3"
+        },
+        {
+          "type": "select",
+          "id": "columns_mobile",
+          "label": "Mobile Columns",
+          "options": [
+            { "value": "1", "label": "1" },
+            { "value": "2", "label": "2" }
+          ],
+          "default": "1"
+        },
+        {
+          "type": "header",
+          "content": "Carousel Settings"
+        },
+        {
+          "type": "range",
+          "id": "autoplay_speed",
+          "label": "Change Slide Every (seconds)",
+          "info": "Set to 0 to disable autoplay",
+          "min": 0, "max": 5, "step": 1, "unit": "s",
+          "default": 0
+        },
+        {
+          "type": "checkbox",
+          "id": "carousel_loop",
+          "label": "Loop",
+          "default": true
+        },
+        {
+          "type": "header",
+          "content": "Navigation Settings"
+        },
+        {
+          "type": "select",
+          "id": "nav_style",
+          "label": "Navigation Style",
+          "options": [
+            { "value": "navigation", "label": "Navigation (Arrows)" },
+            { "value": "pagination", "label": "Pagination (Dots)" },
+            { "value": "both",       "label": "Both" },
+            { "value": "none",       "label": "None" }
+          ],
+          "default": "navigation"
+        },
+        {
+          "type": "header",
+          "content": "Padding"
+        },
+        {
+          "type": "range",
+          "id": "padding_top",
+          "label": "Padding Top",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 20
+        },
+        {
+          "type": "range",
+          "id": "padding_bottom",
+          "label": "Padding Bottom",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 20
+        },
+        {
+          "type": "range",
+          "id": "padding_left",
+          "label": "Padding Left",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "padding_right",
+          "label": "Padding Right",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 0
+        }
+      ]
+    },
+    {
+      "type": "wdt-card",
+      "name": "Testimonial Card",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Card Layout"
+        },
+        {
+          "type": "select",
+          "id": "card_type",
+          "label": "Type",
+          "options": [
+            { "value": "grid",    "label": "Grid" },
+            { "value": "overlay", "label": "Overlay" }
+          ],
+          "default": "grid"
+        },
+        {
+          "type": "select",
+          "id": "card_image_position",
+          "label": "Image Position",
+          "info": "Applies when Type = Grid",
+          "options": [
+            { "value": "top",    "label": "Top" },
+            { "value": "bottom", "label": "Bottom" },
+            { "value": "left",   "label": "Left" },
+            { "value": "right",  "label": "Right" }
+          ],
+          "default": "top",
+          "visible_if": "{{ block.settings.card_type == 'grid' }}"
+        },
+        {
+          "type": "select",
+          "id": "card_alignment",
+          "label": "Alignment",
+          "options": [
+            { "value": "start",  "label": "Left" },
+            { "value": "center", "label": "Center" },
+            { "value": "end",    "label": "Right" }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "range",
+          "id": "card_gap",
+          "label": "Gap",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 10
+        },
+        {
+          "type": "header",
+          "content": "Appearance"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_overlay",
+          "label": "Enable Overlay",
+          "default": false
+        },
+        {
+          "type": "color",
+          "id": "overlay_color",
+          "label": "Overlay Color",
+          "default": "#000000",
+          "visible_if": "{{ block.settings.enable_overlay == true }}"
+        },
+        {
+          "type": "select",
+          "id": "overlay_style",
+          "label": "Overlay Style",
+          "options": [
+            { "value": "solid",    "label": "Solid" },
+            { "value": "gradient", "label": "Gradient" }
+          ],
+          "default": "solid",
+          "visible_if": "{{ block.settings.enable_overlay == true }}"
+        },
+        {
+          "type": "select",
+          "id": "overlay_direction",
+          "label": "Overlay Direction",
+          "info": "Applies when Overlay Style = Gradient",
+          "options": [
+            { "value": "to bottom", "label": "Top → Bottom" },
+            { "value": "to top",    "label": "Bottom → Top" }
+          ],
+          "default": "to bottom",
+          "visible_if": "{{ block.settings.enable_overlay == true and block.settings.overlay_style == 'gradient' }}"
+        },
+        {
+          "type": "checkbox",
+          "id": "inherit_color_scheme",
+          "label": "Inherit Color Scheme",
+          "default": true
+        },
+        {
+          "type": "color_scheme",
+          "id": "card_color_scheme",
+          "label": "Color Scheme",
+          "default": "scheme-1",
+          "visible_if": "{{ block.settings.inherit_color_scheme == false }}"
+        },
+        {
+          "type": "header",
+          "content": "Border"
+        },
+        {
+          "type": "select",
+          "id": "card_border_style",
+          "label": "Border Style",
+          "options": [
+            { "value": "none",  "label": "None" },
+            { "value": "solid", "label": "Solid" }
+          ],
+          "default": "none"
+        },
+        {
+          "type": "range",
+          "id": "card_border_width",
+          "label": "Border Width",
+          "min": 1, "max": 5, "step": 1, "unit": "px",
+          "default": 1,
+          "visible_if": "{{ block.settings.card_border_style == 'solid' }}"
+        },
+        {
+          "type": "range",
+          "id": "card_border_opacity",
+          "label": "Border Opacity",
+          "min": 0, "max": 100, "step": 5, "unit": "%",
+          "default": 100,
+          "visible_if": "{{ block.settings.card_border_style == 'solid' }}"
+        },
+        {
+          "type": "range",
+          "id": "card_border_radius",
+          "label": "Border Radius",
+          "min": 0, "max": 30, "step": 1, "unit": "px",
+          "default": 0,
+          "visible_if": "{{ block.settings.card_border_style == 'solid' }}"
+        },
+        {
+          "type": "header",
+          "content": "Padding"
+        },
+        {
+          "type": "range",
+          "id": "card_pt",
+          "label": "Padding Top",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 20
+        },
+        {
+          "type": "range",
+          "id": "card_pb",
+          "label": "Padding Bottom",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 20
+        },
+        {
+          "type": "range",
+          "id": "card_pl",
+          "label": "Padding Left",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 20
+        },
+        {
+          "type": "range",
+          "id": "card_pr",
+          "label": "Padding Right",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 20
+        },
+        {
+          "type": "header",
+          "content": "Image (Static)"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "range",
+          "id": "img_pt",
+          "label": "Image Padding Top",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "img_pb",
+          "label": "Image Padding Bottom",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "img_pl",
+          "label": "Image Padding Left",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "img_pr",
+          "label": "Image Padding Right",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "Heading"
+        },
+        {
+          "type": "textarea",
+          "id": "heading",
+          "label": "Heading",
+          "default": "\"This product is absolutely amazing!\""
+        },
+        {
+          "type": "range",
+          "id": "hdg_pt",
+          "label": "Heading Padding Top",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 10
+        },
+        {
+          "type": "range",
+          "id": "hdg_pb",
+          "label": "Heading Padding Bottom",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 10
+        },
+        {
+          "type": "range",
+          "id": "hdg_pl",
+          "label": "Heading Padding Left",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "hdg_pr",
+          "label": "Heading Padding Right",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "Description"
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Description"
+        },
+        {
+          "type": "range",
+          "id": "desc_pt",
+          "label": "Description Padding Top",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "desc_pb",
+          "label": "Description Padding Bottom",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 10
+        },
+        {
+          "type": "range",
+          "id": "desc_pl",
+          "label": "Description Padding Left",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "desc_pr",
+          "label": "Description Padding Right",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "Rating"
+        },
+        {
+          "type": "select",
+          "id": "rating_count",
+          "label": "Rating Count",
+          "options": [
+            { "value": "1",   "label": "1" },
+            { "value": "1.5", "label": "1.5" },
+            { "value": "2",   "label": "2" },
+            { "value": "2.5", "label": "2.5" },
+            { "value": "3",   "label": "3" },
+            { "value": "3.5", "label": "3.5" },
+            { "value": "4",   "label": "4" },
+            { "value": "4.5", "label": "4.5" },
+            { "value": "5",   "label": "5" }
+          ],
+          "default": "5"
+        },
+        {
+          "type": "color",
+          "id": "rating_color",
+          "label": "Rating Color",
+          "default": "#F59E0B"
+        },
+        {
+          "type": "range",
+          "id": "rating_gap",
+          "label": "Rating Gap",
+          "min": 0, "max": 30, "step": 2, "unit": "px",
+          "default": 4
+        },
+        {
+          "type": "range",
+          "id": "rating_pt",
+          "label": "Rating Padding Top",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "rating_pb",
+          "label": "Rating Padding Bottom",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 10
+        },
+        {
+          "type": "range",
+          "id": "rating_pl",
+          "label": "Rating Padding Left",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "rating_pr",
+          "label": "Rating Padding Right",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 0
+        },
+        {
+          "type": "header",
+          "content": "Client Details"
+        },
+        {
+          "type": "image_picker",
+          "id": "client_image",
+          "label": "Client Image"
+        },
+        {
+          "type": "text",
+          "id": "client_name",
+          "label": "Name",
+          "default": "John"
+        },
+        {
+          "type": "text",
+          "id": "client_profession",
+          "label": "Profession",
+          "default": "Director"
+        },
+        {
+          "type": "select",
+          "id": "client_image_position",
+          "label": "Image Position",
+          "options": [
+            { "value": "top",  "label": "Top" },
+            { "value": "left", "label": "Left" }
+          ],
+          "default": "top"
+        },
+        {
+          "type": "select",
+          "id": "client_aspect_ratio",
+          "label": "Aspect Ratio",
+          "options": [
+            { "value": "square",   "label": "Square" },
+            { "value": "portrait", "label": "Portrait" },
+            { "value": "adapt",    "label": "Adapt" },
+            { "value": "circle",   "label": "Circle" }
+          ],
+          "default": "circle"
+        },
+        {
+          "type": "range",
+          "id": "client_gap",
+          "label": "Client Gap",
+          "min": 0, "max": 30, "step": 2, "unit": "px",
+          "default": 10
+        },
+        {
+          "type": "range",
+          "id": "client_pt",
+          "label": "Client Padding Top",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 10
+        },
+        {
+          "type": "range",
+          "id": "client_pb",
+          "label": "Client Padding Bottom",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "client_pl",
+          "label": "Client Padding Left",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "client_pr",
+          "label": "Client Padding Right",
+          "min": 0, "max": 50, "step": 2, "unit": "px",
+          "default": 0
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonial",
+      "blocks": [
+        {
+          "type": "wdt-header",
+          "settings": {
+            "heading": "What Our Customers Say"
+          }
+        },
+        {
+          "type": "wdt-content",
+          "settings": {
+            "layout_type": "carousel",
+            "columns_desktop": "3",
+            "columns_mobile": "1",
+            "nav_style": "navigation"
+          }
+        },
+        {
+          "type": "wdt-card",
+          "settings": {
+            "heading": "\"Absolutely love this product — it exceeded every expectation!\"",
+            "client_name": "Sarah Johnson",
+            "client_profession": "Marketing Director",
+            "rating_count": "5"
+          }
+        },
+        {
+          "type": "wdt-card",
+          "settings": {
+            "heading": "\"The quality is unmatched. I recommend it to everyone I know.\"",
+            "client_name": "James Lee",
+            "client_profession": "Entrepreneur",
+            "rating_count": "5"
+          }
+        },
+        {
+          "type": "wdt-card",
+          "settings": {
+            "heading": "\"Fast shipping, beautiful packaging, and the product is perfect.\"",
+            "client_name": "Priya Sharma",
+            "client_profession": "Designer",
+            "rating_count": "4.5"
+          }
+        }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  }
+}
+{% endschema %}
