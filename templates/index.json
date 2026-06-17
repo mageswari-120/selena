@@ -13,66 +13,6 @@
       "type": "hello-world",
       "settings": {}
     },
-    "collection_list_dYwEJn": {
-      "type": "collection-list",
-      "blocks": {
-        "collection_item_kKDYA8": {
-          "type": "collection-card",
-          "settings": { "collection": "" },
-          "blocks": {
-            "img_kKDYA8": { "type": "collection-image", "settings": {} },
-            "title_kKDYA8": { "type": "collection-title", "settings": {} }
-          },
-          "block_order": ["img_kKDYA8", "title_kKDYA8"]
-        },
-        "collection_item_cKdiyQ": {
-          "type": "collection-card",
-          "settings": { "collection": "" },
-          "blocks": {
-            "img_cKdiyQ": { "type": "collection-image", "settings": {} },
-            "title_cKdiyQ": { "type": "collection-title", "settings": {} }
-          },
-          "block_order": ["img_cKdiyQ", "title_cKdiyQ"]
-        },
-        "collection_item_GUCWUw": {
-          "type": "collection-card",
-          "settings": { "collection": "" },
-          "blocks": {
-            "img_GUCWUw": { "type": "collection-image", "settings": {} },
-            "title_GUCWUw": { "type": "collection-title", "settings": {} }
-          },
-          "block_order": ["img_GUCWUw", "title_GUCWUw"]
-        },
-        "collection_item_a486TN": {
-          "type": "collection-card",
-          "settings": { "collection": "" },
-          "blocks": {
-            "img_a486TN": { "type": "collection-image", "settings": {} },
-            "title_a486TN": { "type": "collection-title", "settings": {} }
-          },
-          "block_order": ["img_a486TN", "title_a486TN"]
-        }
-      },
-      "block_order": [
-        "collection_item_kKDYA8",
-        "collection_item_cKdiyQ",
-        "collection_item_GUCWUw",
-        "collection_item_a486TN"
-      ],
-      "name": "Collection List — Card Style",
-      "settings": {
-        "enable_container": true,
-        "width": "full",
-        "color_scheme": "scheme-1",
-        "layout_type": "grid",
-        "columns_desktop": 4,
-        "columns_mobile": "1",
-        "column_gap": 24,
-        "row_gap": 20,
-        "padding_top": 60,
-        "padding_bottom": 60
-      }
-    },
     "collection_list_3TnLmW": {
       "type": "collection-list",
       "blocks": {
@@ -84,59 +24,19 @@
             "title_CtWAWG": { "type": "collection-title", "settings": {} }
           },
           "block_order": ["img_CtWAWG", "title_CtWAWG"]
-        },
-        "collection_item_mkji4e": {
-          "type": "collection-card",
-          "settings": { "collection": "" },
-          "blocks": {
-            "img_mkji4e": { "type": "collection-image", "settings": {} },
-            "title_mkji4e": { "type": "collection-title", "settings": {} }
-          },
-          "block_order": ["img_mkji4e", "title_mkji4e"]
-        },
-        "collection_item_QntGny": {
-          "type": "collection-card",
-          "settings": { "collection": "" },
-          "blocks": {
-            "img_QntGny": { "type": "collection-image", "settings": {} },
-            "title_QntGny": { "type": "collection-title", "settings": {} }
-          },
-          "block_order": ["img_QntGny", "title_QntGny"]
-        },
-        "collection_item_Na8pg8": {
-          "type": "collection-card",
-          "settings": { "collection": "" },
-          "blocks": {
-            "img_Na8pg8": { "type": "collection-image", "settings": {} },
-            "title_Na8pg8": { "type": "collection-title", "settings": {} }
-          },
-          "block_order": ["img_Na8pg8", "title_Na8pg8"]
-        },
-        "collection_item_cddckh": {
-          "type": "collection-card",
-          "settings": { "collection": "" },
-          "blocks": {
-            "img_cddckh": { "type": "collection-image", "settings": {} },
-            "title_cddckh": { "type": "collection-title", "settings": {} }
-          },
-          "block_order": ["img_cddckh", "title_cddckh"]
         }
       },
       "block_order": [
-        "collection_item_CtWAWG",
-        "collection_item_mkji4e",
-        "collection_item_QntGny",
-        "collection_item_Na8pg8",
-        "collection_item_cddckh"
+        "collection_item_CtWAWG"
       ],
-      "name": "Collection List — Fashion",
+      "name": "Collection List",
       "settings": {
         "enable_container": true,
         "width": "full",
         "color_scheme": "scheme-1",
         "layout_type": "grid",
-        "columns_desktop": 5,
-        "columns_mobile": "2",
+        "columns_desktop": 1,
+        "columns_mobile": "1",
         "column_gap": 24,
         "row_gap": 20,
         "padding_top": 60,
@@ -146,7 +46,6 @@
   },
   "order": [
     "main",
-    "collection_list_dYwEJn",
     "collection_list_3TnLmW"
   ]
 }
