@@ -12,6 +12,7 @@
     "main": {
       "type": "hello-world",
       "settings": {}
+<<<<<<< HEAD
     },
     "collection_list_dYwEJn": {
       "type": "collection-list",
@@ -142,11 +143,11 @@
         "padding_top": 60,
         "padding_bottom": 60
       }
+=======
+>>>>>>> 7c861c9ae5fed16b522e1a4beaee222d08af9178
     }
   },
   "order": [
-    "main",
-    "collection_list_dYwEJn",
-    "collection_list_3TnLmW"
+    "main"
   ]
 }
