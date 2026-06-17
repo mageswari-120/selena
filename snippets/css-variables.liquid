@@ -98,4 +98,37 @@
 
   }
 
+  {% comment %}
+    ── Color schemes (native color_scheme_group) ──
+    Shopify does NOT auto-generate this CSS — we emit one .color-{id} rule per
+    scheme defined in settings_schema.json / stored in settings_data.json.
+    These override the global :root colors inside any element carrying a
+    color-scheme-N class, so existing sections that already use that class
+    (product.liquid, etc.) keep working and now respond to scheme colors.
+  {% endcomment %}
+  {% for scheme in settings.color_schemes %}
+    .color-{{ scheme.id }} {
+      --color-background:            {{ scheme.settings.background }};
+      {% if scheme.settings.background_gradient != blank %}
+        --gradient-background:       {{ scheme.settings.background_gradient }};
+      {% else %}
+        --gradient-background:       {{ scheme.settings.background }};
+      {% endif %}
+      --color-foreground:            {{ scheme.settings.text }};
+      --color-shadow:                {{ scheme.settings.shadow }};
+
+      --button-primary-bg:           {{ scheme.settings.button }};
+      --button-primary-color:        {{ scheme.settings.button_label }};
+      --button-primary-border:       {{ scheme.settings.button }};
+      --button-primary-hover-bg:     {{ scheme.settings.button }};
+      --button-primary-hover-color:  {{ scheme.settings.button_label }};
+      --button-primary-hover-border: {{ scheme.settings.button }};
+
+      --button-outline-color:        {{ scheme.settings.text }};
+      --button-outline-border:       {{ scheme.settings.secondary_button_label }};
+      --button-outline-hover-bg:     {{ scheme.settings.text }};
+      --button-outline-hover-color:  {{ scheme.settings.background }};
+    }
+  {% endfor %}
+
 {% endstyle %}

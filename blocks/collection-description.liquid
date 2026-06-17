@@ -1,0 +1,81 @@
+{% doc %}
+  Collection description block. Renders the closest collection's description.
+
+  @example
+  {% content_for 'block', type: 'collection-description', id: 'collection-description' %}
+{% enddoc %}
+
+{%- liquid
+  assign collection = closest.collection
+  assign s = block.settings
+-%}
+
+{%- if collection.description != blank -%}
+  <div
+    class="cl-collection-description cl-collection-description--{{ s.text_case }}"
+    style="--cl-pt: {{ s.padding_top }}px; --cl-pb: {{ s.padding_bottom }}px;"
+    {{ block.shopify_attributes }}
+  >
+    {{ collection.description }}
+  </div>
+{%- else -%}
+  {%- comment -%} Editor-only placeholder so the block stays visible while empty {%- endcomment -%}
+  {%- if request.design_mode -%}
+    <div class="cl-collection-description" {{ block.shopify_attributes }}>
+      <p>Collection description appears here.</p>
+    </div>
+  {%- endif -%}
+{%- endif -%}
+
+{% stylesheet %}
+  .cl-collection-description {
+    padding-top: var(--cl-pt, 0);
+    padding-bottom: var(--cl-pb, 0);
+    color: inherit;
+    opacity: 0.8;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  .cl-collection-description--uppercase { text-transform: uppercase; }
+  .cl-collection-description > :first-child { margin-top: 0; }
+  .cl-collection-description > :last-child { margin-bottom: 0; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Collection description",
+  "settings": [
+    {
+      "type": "select",
+      "id": "text_case",
+      "label": "Text case",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "uppercase", "label": "Uppercase" }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [{ "name": "Collection description" }]
+}
+{% endschema %}

@@ -1,0 +1,121 @@
+{% doc %}
+  Collection title block. Renders the closest collection's title (and, optionally,
+  its product count) as a linked heading.
+
+  @example
+  {% content_for 'block', type: 'collection-title', id: 'collection-title' %}
+{% enddoc %}
+
+{%- liquid
+  assign collection = closest.collection
+  assign s = block.settings
+  assign tag = s.heading_size
+  assign heading = s.heading | default: collection.title | default: 'Collection'
+-%}
+
+<{{ tag }}
+  class="cl-collection-title cl-collection-title--{{ s.text_case }}"
+  style="--cl-pt: {{ s.padding_top }}px; --cl-pb: {{ s.padding_bottom }}px;"
+  {{ block.shopify_attributes }}
+>
+  <a class="cl-collection-title__link" href="{{ collection.url | default: '#' }}">
+    {{ heading }}
+  </a>
+  {%- if s.show_product_count and collection != blank -%}
+    <span class="cl-collection-title__count">{{ collection.all_products_count }}</span>
+  {%- endif -%}
+</{{ tag }}>
+
+{% stylesheet %}
+  .cl-collection-title {
+    margin: 0;
+    padding-top: var(--cl-pt, 0);
+    padding-bottom: var(--cl-pb, 0);
+    font-family: var(--font-heading--family, inherit);
+    font-weight: var(--font-heading--weight, 700);
+    color: inherit;
+    line-height: 1.2;
+  }
+  .cl-collection-title__link {
+    color: inherit;
+    text-decoration: none;
+  }
+  .cl-collection-title__link:hover { text-decoration: underline; }
+
+  .cl-collection-title--uppercase { text-transform: uppercase; }
+
+  .cl-collection-title__count {
+    font-weight: 400;
+    opacity: 0.55;
+  }
+  .cl-collection-title__count::before { content: " ("; }
+  .cl-collection-title__count::after { content: ")"; }
+
+  h3.cl-collection-title { font-size: clamp(1.25rem, 2.6vw, 1.6rem); }
+  h4.cl-collection-title { font-size: clamp(1.05rem, 2.2vw, 1.25rem); }
+  h5.cl-collection-title { font-size: 1rem; }
+  h6.cl-collection-title { font-size: 0.85rem; letter-spacing: 0.04em; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Collection title",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Custom heading",
+      "info": "Optional. Overrides the collection title — useful for custom-image tiles."
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "options": [
+        { "value": "h3", "label": "H3" },
+        { "value": "h4", "label": "H4" },
+        { "value": "h5", "label": "H5" },
+        { "value": "h6", "label": "H6" }
+      ],
+      "default": "h4"
+    },
+    {
+      "type": "select",
+      "id": "text_case",
+      "label": "Text case",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "uppercase", "label": "Uppercase" }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_count",
+      "label": "Show product count",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [{ "name": "Collection title" }]
+}
+{% endschema %}

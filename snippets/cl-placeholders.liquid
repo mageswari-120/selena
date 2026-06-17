@@ -1,0 +1,13 @@
+{% doc %}
+  Placeholder cards for the Collection List section when no collections are
+  selected yet (theme editor empty state). Renders four neutral cards.
+
+  @example
+  {% render 'cl-placeholders' %}
+{% enddoc %}
+
+{%- for i in (1..4) -%}
+  <div class="cl-collection-card cl-card--placeholder" role="listitem" aria-hidden="true">
+    {{ 'collection-1' | placeholder_svg_tag: 'cl-card__placeholder-svg' }}
+  </div>
+{%- endfor -%}

@@ -1,0 +1,364 @@
+{% doc %}
+  Collection card — container block (merchant adds one per tile).
+
+  Each card picks its own collection via `block.settings.collection`, which it
+  passes down to its child blocks as `closest.collection`:
+
+    {% content_for 'blocks', closest.collection: block.settings.collection %}
+
+  A card can instead show a custom image (set the override on the child
+  collection-image block) for a non-collection tile.
+
+  The card owns the visual frame (image shape, overlay vs. below-image layout,
+  alignment, colours, border, padding) and renders its child blocks
+  (collection-image / collection-title / collection-description / collection-text /
+  collection-button) via {% content_for 'blocks' %}.
+{% enddoc %}
+
+{%- liquid
+  assign s = block.settings
+  assign collection = s.collection
+  assign border_alpha = s.border_opacity | divided_by: 100.0
+
+  assign scheme_class = ''
+  unless s.inherit_color_scheme
+    assign scheme_class = 'color-' | append: s.color_scheme
+  endunless
+-%}
+
+<div
+  class="
+    cl-collection-card
+    cl-shape-{{ s.image_shape }}
+    cl-card--overlay-{{ s.overlay_style }}
+    cl-card--align-{{ s.content_alignment }}
+    cl-card--content-{{ s.content_position }}
+    {{ scheme_class }}
+  "
+  style="
+    --cl-img-position: {{ s.image_position }};
+    --cl-card-radius: {{ s.border_radius }}px;
+    --cl-custom-radius: {{ s.custom_radius }}px;
+    --cl-arch-pad: 0;
+    --cl-pad-t: {{ s.padding_top }}px;
+    --cl-pad-b: {{ s.padding_bottom }}px;
+    --cl-pad-l: {{ s.padding_left }}px;
+    --cl-pad-r: {{ s.padding_right }}px;
+    {%- if s.background_color != blank and s.background_color != 'rgba(0,0,0,0)' %}background-color: {{ s.background_color }};{% endif %}
+    {%- if s.border_style != 'none' %}border: {{ s.border_width }}px solid rgba(0,0,0,{{ border_alpha }});{% endif %}
+  "
+  role="listitem"
+  {{ block.shopify_attributes }}
+>
+  <div class="cl-collection-card__inner">
+    {%- if collection != blank -%}
+      {% content_for 'blocks', closest.collection: collection %}
+    {%- else -%}
+      {% content_for 'blocks' %}
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .cl-collection-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border-radius: var(--cl-card-radius, 0);
+    overflow: hidden;
+    color: inherit;
+    background-color: var(--color-background, transparent);
+  }
+  /* A transparent inline background-color override must beat the scheme bg */
+  .cl-collection-card[style*="background-color"] { background-clip: padding-box; }
+
+  .cl-collection-card__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+    padding: var(--cl-pad-t, 20px) var(--cl-pad-r, 20px) var(--cl-pad-b, 20px) var(--cl-pad-l, 20px);
+  }
+
+  /* ── Content alignment ── */
+  .cl-card--align-left   .cl-collection-card__inner { align-items: flex-start; text-align: left; }
+  .cl-card--align-center .cl-collection-card__inner { align-items: center;     text-align: center; }
+  .cl-card--align-right  .cl-collection-card__inner { align-items: flex-end;   text-align: right; }
+
+  /* ── Overlay: content sits ON the image ── */
+  .cl-card--overlay-on-image .cl-collection-card__inner { position: relative; min-height: 320px; }
+  .cl-card--overlay-on-image .cl-collection-image {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  .cl-card--overlay-on-image .cl-collection-image,
+  .cl-card--overlay-on-image .cl-collection-image__media,
+  .cl-card--overlay-on-image .cl-collection-image__img { height: 100%; }
+  .cl-card--overlay-on-image .cl-collection-title,
+  .cl-card--overlay-on-image .cl-collection-description,
+  .cl-card--overlay-on-image .cl-collection-button,
+  .cl-card--overlay-on-image .text { position: relative; z-index: 1; }
+
+  /* Vertical position of overlaid content (Default shape + On image) */
+  .cl-card--overlay-on-image.cl-card--content-top    .cl-collection-card__inner { justify-content: flex-start; }
+  .cl-card--overlay-on-image.cl-card--content-center .cl-collection-card__inner { justify-content: center; }
+  .cl-card--overlay-on-image.cl-card--content-bottom .cl-collection-card__inner { justify-content: flex-end; }
+
+  /* ── Overlay: content sits BELOW the image ── */
+  .cl-card--overlay-below-image .cl-collection-card__inner { justify-content: flex-start; }
+
+  /* ════ Image shapes (applied to the child image's media element) ════ */
+  .cl-shape-circle .cl-collection-image__media {
+    border-radius: 50%;
+    aspect-ratio: 1 / 1;
+  }
+  .cl-shape-oval .cl-collection-image__media {
+    border-radius: 50% / 42%;
+    aspect-ratio: 4 / 5;
+  }
+  .cl-shape-pill .cl-collection-image__media {
+    border-radius: 999px;
+    aspect-ratio: 3 / 4;
+  }
+  .cl-shape-rounded-rectangle .cl-collection-image__media {
+    border-radius: 16px;
+  }
+  .cl-shape-custom-radius .cl-collection-image__media {
+    border-radius: var(--cl-custom-radius, 16px);
+  }
+  .cl-shape-arch .cl-collection-image__media {
+    height: var(--cl-arch-h, 300px);
+    aspect-ratio: auto;
+    border-radius: 50% 50% 0 0 / 65% 65% 0 0;
+  }
+  .cl-shape-rounded-arch .cl-collection-image__media {
+    height: var(--cl-arch-h, 300px);
+    aspect-ratio: auto;
+    border-radius: calc(var(--cl-arch-w, 250px) / 2) calc(var(--cl-arch-w, 250px) / 2) 0 0;
+  }
+
+  /* Circle / oval / pill cards look best centred regardless of alignment image */
+  .cl-shape-circle .cl-collection-image,
+  .cl-shape-oval .cl-collection-image,
+  .cl-shape-pill .cl-collection-image { margin-inline: auto; max-width: 100%; }
+
+  .cl-collection-card:hover { box-shadow: 0 12px 32px color-mix(in srgb, var(--color-shadow, #1a1a1a) 14%, transparent); }
+  @media (prefers-reduced-motion: reduce) {
+    .cl-collection-card, .cl-collection-image__img { transition: none; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Collection card",
+  "blocks": [
+    { "type": "collection-image" },
+    { "type": "collection-title" },
+    { "type": "collection-description" },
+    { "type": "collection-text" },
+    { "type": "collection-button" }
+  ],
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection",
+      "info": "The collection this card links to. Leave blank and set a custom image on the Collection image block for a non-collection tile."
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "select",
+      "id": "image_shape",
+      "label": "Image shape style",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "arch", "label": "Arch" },
+        { "value": "rounded-arch", "label": "Rounded arch" },
+        { "value": "oval", "label": "Oval" },
+        { "value": "circle", "label": "Circle" },
+        { "value": "pill", "label": "Pill" },
+        { "value": "rounded-rectangle", "label": "Rounded rectangle" },
+        { "value": "custom-radius", "label": "Custom radius" }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "range",
+      "id": "custom_radius",
+      "label": "Custom radius",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 16,
+      "visible_if": "{{ block.settings.image_shape == 'custom-radius' }}"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image position",
+      "options": [
+        { "value": "top", "label": "Top" },
+        { "value": "center", "label": "Center" },
+        { "value": "bottom", "label": "Bottom" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "select",
+      "id": "overlay_style",
+      "label": "Overlay style",
+      "options": [
+        { "value": "on-image", "label": "On image" },
+        { "value": "below-image", "label": "Below image" }
+      ],
+      "default": "on-image"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "Content alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "content_position",
+      "label": "Content position",
+      "options": [
+        { "value": "top", "label": "Top" },
+        { "value": "center", "label": "Center" },
+        { "value": "bottom", "label": "Bottom" }
+      ],
+      "default": "bottom",
+      "visible_if": "{{ block.settings.image_shape == 'default' and block.settings.overlay_style == 'on-image' }}"
+    },
+    {
+      "type": "header",
+      "content": "Color"
+    },
+    {
+      "type": "checkbox",
+      "id": "inherit_color_scheme",
+      "label": "Inherit color scheme",
+      "default": true
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1",
+      "visible_if": "{{ block.settings.inherit_color_scheme == false }}"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "info": "Optional override. Leave blank to use the color scheme."
+    },
+    {
+      "type": "header",
+      "content": "Border"
+    },
+    {
+      "type": "select",
+      "id": "border_style",
+      "label": "Border style",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "solid", "label": "Solid" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Border width",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "unit": "px",
+      "default": 1,
+      "visible_if": "{{ block.settings.border_style != 'none' }}"
+    },
+    {
+      "type": "range",
+      "id": "border_opacity",
+      "label": "Border opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 100,
+      "visible_if": "{{ block.settings.border_style != 'none' }}"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "label": "Padding left",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "label": "Padding right",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    }
+  ]
+}
+{% endschema %}

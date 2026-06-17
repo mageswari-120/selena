@@ -1,0 +1,154 @@
+{% doc %}
+  Text block for the Collection List card. Free, merchant-authored text rendered
+  as a heading (H3–H6). Unlike the other Collection List blocks it is NOT
+  collection-aware — it does not read `closest.collection`.
+
+  @example
+  {% content_for 'block', type: 'collection-text', id: 'collection-text' %}
+{% enddoc %}
+
+{%- liquid
+  assign s = block.settings
+  assign tag = s.heading_size
+  assign border_alpha = s.border_opacity | divided_by: 100.0
+-%}
+
+<{{ tag }}
+  class="cl-text cl-text--{{ s.text_case }}"
+  style="
+    --cl-pt: {{ s.padding_top }}px;
+    --cl-pb: {{ s.padding_bottom }}px;
+    --cl-text-radius: {{ s.border_radius }}px;
+    {%- if s.border_style != 'none' %}--cl-text-border: {{ s.border_width }}px solid rgba(0,0,0,{{ border_alpha }});{% endif %}
+  "
+  {{ block.shopify_attributes }}
+>
+  {{ s.text }}
+</{{ tag }}>
+
+{% stylesheet %}
+  .cl-text {
+    margin: 0;
+    padding-top: var(--cl-pt, 0);
+    padding-bottom: var(--cl-pb, 0);
+    border: var(--cl-text-border, none);
+    border-radius: var(--cl-text-radius, 0);
+    font-family: var(--font-heading--family, inherit);
+    font-weight: var(--font-heading--weight, 700);
+    color: inherit;
+    line-height: 1.2;
+  }
+  .cl-text--uppercase { text-transform: uppercase; }
+
+  h3.cl-text { font-size: clamp(1.25rem, 2.6vw, 1.6rem); }
+  h4.cl-text { font-size: clamp(1.05rem, 2.2vw, 1.25rem); }
+  h5.cl-text { font-size: 1rem; }
+  h6.cl-text { font-size: 0.85rem; letter-spacing: 0.04em; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Text",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "Text"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "options": [
+        { "value": "h3", "label": "H3" },
+        { "value": "h4", "label": "H4" },
+        { "value": "h5", "label": "H5" },
+        { "value": "h6", "label": "H6" }
+      ],
+      "default": "h5"
+    },
+    {
+      "type": "select",
+      "id": "text_case",
+      "label": "Text case",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "uppercase", "label": "Uppercase" }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "header",
+      "content": "Border"
+    },
+    {
+      "type": "select",
+      "id": "border_style",
+      "label": "Border style",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "solid", "label": "Solid" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Border width",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "unit": "px",
+      "default": 1,
+      "visible_if": "{{ block.settings.border_style != 'none' }}"
+    },
+    {
+      "type": "range",
+      "id": "border_opacity",
+      "label": "Border opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 100,
+      "visible_if": "{{ block.settings.border_style != 'none' }}"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [{ "name": "Text" }]
+}
+{% endschema %}

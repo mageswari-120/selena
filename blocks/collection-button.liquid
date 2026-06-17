@@ -1,0 +1,203 @@
+{% doc %}
+  Collection button block. Links to the closest collection (or a custom URL).
+  Supports the theme's primary/secondary/link button styles plus an "arrow"
+  style with four icon treatments.
+
+  @example
+  {% content_for 'block', type: 'collection-button', id: 'collection-button' %}
+{% enddoc %}
+
+{%- liquid
+  assign collection = closest.collection
+  assign s = block.settings
+  assign link = s.button_link
+  if link == blank
+    assign link = collection.url
+  endif
+  if link == blank
+    assign link = '#'
+  endif
+  assign label = s.button_label | default: 'Shop Now'
+-%}
+
+<div class="cl-collection-button" {{ block.shopify_attributes }}>
+  {%- if s.button_style == 'arrow' -%}
+    <a
+      class="cl-arrow-btn cl-arrow-btn--{{ s.arrow_style }}"
+      href="{{ link }}"
+      style="--cl-arrow-size: {{ s.arrow_size }}px;"
+      {% if s.open_new_tab %}target="_blank" rel="noopener"{% endif %}
+    >
+      <span class="cl-arrow-btn__label">{{ label }}</span>
+      {%- if s.arrow_button -%}
+        <span class="cl-arrow-btn__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </span>
+      {%- endif -%}
+    </a>
+  {%- else -%}
+    <a
+      class="cl-btn cl-btn--{{ s.button_style }}"
+      href="{{ link }}"
+      {% if s.open_new_tab %}target="_blank" rel="noopener"{% endif %}
+    >
+      {{ label }}
+    </a>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .cl-collection-button { display: inline-flex; }
+
+  .cl-btn {
+    display: inline-block;
+    padding: var(--button-padding-vertical, 14px) var(--button-padding-horizontal, 28px);
+    border: 1px solid transparent;
+    border-radius: var(--button-border-radius, 0);
+    font: inherit;
+    line-height: 1;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+  .cl-btn--primary {
+    background: var(--button-primary-bg);
+    color: var(--button-primary-color);
+    border-color: var(--button-primary-border);
+  }
+  .cl-btn--primary:hover {
+    background: var(--button-primary-hover-bg);
+    color: var(--button-primary-hover-color);
+    border-color: var(--button-primary-hover-border);
+  }
+  .cl-btn--secondary {
+    background: var(--button-outline-bg, transparent);
+    color: var(--button-outline-color);
+    border-color: var(--button-outline-border);
+  }
+  .cl-btn--secondary:hover {
+    background: var(--button-outline-hover-bg);
+    color: var(--button-outline-hover-color);
+    border-color: var(--button-outline-hover-border);
+  }
+  .cl-btn--link {
+    padding-inline: 0;
+    background: none;
+    border: none;
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  /* ── Arrow button ── */
+  .cl-arrow-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: inherit;
+    text-decoration: none;
+    font: inherit;
+  }
+  .cl-arrow-btn__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--cl-arrow-size, 32px);
+    height: var(--cl-arrow-size, 32px);
+    flex-shrink: 0;
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+  .cl-arrow-btn__icon svg { width: 52%; height: 52%; display: block; }
+  .cl-arrow-btn--filled-circle .cl-arrow-btn__icon {
+    border-radius: 50%;
+    background: var(--button-primary-bg);
+    color: var(--button-primary-color);
+  }
+  .cl-arrow-btn--outline-circle .cl-arrow-btn__icon {
+    border-radius: 50%;
+    border: 1.5px solid currentColor;
+  }
+  .cl-arrow-btn--square .cl-arrow-btn__icon {
+    border-radius: 4px;
+    background: var(--button-primary-bg);
+    color: var(--button-primary-color);
+  }
+  .cl-arrow-btn--minimal .cl-arrow-btn__icon {
+    width: auto;
+    height: auto;
+  }
+  .cl-arrow-btn:hover .cl-arrow-btn__icon { transform: translateX(3px); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Collection button",
+  "settings": [
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link",
+      "info": "Leave blank to link to the collection."
+    },
+    {
+      "type": "checkbox",
+      "id": "open_new_tab",
+      "label": "Open link in new tab",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Button style",
+      "options": [
+        { "value": "primary", "label": "Primary" },
+        { "value": "secondary", "label": "Secondary" },
+        { "value": "link", "label": "Link" },
+        { "value": "arrow", "label": "Arrow button" }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "checkbox",
+      "id": "arrow_button",
+      "label": "Arrow button",
+      "default": false,
+      "visible_if": "{{ block.settings.button_style == 'arrow' }}"
+    },
+    {
+      "type": "select",
+      "id": "arrow_style",
+      "label": "Arrow style",
+      "options": [
+        { "value": "filled-circle", "label": "Filled circle" },
+        { "value": "outline-circle", "label": "Outline circle" },
+        { "value": "square", "label": "Square" },
+        { "value": "minimal", "label": "Minimal" }
+      ],
+      "default": "filled-circle",
+      "visible_if": "{{ block.settings.button_style == 'arrow' }}"
+    },
+    {
+      "type": "range",
+      "id": "arrow_size",
+      "label": "Arrow size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 32,
+      "visible_if": "{{ block.settings.button_style == 'arrow' }}"
+    }
+  ],
+  "presets": [{ "name": "Collection button" }]
+}
+{% endschema %}
