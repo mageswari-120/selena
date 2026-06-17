@@ -25,7 +25,7 @@
     assign scheme_class = 'color-' | append: s.color_scheme
   endunless
 -%}
-
+   
 <div
   class="
     cl-collection-card
@@ -51,11 +51,10 @@
   {{ block.shopify_attributes }}
 >
   <div class="cl-collection-card__inner">
-    {%- if collection != blank -%}
-      {% content_for 'blocks', closest.collection: collection %}
-    {%- else -%}
-      {% content_for 'blocks' %}
-    {%- endif -%}
+    {%- comment -%} Only one content_for 'blocks' is allowed per file.
+        When the collection is blank, closest.collection is simply passed as
+        nil, which child blocks treat the same as not receiving it. {%- endcomment -%}
+    {% content_for 'blocks', closest.collection: collection %}
   </div>
 </div>
 
