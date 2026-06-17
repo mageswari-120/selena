@@ -17,56 +17,40 @@
       "type": "collection-list",
       "blocks": {
         "collection_item_kKDYA8": {
-          "type": "collection_item",
-          "settings": {
-            "collection": "",
-            "custom_title": "",
-            "custom_link": "",
-            "badge_text": "Ages 0–2",
-            "badge_bg_color": "#ffffff",
-            "badge_text_color": "#1a1a1a",
-            "description": "",
-            "card_bg_color": "#fde8d8"
-          }
+          "type": "collection-card",
+          "settings": { "collection": "" },
+          "blocks": {
+            "img_kKDYA8": { "type": "collection-image", "settings": {} },
+            "title_kKDYA8": { "type": "collection-title", "settings": {} }
+          },
+          "block_order": ["img_kKDYA8", "title_kKDYA8"]
         },
         "collection_item_cKdiyQ": {
-          "type": "collection_item",
-          "settings": {
-            "collection": "",
-            "custom_title": "",
-            "custom_link": "",
-            "badge_text": "Ages 3–6",
-            "badge_bg_color": "#ffffff",
-            "badge_text_color": "#1a1a1a",
-            "description": "",
-            "card_bg_color": "#d8f0e8"
-          }
+          "type": "collection-card",
+          "settings": { "collection": "" },
+          "blocks": {
+            "img_cKdiyQ": { "type": "collection-image", "settings": {} },
+            "title_cKdiyQ": { "type": "collection-title", "settings": {} }
+          },
+          "block_order": ["img_cKdiyQ", "title_cKdiyQ"]
         },
         "collection_item_GUCWUw": {
-          "type": "collection_item",
-          "settings": {
-            "collection": "",
-            "custom_title": "",
-            "custom_link": "",
-            "badge_text": "Ages 7–12",
-            "badge_bg_color": "#ffffff",
-            "badge_text_color": "#1a1a1a",
-            "description": "",
-            "card_bg_color": "#d8e8fd"
-          }
+          "type": "collection-card",
+          "settings": { "collection": "" },
+          "blocks": {
+            "img_GUCWUw": { "type": "collection-image", "settings": {} },
+            "title_GUCWUw": { "type": "collection-title", "settings": {} }
+          },
+          "block_order": ["img_GUCWUw", "title_GUCWUw"]
         },
         "collection_item_a486TN": {
-          "type": "collection_item",
-          "settings": {
-            "collection": "",
-            "custom_title": "",
-            "custom_link": "",
-            "badge_text": "Ages 13+",
-            "badge_bg_color": "#ffffff",
-            "badge_text_color": "#1a1a1a",
-            "description": "",
-            "card_bg_color": "#f0d8fd"
-          }
+          "type": "collection-card",
+          "settings": { "collection": "" },
+          "blocks": {
+            "img_a486TN": { "type": "collection-image", "settings": {} },
+            "title_a486TN": { "type": "collection-title", "settings": {} }
+          },
+          "block_order": ["img_a486TN", "title_a486TN"]
         }
       },
       "block_order": [
@@ -77,111 +61,65 @@
       ],
       "name": "Collection List — Card Style",
       "settings": {
-        "layout_style": "card_style",
-        "section_width": "container",
-        "bg_color": "#ffffff",
+        "enable_container": true,
+        "width": "full",
+        "color_scheme": "scheme-1",
+        "layout_type": "grid",
+        "columns_desktop": 4,
+        "columns_mobile": "1",
+        "column_gap": 24,
+        "row_gap": 20,
         "padding_top": 60,
-        "padding_bottom": 60,
-        "margin_top": 0,
-        "margin_bottom": 0,
-        "heading": "Shop by Age",
-        "subheading": "Find the perfect gift",
-        "heading_alignment": "center",
-        "heading_color": "#1a1a1a",
-        "cols_desktop": 4,
-        "cols_tablet": 2,
-        "cols_mobile": 1,
-        "gap_desktop": 24,
-        "gap_mobile": 14,
-        "enable_slider_mobile": true,
-        "enable_swipe": true,
-        "image_ratio": "portrait",
-        "image_fit": "cover",
-        "card_border_radius": 16,
-        "card_padding": 20,
-        "hover_effect": true,
-        "show_item_count": false,
-        "item_count_text": "[count] items",
-        "image_shape": "oval",
-        "image_size": 130,
-        "content_alignment": "center",
-        "fashion_bg_color": "#f5f0ea",
-        "show_description": true,
-        "show_cta": true,
-        "cta_icon_style": "arrow",
-        "card_shadow": true,
-        "card_min_height": 300,
-        "content_position": "bottom",
-        "image_alignment": "top"
+        "padding_bottom": 60
       }
     },
     "collection_list_3TnLmW": {
       "type": "collection-list",
       "blocks": {
         "collection_item_CtWAWG": {
-          "type": "collection_item",
-          "settings": {
-            "collection": "",
-            "custom_title": "",
-            "custom_link": "",
-            "badge_text": "",
-            "badge_bg_color": "#ffffff",
-            "badge_text_color": "#1a1a1a",
-            "description": "",
-            "card_bg_color": "#e8f4f8"
-          }
+          "type": "collection-card",
+          "settings": { "collection": "" },
+          "blocks": {
+            "img_CtWAWG": { "type": "collection-image", "settings": {} },
+            "title_CtWAWG": { "type": "collection-title", "settings": {} }
+          },
+          "block_order": ["img_CtWAWG", "title_CtWAWG"]
         },
         "collection_item_mkji4e": {
-          "type": "collection_item",
-          "settings": {
-            "collection": "",
-            "custom_title": "",
-            "custom_link": "",
-            "badge_text": "",
-            "badge_bg_color": "#ffffff",
-            "badge_text_color": "#1a1a1a",
-            "description": "",
-            "card_bg_color": "#e8f4f8"
-          }
+          "type": "collection-card",
+          "settings": { "collection": "" },
+          "blocks": {
+            "img_mkji4e": { "type": "collection-image", "settings": {} },
+            "title_mkji4e": { "type": "collection-title", "settings": {} }
+          },
+          "block_order": ["img_mkji4e", "title_mkji4e"]
         },
         "collection_item_QntGny": {
-          "type": "collection_item",
-          "settings": {
-            "collection": "",
-            "custom_title": "",
-            "custom_link": "",
-            "badge_text": "",
-            "badge_bg_color": "#ffffff",
-            "badge_text_color": "#1a1a1a",
-            "description": "",
-            "card_bg_color": "#e8f4f8"
-          }
+          "type": "collection-card",
+          "settings": { "collection": "" },
+          "blocks": {
+            "img_QntGny": { "type": "collection-image", "settings": {} },
+            "title_QntGny": { "type": "collection-title", "settings": {} }
+          },
+          "block_order": ["img_QntGny", "title_QntGny"]
         },
         "collection_item_Na8pg8": {
-          "type": "collection_item",
-          "settings": {
-            "collection": "",
-            "custom_title": "",
-            "custom_link": "",
-            "badge_text": "",
-            "badge_bg_color": "#ffffff",
-            "badge_text_color": "#1a1a1a",
-            "description": "",
-            "card_bg_color": "#e8f4f8"
-          }
+          "type": "collection-card",
+          "settings": { "collection": "" },
+          "blocks": {
+            "img_Na8pg8": { "type": "collection-image", "settings": {} },
+            "title_Na8pg8": { "type": "collection-title", "settings": {} }
+          },
+          "block_order": ["img_Na8pg8", "title_Na8pg8"]
         },
         "collection_item_cddckh": {
-          "type": "collection_item",
-          "settings": {
-            "collection": "",
-            "custom_title": "",
-            "custom_link": "",
-            "badge_text": "",
-            "badge_bg_color": "#ffffff",
-            "badge_text_color": "#1a1a1a",
-            "description": "",
-            "card_bg_color": "#e8f4f8"
-          }
+          "type": "collection-card",
+          "settings": { "collection": "" },
+          "blocks": {
+            "img_cddckh": { "type": "collection-image", "settings": {} },
+            "title_cddckh": { "type": "collection-title", "settings": {} }
+          },
+          "block_order": ["img_cddckh", "title_cddckh"]
         }
       },
       "block_order": [
@@ -193,42 +131,16 @@
       ],
       "name": "Collection List — Fashion",
       "settings": {
-        "layout_style": "fashion_style",
-        "section_width": "container",
-        "bg_color": "#ffffff",
+        "enable_container": true,
+        "width": "full",
+        "color_scheme": "scheme-1",
+        "layout_type": "grid",
+        "columns_desktop": 5,
+        "columns_mobile": "2",
+        "column_gap": 24,
+        "row_gap": 20,
         "padding_top": 60,
-        "padding_bottom": 60,
-        "margin_top": 0,
-        "margin_bottom": 0,
-        "heading": "Shop by Category",
-        "subheading": "Discover our curated collections",
-        "heading_alignment": "center",
-        "heading_color": "#1a1a1a",
-        "cols_desktop": 5,
-        "cols_tablet": 3,
-        "cols_mobile": 2,
-        "gap_desktop": 24,
-        "gap_mobile": 14,
-        "enable_slider_mobile": true,
-        "enable_swipe": true,
-        "image_ratio": "portrait",
-        "image_fit": "cover",
-        "card_border_radius": 16,
-        "card_padding": 20,
-        "hover_effect": true,
-        "show_item_count": false,
-        "item_count_text": "[count] items",
-        "image_shape": "oval",
-        "image_size": 130,
-        "content_alignment": "center",
-        "fashion_bg_color": "#f5f0ea",
-        "show_description": true,
-        "show_cta": true,
-        "cta_icon_style": "arrow",
-        "card_shadow": true,
-        "card_min_height": 300,
-        "content_position": "bottom",
-        "image_alignment": "top"
+        "padding_bottom": 60
       }
     }
   },
