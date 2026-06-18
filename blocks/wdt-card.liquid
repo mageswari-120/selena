@@ -50,47 +50,32 @@
     assign scheme_class = ''
   endunless
 
-  comment ── Layout: carousel wraps each card in .carousel-item ──
+  if card_type == 'overlay'
+    assign enable_overlay = true
+    if overlay_style == blank
+      assign overlay_style = 'gradient'
+    endif
+    if overlay_dir == blank
+      assign overlay_dir = 'to bottom'
+    endif
+  endif
+
+  comment ── Parent layout from section-level wdt-content block ──
   endcomment
   assign parent_layout = 'carousel'
-  for b in section.blocks
-    if b.type == 'wdt-content'
-      assign parent_layout = b.settings.layout_type
-      break
-    endif
-  endfor
-
   assign cols_desktop = '3'
   assign cols_mobile  = '1'
   for b in section.blocks
     if b.type == 'wdt-content'
+      assign parent_layout = b.settings.layout_type
       assign cols_desktop = b.settings.columns_desktop
       assign cols_mobile  = b.settings.columns_mobile
       break
     endif
   endfor
-
-  comment ── First card gets the carousel "active" class.
-    Theme blocks have no block.index, so identify the first card by id from
-    section.blocks (Bootstrap hides every .carousel-item that isn't .active). ──
-  endcomment
-  assign first_card_id = ''
-  for b in section.blocks
-    if b.type == 'wdt-card'
-      assign first_card_id = b.id
-      break
-    endif
-  endfor
 -%}
 
-{%- if parent_layout == 'carousel' -%}
-  {%- comment -%} Bootstrap carousel-item wraps the card in carousel mode {%- endcomment -%}
-  <div class="carousel-item wdt-content__slide{% if block.id == first_card_id %} active{% endif %}">
-{%- else -%}
-  {%- comment -%} Grid mode: Bootstrap column wraps the card {%- endcomment -%}
-  <div class="wdt-content__grid-item col-12 col-sm-{{ 12 | divided_by: cols_mobile }} col-md-{{ 12 | divided_by: cols_desktop }}">
-{%- endif -%}
-
+<div class="{% if parent_layout == 'carousel' %}wdt-content__slide{% else %}wdt-content__grid-item col-12 col-sm-{{ 12 | divided_by: cols_mobile }} col-md-{{ 12 | divided_by: cols_desktop }}{% endif %}">
   <article
     class="wdt-card wdt-card--{{ card_type }} wdt-card--img-{{ block.settings.card_image_position }} {{ scheme_class }} text-{{ alignment }}"
     {{ block.shopify_attributes }}
@@ -114,11 +99,7 @@
     </div>
 
   </article>
-
-{%- if parent_layout == 'carousel' or parent_layout == 'grid' -%}
-  </div>
-{%- endif -%}
-
+</div>
 {% stylesheet %}
 
 /* ── Card base ── */
@@ -170,17 +151,40 @@
 .wdt-card--grid.wdt-card--img-right { flex-direction: row-reverse; align-items: flex-start; }
 
 /* ── Overlay card ── */
-.wdt-card--overlay { position: relative; min-height: 280px; }
-.wdt-card--overlay .wdt-card__inner { margin-top: auto; position: relative; z-index: 2; }
-
-/* ── Carousel slide ── */
-.wdt-content__slide { padding-inline: 0; }
-
-/* Fallback: if no slide is marked active (e.g. before Bootstrap JS runs),
-   keep the first slide visible so testimonials are never fully hidden. */
-.wdt-content__track.carousel-inner:not(:has(.carousel-item.active)) > .carousel-item:first-child {
-  display: block;
+.wdt-card--overlay {
+  position: relative;
+  min-height: 280px;
+  padding: 0;
+  color: #fff;
 }
+.wdt-card--overlay .wdt-card__inner {
+  margin-top: auto;
+  position: relative;
+  z-index: 2;
+  padding: 1.25rem;
+}
+.wdt-card--overlay .wdt-card__image-wrap {
+  position: absolute;
+  inset: 0;
+  padding: 0 !important;
+  z-index: 0;
+}
+.wdt-card--overlay .wdt-card__image {
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  object-fit: cover;
+}
+.wdt-card--overlay .wdt-card__client-prof {
+  opacity: 0.75;
+}
+.wdt-card--overlay .wdt-card__overlay {
+  background: linear-gradient(to bottom, transparent, rgba(0,0,0,.75));
+  z-index: 1;
+}
+
+/* ── Carousel slide wrapper ── */
+.wdt-content__slide { padding-inline: 0; }
 
 {% endstylesheet %}
 

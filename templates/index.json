@@ -58,7 +58,67 @@
         "card_padding_left": 0,
         "card_padding_right": 0
       }
+    },
+    "testimonial_home": {
+      "type": "testimonial",
+      "settings": {
+        "enable_container": true,
+        "width_type": "container_fluid",
+        "color_scheme": "scheme-1",
+        "padding_top": 40,
+        "padding_bottom": 40
+      },
+      "blocks": {
+        "wdt_header": {
+          "type": "wdt-header",
+          "static": true,
+          "blocks": {
+            "description": {
+              "type": "wdt-description",
+              "settings": { "description": "<p><em>About Style</em></p>" }
+            },
+            "heading": {
+              "type": "wdt-heading",
+              "settings": { "heading": "Client Says" }
+            }
+          },
+          "block_order": ["description", "heading"]
+        },
+        "wdt_content": {
+          "type": "wdt-content",
+          "static": true,
+          "settings": {
+            "layout_type": "carousel",
+            "nav_style": "navigation",
+            "slides_desktop": "1"
+          },
+          "blocks": {
+            "card_1": {
+              "type": "wdt-card",
+              "settings": {
+                "card_type": "grid",
+                "card_image_position": "top",
+                "card_alignment": "center"
+              },
+              "blocks": {
+                "image": { "type": "wdt-image-static" },
+                "rating": { "type": "wdt-custom-rating", "settings": { "rating_count": "5" } },
+                "description": {
+                  "type": "wdt-card-description",
+                  "settings": { "description": "<p>The attention to detail is incredible.</p>" }
+                },
+                "client": {
+                  "type": "wdt-client-details",
+                  "settings": { "name": "Sophia Bennett", "profession": "Customer" }
+                }
+              },
+              "block_order": ["image", "rating", "description", "client"]
+            }
+          },
+          "block_order": ["card_1"]
+        }
+      }
     }
   },
-  "order": ["main", "collection_list_3TnLmW"]
+  "order": ["main", "collection_list_3TnLmW", "testimonial_home"]
 }

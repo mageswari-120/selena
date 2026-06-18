@@ -3,13 +3,9 @@
   Type     : wdt-content
   Parent   : sections/testimonial.liquid (fixed slot via content_for 'block')
   Children : wdt-card × N  (merchant adds/reorders via content_for 'blocks')
-
-  This block owns all layout settings: grid vs carousel, columns,
-  autoplay, navigation. Each wdt-card child renders one testimonial.
 {%- endcomment -%}
 
 {%- liquid
-  assign sec_id       = section.id
   assign layout_type  = block.settings.layout_type
   assign col_gap      = block.settings.column_gap
   assign row_gap      = block.settings.row_gap
@@ -18,29 +14,49 @@
   assign autoplay     = block.settings.autoplay_speed
   assign loop         = block.settings.carousel_loop
   assign nav_style    = block.settings.nav_style
-  assign carousel_id  = 'wdt-carousel-' | append: sec_id
--%} 
- 
+  assign slides_dt    = block.settings.slides_desktop
+  assign carousel_id  = 'wdt-carousel-' | append: block.id
+  assign border_alpha = block.settings.border_opacity | divided_by: 100.0
+  assign nav_border_alpha = block.settings.nav_border_opacity | divided_by: 100.0
+
+  assign content_scheme_class = ''
+  unless block.settings.inherit_color_scheme
+    assign content_scheme_class = 'color-' | append: block.settings.content_color_scheme
+  endunless
+
+  assign nav_scheme_class = ''
+  unless block.settings.nav_inherit_color
+    assign nav_scheme_class = 'color-' | append: block.settings.nav_color_scheme
+  endunless
+-%}
+
 <div
-  class="wdt-testimonial__content"
+  class="wdt-testimonial__content {{ content_scheme_class }}"
   {{ block.shopify_attributes }}
   style="
     --wdt-col-gap: {{ col_gap }}px;
     --wdt-row-gap: {{ row_gap }}px;
     --wdt-cols-dt: {{ cols_dt }};
     --wdt-cols-mb: {{ cols_mb }};
+    --wdt-slides-dt: {{ slides_dt }};
+    --wdt-border-radius: {{ block.settings.border_radius }}px;
+    --wdt-nav-radius: {{ block.settings.nav_border_radius }}px;
     padding-top: {{ block.settings.padding_top }}px;
     padding-bottom: {{ block.settings.padding_bottom }}px;
     padding-left: {{ block.settings.padding_left }}px;
     padding-right: {{ block.settings.padding_right }}px;
+    {%- if block.settings.border_style == 'solid' -%}
+      border: {{ block.settings.border_width }}px solid rgba(0,0,0,{{ border_alpha }});
+      border-radius: var(--wdt-border-radius);
+    {%- endif -%}
+    {%- if block.settings.nav_border_style == 'solid' -%}
+      --wdt-nav-border: {{ block.settings.nav_border_width }}px solid rgba(0,0,0,{{ nav_border_alpha }});
+    {%- endif -%}
   "
+  data-wdt-content
+  data-layout="{{ layout_type }}"
+  data-slides-desktop="{{ slides_dt }}"
 >
-
-  {%- comment -%}
-    Shopify allows only ONE content_for 'blocks' per file (even across if/else
-    branches it counts as a duplicate). So the cards render once inside a single
-    track container; the carousel wrapper + nav are layered around it conditionally.
-  {%- endcomment -%}
   {%- liquid
     assign is_carousel = false
     if layout_type == 'carousel'
@@ -55,10 +71,11 @@
   {%- if is_carousel -%}
     <div
       id="{{ carousel_id }}"
-      class="wdt-content__carousel carousel slide"
+      class="wdt-content__carousel carousel slide {{ nav_scheme_class }}"
       data-bs-ride="{% if autoplay > 0 %}carousel{% else %}false{% endif %}"
       {% if autoplay > 0 %}data-bs-interval="{{ autoplay | times: 1000 }}"{% endif %}
       data-bs-wrap="{{ loop }}"
+      data-wdt-carousel
     >
   {%- endif -%}
 
@@ -97,18 +114,7 @@
       {%- endif -%}
 
       {%- if nav_style == 'pagination' or nav_style == 'both' -%}
-        <div class="wdt-content__dots carousel-indicators">
-          {%- for i in (1..10) -%}
-            <button
-              type="button"
-              class="wdt-content__dot{% if forloop.first %} active{% endif %}"
-              data-bs-target="#{{ carousel_id }}"
-              data-bs-slide-to="{{ forloop.index0 }}"
-              {% if forloop.first %}aria-current="true"{% endif %}
-              aria-label="Slide {{ forloop.index }}"
-            ></button>
-          {%- endfor -%}
-        </div>
+        <div class="wdt-content__dots carousel-indicators" data-wdt-dots></div>
       {%- endif -%}
     </div>
   {%- endif -%}
@@ -117,31 +123,27 @@
 
 {% stylesheet %}
 
-/* ── Content wrapper ── */
 .wdt-testimonial__content {
   position: relative;
 }
 
-/* ── GRID ── */
 .wdt-content__grid {
   --bs-gutter-x: var(--wdt-col-gap, 20px);
   --bs-gutter-y: var(--wdt-row-gap, 20px);
 }
 
-/* ── CAROUSEL ── */
 .wdt-content__carousel { position: relative; }
 .wdt-content__track    { width: 100%; }
 
-/* ── Arrow nav ── */
 .wdt-content__nav {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 44px;
   height: 44px;
-  border-radius: 50%;
+  border-radius: var(--wdt-nav-radius, 50%);
   background: var(--color-background, #fff);
-  border: 1px solid rgba(0,0,0,.12);
+  border: var(--wdt-nav-border, 1px solid rgba(0,0,0,.12));
   color: var(--color-foreground, #1a1a1a);
   opacity: 1;
   position: absolute;
@@ -161,14 +163,16 @@
 }
 .wdt-content__nav.carousel-control-prev,
 .wdt-content__nav.carousel-control-next {
-  width: 44px; opacity: 1;
+  width: 44px;
+  opacity: 1;
 }
 .wdt-content__nav-icon {
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   pointer-events: none;
 }
 
-/* ── Dots ── */
 .wdt-content__dots {
   position: static;
   display: flex;
@@ -177,27 +181,113 @@
   margin-top: 1.25rem;
   padding: 0;
 }
-.wdt-content__dot {
-  width: 8px; height: 8px;
+.wdt-content__dots .carousel-indicator-btn {
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: rgba(0,0,0,.2);
-  border: none; padding: 0;
+  border: none;
+  padding: 0;
   cursor: pointer;
   transition: background .2s, transform .2s;
 }
-.wdt-content__dot.active,
-.wdt-content__dot:hover {
+.wdt-content__dots .carousel-indicator-btn.active,
+.wdt-content__dots .carousel-indicator-btn:hover {
   background: var(--color-primary, #1a1a1a);
   transform: scale(1.25);
 }
 
-/* ── Responsive ── */
+.wdt-content__carousel[data-slides-desktop='2'] .carousel-item.active,
+.wdt-content__carousel[data-slides-desktop='2'] .carousel-item-next,
+.wdt-content__carousel[data-slides-desktop='2'] .carousel-item-prev {
+  display: flex;
+  gap: var(--wdt-col-gap, 20px);
+}
+.wdt-content__carousel[data-slides-desktop='2'] .carousel-item .wdt-content__grid-item,
+.wdt-content__carousel[data-slides-desktop='2'] .carousel-item .wdt-content__slide {
+  flex: 1 1 50%;
+}
+
 @media (max-width: 767.98px) {
   .wdt-content__nav--prev { left: 0; }
   .wdt-content__nav--next { right: 0; }
 }
 
 {% endstylesheet %}
+
+{% javascript %}
+(function () {
+  function initContent(root) {
+    var carousel = root.querySelector('[data-wdt-carousel]');
+    if (!carousel) return;
+
+    var inner = carousel.querySelector('.carousel-inner');
+    if (!inner) return;
+
+    var slidesDesktop = parseInt(root.dataset.slidesDesktop || '1', 10);
+    var cards = inner.querySelectorAll(':scope > .wdt-content__slide, :scope > .wdt-content__grid-item');
+    if (!cards.length) return;
+
+    if (slidesDesktop > 1) {
+      inner.innerHTML = '';
+      for (var i = 0; i < cards.length; i += slidesDesktop) {
+        var item = document.createElement('div');
+        item.className = 'carousel-item' + (i === 0 ? ' active' : '');
+        for (var j = 0; j < slidesDesktop && i + j < cards.length; j += 1) {
+          item.appendChild(cards[i + j]);
+        }
+        inner.appendChild(item);
+      }
+    } else {
+      cards.forEach(function (card, index) {
+        if (!card.classList.contains('carousel-item')) {
+          card.classList.add('carousel-item');
+        }
+        if (index === 0) {
+          card.classList.add('active');
+        }
+      });
+    }
+
+    var dotsWrap = carousel.querySelector('[data-wdt-dots]');
+    if (dotsWrap) {
+      dotsWrap.innerHTML = '';
+      var items = inner.querySelectorAll('.carousel-item');
+      items.forEach(function (_, index) {
+        var button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'carousel-indicator-btn' + (index === 0 ? ' active' : '');
+        button.setAttribute('data-bs-target', '#' + carousel.id);
+        button.setAttribute('data-bs-slide-to', String(index));
+        button.setAttribute('aria-label', 'Slide ' + (index + 1));
+        if (index === 0) {
+          button.setAttribute('aria-current', 'true');
+        }
+        dotsWrap.appendChild(button);
+      });
+    }
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      carousel.removeAttribute('data-bs-ride');
+      carousel.setAttribute('data-bs-interval', 'false');
+    }
+  }
+
+  function initAll(scope) {
+    (scope || document).querySelectorAll('[data-wdt-content]').forEach(initContent);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { initAll(); });
+  } else {
+    initAll();
+  }
+
+  document.addEventListener('shopify:section:load', function (event) {
+    initAll(event.target);
+  });
+})();
+{% endjavascript %}
 
 {% schema %}
 {
@@ -249,7 +339,8 @@
         { "value": "3", "label": "3" },
         { "value": "4", "label": "4" }
       ],
-      "default": "3"
+      "default": "3",
+      "visible_if": "{{ block.settings.layout_type == 'grid' }}"
     },
     {
       "type": "select",
@@ -259,7 +350,8 @@
         { "value": "1", "label": "1" },
         { "value": "2", "label": "2" }
       ],
-      "default": "1"
+      "default": "1",
+      "visible_if": "{{ block.settings.layout_type == 'grid' }}"
     },
     {
       "type": "header",
@@ -271,13 +363,26 @@
       "label": "Change Slide Every (seconds)",
       "info": "Set to 0 to disable autoplay",
       "min": 0, "max": 5, "step": 1, "unit": "s",
-      "default": 0
+      "default": 0,
+      "visible_if": "{{ block.settings.layout_type == 'carousel' }}"
     },
     {
       "type": "checkbox",
       "id": "carousel_loop",
       "label": "Loop",
-      "default": true
+      "default": true,
+      "visible_if": "{{ block.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "select",
+      "id": "slides_desktop",
+      "label": "Slides Visible on Desktop",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
+      ],
+      "default": "1",
+      "visible_if": "{{ block.settings.layout_type == 'carousel' }}"
     },
     {
       "type": "header",
@@ -293,7 +398,111 @@
         { "value": "both",       "label": "Both" },
         { "value": "none",       "label": "None" }
       ],
-      "default": "navigation"
+      "default": "navigation",
+      "visible_if": "{{ block.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "select",
+      "id": "nav_border_style",
+      "label": "Navigation Border Style",
+      "options": [
+        { "value": "none",  "label": "None" },
+        { "value": "solid", "label": "Solid" }
+      ],
+      "default": "none",
+      "visible_if": "{{ block.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "range",
+      "id": "nav_border_width",
+      "label": "Navigation Border Width",
+      "min": 1, "max": 5, "step": 1, "unit": "px",
+      "default": 1,
+      "visible_if": "{{ block.settings.nav_border_style == 'solid' }}"
+    },
+    {
+      "type": "range",
+      "id": "nav_border_opacity",
+      "label": "Navigation Border Opacity",
+      "min": 0, "max": 100, "step": 5, "unit": "%",
+      "default": 100,
+      "visible_if": "{{ block.settings.nav_border_style == 'solid' }}"
+    },
+    {
+      "type": "range",
+      "id": "nav_border_radius",
+      "label": "Navigation Border Radius",
+      "min": 0, "max": 30, "step": 1, "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "nav_inherit_color",
+      "label": "Navigation Inherit Color",
+      "default": true,
+      "visible_if": "{{ block.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "color_scheme",
+      "id": "nav_color_scheme",
+      "label": "Navigation Color Scheme",
+      "default": "scheme-1",
+      "visible_if": "{{ block.settings.nav_inherit_color == false }}"
+    },
+    {
+      "type": "header",
+      "content": "Border"
+    },
+    {
+      "type": "select",
+      "id": "border_style",
+      "label": "Border Style",
+      "options": [
+        { "value": "none",  "label": "None" },
+        { "value": "solid", "label": "Solid" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Border Width",
+      "min": 1, "max": 5, "step": 1, "unit": "px",
+      "default": 1,
+      "visible_if": "{{ block.settings.border_style == 'solid' }}"
+    },
+    {
+      "type": "range",
+      "id": "border_opacity",
+      "label": "Border Opacity",
+      "min": 0, "max": 100, "step": 5, "unit": "%",
+      "default": 100,
+      "visible_if": "{{ block.settings.border_style == 'solid' }}"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border Radius",
+      "min": 0, "max": 30, "step": 1, "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Color"
+    },
+    {
+      "type": "checkbox",
+      "id": "inherit_color_scheme",
+      "label": "Inherit Color Scheme",
+      "default": true
+    },
+    {
+      "type": "color_scheme",
+      "id": "content_color_scheme",
+      "label": "Color Scheme",
+      "default": "scheme-1",
+      "visible_if": "{{ block.settings.inherit_color_scheme == false }}"
     },
     {
       "type": "header",

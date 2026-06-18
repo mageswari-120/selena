@@ -4,7 +4,7 @@
   Parent : blocks/wdt-header.liquid
 {%- endcomment -%}
 
-{%- if block.settings.label != blank and block.settings.url != blank -%}
+{%- if block.settings.label != blank -%}
   <div
     class="wdt-hdr__btn-wrap"
     {{ block.shopify_attributes }}
@@ -12,15 +12,19 @@
       padding-top: {{ block.settings.padding_top }}px;
       padding-bottom: {{ block.settings.padding_bottom }}px;
     "
-  > 
+  >
     <a
-      href="{{ block.settings.url }}" 
-      class="wdt-hdr__btn"
+      href="{{ block.settings.url | default: '#' }}"
+      class="wdt-hdr__btn btn btn-{{ block.settings.style }}"
+      {% if block.settings.open_new_tab %}
+        target="_blank"
+        rel="noopener noreferrer"
+      {% endif %}
     >
       {{- block.settings.label | escape -}}
     </a>
   </div>
-{%- endif -%} 
+{%- endif -%}
 
 {% stylesheet %}
 
@@ -29,23 +33,9 @@
   justify-content: inherit;
 }
 
-.wdt-hdr__btn {
-  display: inline-block;
-  padding: var(--button-padding-vertical, 14px) var(--button-padding-horizontal, 28px);
-  font-size: 0.875rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-decoration: none;
-  border-radius: var(--button-border-radius, 0px);
-  background: var(--button-primary-bg, #1a1a1a);
-  color: var(--button-primary-color, #fff);
-  border: 1px solid var(--button-primary-border, #1a1a1a);
-  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-}
-.wdt-hdr__btn:hover {
-  background: var(--button-primary-hover-bg, #333);
-  color: var(--button-primary-hover-color, #fff);
-  border-color: var(--button-primary-hover-border, #333);
+.wdt-hdr__btn.btn-link {
+  padding-left: 0;
+  padding-right: 0;
 }
 
 {% endstylesheet %}
@@ -57,12 +47,30 @@
     {
       "type": "text",
       "id": "label",
-      "label": "Button Label"
+      "label": "Button Label",
+      "default": "Shop now"
     },
     {
       "type": "url",
       "id": "url",
       "label": "Button URL"
+    },
+    {
+      "type": "select",
+      "id": "style",
+      "label": "Style",
+      "options": [
+        { "value": "primary", "label": "Primary" },
+        { "value": "outline-secondary", "label": "Secondary" },
+        { "value": "link", "label": "Link" }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_new_tab",
+      "label": "Open in new tab",
+      "default": false
     },
     {
       "type": "range",
