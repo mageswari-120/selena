@@ -1,0 +1,82 @@
+{%- comment -%}
+  Block  : wdt-card-heading.liquid
+  Type   : wdt-card-heading
+  Parent : blocks/wdt-card.liquid
+{%- endcomment -%}
+
+{%- if block.settings.heading != blank -%}
+  <blockquote
+    class="wdt-card__heading"
+    {{ block.shopify_attributes }}
+    style="
+      padding-top: {{ block.settings.padding_top }}px;
+      padding-bottom: {{ block.settings.padding_bottom }}px;
+      padding-left: {{ block.settings.padding_left }}px;
+      padding-right: {{ block.settings.padding_right }}px;
+    "
+  >
+    {{- block.settings.heading | escape -}}
+  </blockquote>
+{%- endif -%} 
+ 
+{% stylesheet %}
+ 
+.wdt-card__heading {
+  font-family: var(--font-heading--family, inherit);
+  font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+  font-weight: 500;
+  font-style: italic;
+  line-height: 1.6;
+  margin: 0;
+  border: none;
+  padding: 0;
+  color: var(--color-foreground, #1a1a1a);
+}
+
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Heading",
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Heading",
+      "default": "\"This product is absolutely amazing!\""
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding Top",
+      "min": 0, "max": 50, "step": 2, "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding Bottom",
+      "min": 0, "max": 50, "step": 2, "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "label": "Padding Left",
+      "min": 0, "max": 50, "step": 2, "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "label": "Padding Right",
+      "min": 0, "max": 50, "step": 2, "unit": "px",
+      "default": 0
+    }
+  ]
+}
+{% endschema %}

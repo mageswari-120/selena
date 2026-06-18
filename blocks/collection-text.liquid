@@ -1,49 +1,70 @@
 {% doc %}
-  Text block for the Collection List card. Free, merchant-authored text rendered
-  as a heading (H3–H6). Unlike the other Collection List blocks it is NOT
-  collection-aware — it does not read `closest.collection`.
+  blocks/collection-text.liquid  —  Selena Theme  (OS 3.0)
+  ─────────────────────────────────────────────────────────
+  Free merchant-authored inline text rendered as a heading
+  (H3–H6) or as a small badge/pill label (e.g. "0–10 Months",
+  "1–3 Years").
 
-  @example
-  {% content_for 'block', type: 'collection-text', id: 'collection-text' %}
+  Does NOT read closest.collection — the text is fully custom.
 {% enddoc %}
-
+ 
 {%- liquid
-  assign s = block.settings
-  assign tag = s.heading_size
+  assign s           = block.settings
+  assign tag         = s.heading_size
   assign border_alpha = s.border_opacity | divided_by: 100.0
 -%}
 
-<{{ tag }}
-  class="cl-text cl-text--{{ s.text_case }}"
+<{{ tag }} 
+  class="cl-text cl-text--{{ s.text_case }}{% if s.display_style == 'badge' %} cl-text--badge{% endif %}"
   style="
-    --cl-pt: {{ s.padding_top }}px;
-    --cl-pb: {{ s.padding_bottom }}px;
-    --cl-text-radius: {{ s.border_radius }}px;
-    {%- if s.border_style != 'none' %}--cl-text-border: {{ s.border_width }}px solid rgba(0,0,0,{{ border_alpha }});{% endif %}
+    --cl-text-pt: {{ s.padding_top }}px;
+    --cl-text-pb: {{ s.padding_bottom }}px;
+    {%- if s.border_radius > 0 -%}--cl-text-radius: {{ s.border_radius }}px;{%- endif -%}
+    {%- if s.badge_background != blank -%}--cl-text-bg: {{ s.badge_background }};{%- endif -%}
+    {%- if s.border_style != 'none' -%}
+      --cl-text-border: {{ s.border_width }}px solid rgba(0,0,0,{{ border_alpha }});
+    {%- endif -%}
   "
   {{ block.shopify_attributes }}
 >
-  {{ s.text }}
+  {{- s.text -}}
 </{{ tag }}>
 
 {% stylesheet %}
-  .cl-text {
-    margin: 0;
-    padding-top: var(--cl-pt, 0);
-    padding-bottom: var(--cl-pb, 0);
-    border: var(--cl-text-border, none);
-    border-radius: var(--cl-text-radius, 0);
-    font-family: var(--font-heading--family, inherit);
-    font-weight: var(--font-heading--weight, 700);
-    color: inherit;
-    line-height: 1.2;
-  }
-  .cl-text--uppercase { text-transform: uppercase; }
+/* ─────────────────────────────────────────────
+   Text Block — block styles
+───────────────────────────────────────────── */
 
-  h3.cl-text { font-size: clamp(1.25rem, 2.6vw, 1.6rem); }
-  h4.cl-text { font-size: clamp(1.05rem, 2.2vw, 1.25rem); }
-  h5.cl-text { font-size: 1rem; }
-  h6.cl-text { font-size: 0.85rem; letter-spacing: 0.04em; }
+.cl-text {
+  margin: 0;
+  padding-top:    var(--cl-text-pt, 0);
+  padding-bottom: var(--cl-text-pb, 0);
+  border:         var(--cl-text-border, none);
+  border-radius:  var(--cl-text-radius, 0);
+  font-family: var(--font-heading--family, inherit);
+  font-weight: var(--font-heading--weight, 700);
+  color: inherit;
+  line-height: 1.2;
+}
+.cl-text--uppercase { text-transform: uppercase; }
+
+/* Badge / pill label */
+.cl-text--badge {
+  display: inline-block;
+  width: auto;
+  padding: 0.35em 0.85em;
+  border-radius: var(--cl-text-radius, 999px);
+  background: var(--cl-text-bg, rgba(255,255,255,0.72));
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+}
+
+h3.cl-text { font-size: clamp(1.25rem, 2.6vw, 1.6rem); }
+h4.cl-text { font-size: clamp(1.05rem, 2.2vw, 1.25rem); }
+h5.cl-text { font-size: 1rem; }
+h6.cl-text { font-size: 0.85rem; letter-spacing: 0.04em; }
 {% endstylesheet %}
 
 {% schema %}
@@ -55,6 +76,24 @@
       "id": "text",
       "label": "Text",
       "default": "Text"
+    },
+    {
+      "type": "select",
+      "id": "display_style",
+      "label": "Display style",
+      "options": [
+        { "value": "heading", "label": "Heading" },
+        { "value": "badge",   "label": "Badge (pill)" }
+      ],
+      "default": "heading",
+      "info": "Badge renders as a small rounded pill — e.g. an age-range label."
+    },
+    {
+      "type": "color",
+      "id": "badge_background",
+      "label": "Badge background color",
+      "info": "Leave blank for translucent white.",
+      "visible_if": "{{ block.settings.display_style == 'badge' }}"
     },
     {
       "type": "select",
@@ -73,7 +112,7 @@
       "id": "text_case",
       "label": "Text case",
       "options": [
-        { "value": "default", "label": "Default" },
+        { "value": "default",   "label": "Default" },
         { "value": "uppercase", "label": "Uppercase" }
       ],
       "default": "default"
@@ -87,7 +126,7 @@
       "id": "border_style",
       "label": "Border style",
       "options": [
-        { "value": "none", "label": "None" },
+        { "value": "none",  "label": "None" },
         { "value": "solid", "label": "Solid" }
       ],
       "default": "none"
@@ -96,10 +135,7 @@
       "type": "range",
       "id": "border_width",
       "label": "Border width",
-      "min": 1,
-      "max": 5,
-      "step": 1,
-      "unit": "px",
+      "min": 1, "max": 5, "step": 1, "unit": "px",
       "default": 1,
       "visible_if": "{{ block.settings.border_style != 'none' }}"
     },
@@ -107,10 +143,7 @@
       "type": "range",
       "id": "border_opacity",
       "label": "Border opacity",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "%",
+      "min": 0, "max": 100, "step": 1, "unit": "%",
       "default": 100,
       "visible_if": "{{ block.settings.border_style != 'none' }}"
     },
@@ -118,10 +151,7 @@
       "type": "range",
       "id": "border_radius",
       "label": "Border radius",
-      "min": 0,
-      "max": 30,
-      "step": 1,
-      "unit": "px",
+      "min": 0, "max": 30, "step": 1, "unit": "px",
       "default": 0
     },
     {
@@ -132,24 +162,16 @@
       "type": "range",
       "id": "padding_top",
       "label": "Padding top",
-      "min": 0,
-      "max": 30,
-      "step": 1,
-      "unit": "px",
+      "min": 0, "max": 30, "step": 1, "unit": "px",
       "default": 0
     },
     {
       "type": "range",
       "id": "padding_bottom",
       "label": "Padding bottom",
-      "min": 0,
-      "max": 30,
-      "step": 1,
-      "unit": "px",
+      "min": 0, "max": 30, "step": 1, "unit": "px",
       "default": 0
     }
-  ],
-  "presets": [{ "name": "Text" }]
+  ]
 }
 {% endschema %}
-

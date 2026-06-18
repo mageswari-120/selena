@@ -1,15 +1,23 @@
 {% doc %}
-  Collection button block. Links to the closest collection (or a custom URL).
-  Supports the theme's primary/secondary/link button styles plus an "arrow"
-  style with four icon treatments.
- 
-  @example
-  {% content_for 'block', type: 'collection-button', id: 'collection-button' %}
-{% enddoc %}
+  blocks/collection-button.liquid  —  Selena Theme  (OS 3.0)
+  ───────────────────────────────────────────────────────────
+  CTA button for a collection card.  Links to the closest
+  collection's URL by default; merchant can override with a
+  custom URL.
 
-{%- liquid
+  Supports four button styles:
+    primary   — filled primary-colour button
+    secondary — outline button
+    link      — plain underlined text link
+    arrow     — label + directional arrow icon (four icon styles)
+
+  Reads:  closest.collection  (passed by the parent card)
+{% enddoc %} 
+
+{%- liquid  
+  assign s          = block.settings
   assign collection = closest.collection
-  assign s = block.settings
+
   assign link = s.button_link
   if link == blank
     assign link = collection.url
@@ -17,119 +25,154 @@
   if link == blank
     assign link = '#'
   endif
+
   assign label = s.button_label | default: 'Shop Now'
 -%}
 
-<div class="cl-collection-button" {{ block.shopify_attributes }}>
+<div
+  class="cl-collection-button{% if s.pin_bottom %} cl-btn-wrap--pin{% endif %}{% if s.align != 'auto' %} cl-btn-wrap--{{ s.align }}{% endif %}"
+  {{ block.shopify_attributes }}
+>
+
   {%- if s.button_style == 'arrow' -%}
     <a
-      class="cl-arrow-btn cl-arrow-btn--{{ s.arrow_style }}"
+      class="cl-arrow-btn cl-arrow-btn--{{ s.arrow_style }}{% unless s.show_label and label != blank %} cl-arrow-btn--icon-only{% endunless %}"
       href="{{ link }}"
       style="--cl-arrow-size: {{ s.arrow_size }}px;"
-      {% if s.open_new_tab %}target="_blank" rel="noopener"{% endif %}
+      aria-label="{{ label | default: collection.title | escape }}"
+      {%- if s.open_new_tab %} target="_blank" rel="noopener"{%- endif -%}
     >
-      <span class="cl-arrow-btn__label">{{ label }}</span>
+      {%- if s.show_label and label != blank -%}
+        <span class="cl-arrow-btn__label">{{ label }}</span>
+      {%- endif -%}
       {%- if s.arrow_button -%}
         <span class="cl-arrow-btn__icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false">
-            <path d="M5 12h14M12 5l7 7-7 7" />
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" focusable="false">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
           </svg>
         </span>
       {%- endif -%}
     </a>
+
   {%- else -%}
     <a
       class="cl-btn cl-btn--{{ s.button_style }}"
       href="{{ link }}"
-      {% if s.open_new_tab %}target="_blank" rel="noopener"{% endif %}
+      {%- if s.open_new_tab %} target="_blank" rel="noopener"{%- endif -%}
     >
-      {{ label }}
+      {{- label -}}
     </a>
   {%- endif -%}
+
 </div>
 
 {% stylesheet %}
-  .cl-collection-button { display: inline-flex; }
+/* ─────────────────────────────────────────────
+   Collection Button — block styles
+───────────────────────────────────────────── */
 
-  .cl-btn {
-    display: inline-block;
-    padding: var(--button-padding-vertical, 14px) var(--button-padding-horizontal, 28px);
-    border: 1px solid transparent;
-    border-radius: var(--button-border-radius, 0);
-    font: inherit;
-    line-height: 1;
-    text-align: center;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-  }
-  .cl-btn--primary {
-    background: var(--button-primary-bg);
-    color: var(--button-primary-color);
-    border-color: var(--button-primary-border);
-  }
-  .cl-btn--primary:hover {
-    background: var(--button-primary-hover-bg);
-    color: var(--button-primary-hover-color);
-    border-color: var(--button-primary-hover-border);
-  }
-  .cl-btn--secondary {
-    background: var(--button-outline-bg, transparent);
-    color: var(--button-outline-color);
-    border-color: var(--button-outline-border);
-  }
-  .cl-btn--secondary:hover {
-    background: var(--button-outline-hover-bg);
-    color: var(--button-outline-hover-color);
-    border-color: var(--button-outline-hover-border);
-  }
-  .cl-btn--link {
-    padding-inline: 0;
-    background: none;
-    border: none;
-    color: inherit;
-    text-decoration: underline;
-    text-underline-offset: 4px;
-  }
+.cl-collection-button {
+  display: inline-flex;
+}
 
-  /* ── Arrow button ── */
-  .cl-arrow-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    color: inherit;
-    text-decoration: none;
-    font: inherit;
-  }
-  .cl-arrow-btn__icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--cl-arrow-size, 32px);
-    height: var(--cl-arrow-size, 32px);
-    flex-shrink: 0;
-    transition: transform 0.2s ease, background 0.2s ease;
-  }
-  .cl-arrow-btn__icon svg { width: 52%; height: 52%; display: block; }
-  .cl-arrow-btn--filled-circle .cl-arrow-btn__icon {
-    border-radius: 50%;
-    background: var(--button-primary-bg);
-    color: var(--button-primary-color);
-  }
-  .cl-arrow-btn--outline-circle .cl-arrow-btn__icon {
-    border-radius: 50%;
-    border: 1.5px solid currentColor;
-  }
-  .cl-arrow-btn--square .cl-arrow-btn__icon {
-    border-radius: 4px;
-    background: var(--button-primary-bg);
-    color: var(--button-primary-color);
-  }
-  .cl-arrow-btn--minimal .cl-arrow-btn__icon {
-    width: auto;
-    height: auto;
-  }
-  .cl-arrow-btn:hover .cl-arrow-btn__icon { transform: translateX(3px); }
+/* Vertical pinning / horizontal alignment within the card column */
+.cl-btn-wrap--pin    { margin-top: auto; }
+.cl-btn-wrap--left   { align-self: flex-start; }
+.cl-btn-wrap--center { align-self: center; }
+.cl-btn-wrap--right  { align-self: flex-end; }
+
+/* ── Standard buttons ── */
+.cl-btn {
+  display: inline-block;
+  padding: var(--button-padding-vertical, 14px) var(--button-padding-horizontal, 28px);
+  border: 1px solid transparent;
+  border-radius: var(--button-border-radius, 0);
+  font: inherit;
+  font-size: 0.9rem;
+  line-height: 1;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.cl-btn--primary {
+  background:   var(--button-primary-bg);
+  color:        var(--button-primary-color);
+  border-color: var(--button-primary-border, transparent);
+}
+.cl-btn--primary:hover {
+  background:   var(--button-primary-hover-bg);
+  color:        var(--button-primary-hover-color);
+  border-color: var(--button-primary-hover-border, transparent);
+}
+
+.cl-btn--secondary {
+  background:   var(--button-outline-bg, transparent);
+  color:        var(--button-outline-color);
+  border-color: var(--button-outline-border);
+}
+.cl-btn--secondary:hover {
+  background:   var(--button-outline-hover-bg);
+  color:        var(--button-outline-hover-color);
+  border-color: var(--button-outline-hover-border);
+}
+
+.cl-btn--link {
+  padding-inline: 0;
+  background: none;
+  border: none;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.cl-btn--link:hover { opacity: 0.75; }
+
+/* ── Arrow button ── */
+.cl-arrow-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: inherit;
+  text-decoration: none;
+  font: inherit;
+}
+.cl-arrow-btn--icon-only { gap: 0; }
+
+.cl-arrow-btn__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width:  var(--cl-arrow-size, 32px);
+  height: var(--cl-arrow-size, 32px);
+  flex-shrink: 0;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.cl-arrow-btn__icon svg { width: 52%; height: 52%; display: block; }
+
+.cl-arrow-btn--filled-circle .cl-arrow-btn__icon {
+  border-radius: 50%;
+  background: var(--button-primary-bg);
+  color: var(--button-primary-color);
+}
+.cl-arrow-btn--outline-circle .cl-arrow-btn__icon {
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+}
+.cl-arrow-btn--square .cl-arrow-btn__icon {
+  border-radius: 4px;
+  background: var(--button-primary-bg);
+  color: var(--button-primary-color);
+}
+.cl-arrow-btn--minimal .cl-arrow-btn__icon {
+  width: auto;
+  height: auto;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cl-arrow-btn:hover .cl-arrow-btn__icon { transform: translateX(4px); }
+}
 {% endstylesheet %}
 
 {% schema %}
@@ -146,7 +189,7 @@
       "type": "url",
       "id": "button_link",
       "label": "Button link",
-      "info": "Leave blank to link to the collection."
+      "info": "Leave blank to link to the collection automatically."
     },
     {
       "type": "checkbox",
@@ -159,18 +202,26 @@
       "id": "button_style",
       "label": "Button style",
       "options": [
-        { "value": "primary", "label": "Primary" },
+        { "value": "primary",   "label": "Primary" },
         { "value": "secondary", "label": "Secondary" },
-        { "value": "link", "label": "Link" },
-        { "value": "arrow", "label": "Arrow button" }
+        { "value": "link",      "label": "Link" },
+        { "value": "arrow",     "label": "Arrow button" }
       ],
       "default": "primary"
     },
     {
       "type": "checkbox",
+      "id": "show_label",
+      "label": "Show label text",
+      "default": true,
+      "info": "Turn off for an icon-only arrow button.",
+      "visible_if": "{{ block.settings.button_style == 'arrow' }}"
+    },
+    {
+      "type": "checkbox",
       "id": "arrow_button",
-      "label": "Arrow button",
-      "default": false,
+      "label": "Show arrow icon",
+      "default": true,
       "visible_if": "{{ block.settings.button_style == 'arrow' }}"
     },
     {
@@ -178,10 +229,10 @@
       "id": "arrow_style",
       "label": "Arrow style",
       "options": [
-        { "value": "filled-circle", "label": "Filled circle" },
+        { "value": "filled-circle",  "label": "Filled circle" },
         { "value": "outline-circle", "label": "Outline circle" },
-        { "value": "square", "label": "Square" },
-        { "value": "minimal", "label": "Minimal" }
+        { "value": "square",         "label": "Square" },
+        { "value": "minimal",        "label": "Minimal" }
       ],
       "default": "filled-circle",
       "visible_if": "{{ block.settings.button_style == 'arrow' }}"
@@ -190,15 +241,33 @@
       "type": "range",
       "id": "arrow_size",
       "label": "Arrow size",
-      "min": 20,
-      "max": 60,
-      "step": 2,
-      "unit": "px",
+      "min": 20, "max": 60, "step": 2, "unit": "px",
       "default": 32,
       "visible_if": "{{ block.settings.button_style == 'arrow' }}"
+    },
+    {
+      "type": "header",
+      "content": "Placement"
+    },
+    {
+      "type": "select",
+      "id": "align",
+      "label": "Horizontal alignment",
+      "options": [
+        { "value": "auto",   "label": "Inherit from card" },
+        { "value": "left",   "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right",  "label": "Right" }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "checkbox",
+      "id": "pin_bottom",
+      "label": "Pin to bottom of card",
+      "default": false,
+      "info": "Pushes the button to the card's bottom edge — useful for a bottom-left arrow CTA."
     }
-  ],
-  "presets": [{ "name": "Collection button" }]
+  ]
 }
 {% endschema %}
-

@@ -1,13 +1,23 @@
-{% doc %}
-  Placeholder cards for the Collection List section when no collections are
-  selected yet (theme editor empty state). Renders four neutral cards.
+{%- comment -%}
+  snippets/cl-placeholders.liquid  —  Selena Theme
+  ─────────────────────────────────────────────────
+  Renders 5 skeleton placeholder cards when the Collection List
+  section has no blocks yet (empty state in the theme editor).
+  Uses the same grid/carousel track classes as the real cards so
+  layout is identical.
+{%- endcomment -%}
 
-  @example
-  {% render 'cl-placeholders' %}
-{% enddoc %}
-
-{%- for i in (1..4) -%}
-  <div class="cl-collection-card cl-card--placeholder" role="listitem" aria-hidden="true">
-    {{ 'collection-1' | placeholder_svg_tag: 'cl-card__placeholder-svg' }}
+{%- for i in (1..5) -%}
+  <div class="cl-card--placeholder" aria-hidden="true">
+    {{- 'collection-' | append: i | placeholder_svg_tag: 'cl-placeholder__svg' -}}
   </div>
 {%- endfor -%}
+ 
+{% stylesheet %}
+.cl-placeholder__svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0.18;
+} 
+{% endstylesheet %}

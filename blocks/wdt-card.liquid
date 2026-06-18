@@ -1,0 +1,369 @@
+{%- comment -%}
+  Block    : wdt-card.liquid
+  Type     : wdt-card
+  Parent   : blocks/wdt-content.liquid
+  Children : wdt-image-static · wdt-card-heading · wdt-card-description
+             wdt-custom-rating · wdt-client-details
+             (merchant-reorderable via content_for 'blocks')
+{%- endcomment -%}
+
+{%- liquid
+  assign card_type      = block.settings.card_type
+  assign alignment      = block.settings.card_alignment
+  assign card_gap       = block.settings.card_gap
+  assign border_style   = block.settings.card_border_style
+  assign border_width   = block.settings.card_border_width
+  assign border_opacity = block.settings.card_border_opacity | divided_by: 100.0
+  assign border_radius  = block.settings.card_border_radius
+  assign enable_overlay = block.settings.enable_overlay
+  assign overlay_color  = block.settings.overlay_color
+  assign overlay_style  = block.settings.overlay_style
+  assign overlay_dir    = block.settings.overlay_direction
+  assign inherit_scheme = block.settings.inherit_color_scheme
+  assign card_scheme    = block.settings.card_color_scheme
+   
+  comment ── Build border CSS value ──
+  endcomment
+  if border_style == 'solid'
+    assign border_css = border_width | append: 'px solid rgba(0,0,0,' | append: border_opacity | append: ')'
+  else
+    assign border_css = 'none'
+  endif
+
+  comment ── Build overlay CSS value ──
+  endcomment
+  if enable_overlay
+    if overlay_style == 'gradient'
+      assign overlay_css = 'linear-gradient(' | append: overlay_dir | append: ', ' | append: overlay_color | append: 'cc, transparent)'
+    else
+      assign overlay_css = overlay_color | append: '26'
+    endif
+  else
+    assign overlay_css = 'transparent'
+  endif
+
+  comment ── Color scheme class ──
+  endcomment
+  unless inherit_scheme
+    assign scheme_class = 'color-' | append: card_scheme
+  else
+    assign scheme_class = ''
+  endunless
+
+  comment ── Layout: carousel wraps each card in .carousel-item ──
+  endcomment
+  assign parent_layout = 'carousel'
+  for b in section.blocks
+    if b.type == 'wdt-content'
+      assign parent_layout = b.settings.layout_type
+      break
+    endif
+  endfor
+
+  assign cols_desktop = '3'
+  assign cols_mobile  = '1'
+  for b in section.blocks
+    if b.type == 'wdt-content'
+      assign cols_desktop = b.settings.columns_desktop
+      assign cols_mobile  = b.settings.columns_mobile
+      break
+    endif
+  endfor
+
+  comment ── First card gets the carousel "active" class.
+    Theme blocks have no block.index, so identify the first card by id from
+    section.blocks (Bootstrap hides every .carousel-item that isn't .active). ──
+  endcomment
+  assign first_card_id = ''
+  for b in section.blocks
+    if b.type == 'wdt-card'
+      assign first_card_id = b.id
+      break
+    endif
+  endfor
+-%}
+
+{%- if parent_layout == 'carousel' -%}
+  {%- comment -%} Bootstrap carousel-item wraps the card in carousel mode {%- endcomment -%}
+  <div class="carousel-item wdt-content__slide{% if block.id == first_card_id %} active{% endif %}">
+{%- else -%}
+  {%- comment -%} Grid mode: Bootstrap column wraps the card {%- endcomment -%}
+  <div class="wdt-content__grid-item col-12 col-sm-{{ 12 | divided_by: cols_mobile }} col-md-{{ 12 | divided_by: cols_desktop }}">
+{%- endif -%}
+
+  <article
+    class="wdt-card wdt-card--{{ card_type }} wdt-card--img-{{ block.settings.card_image_position }} {{ scheme_class }} text-{{ alignment }}"
+    {{ block.shopify_attributes }}
+    style="
+      --wdt-card-gap: {{ card_gap }}px;
+      --wdt-card-pt: {{ block.settings.card_pt }}px;
+      --wdt-card-pb: {{ block.settings.card_pb }}px;
+      --wdt-card-pl: {{ block.settings.card_pl }}px;
+      --wdt-card-pr: {{ block.settings.card_pr }}px;
+      --wdt-card-border: {{ border_css }};
+      --wdt-card-radius: {{ border_radius }}px;
+      --wdt-card-overlay: {{ overlay_css }};
+    "
+  >
+    {%- if enable_overlay -%}
+      <div class="wdt-card__overlay" aria-hidden="true"></div>
+    {%- endif -%}
+
+    <div class="wdt-card__inner">
+      {% content_for 'blocks' %}
+    </div>
+
+  </article>
+
+{%- if parent_layout == 'carousel' or parent_layout == 'grid' -%}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+
+/* ── Card base ── */
+.wdt-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding-top: var(--wdt-card-pt, 20px);
+  padding-bottom: var(--wdt-card-pb, 20px);
+  padding-left: var(--wdt-card-pl, 20px);
+  padding-right: var(--wdt-card-pr, 20px);
+  border: var(--wdt-card-border, none);
+  border-radius: var(--wdt-card-radius, 0px);
+  overflow: hidden;
+  background-color: var(--color-background, #fff);
+  color: var(--color-foreground, #1a1a1a);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.wdt-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(0,0,0,.08);
+}
+
+/* ── Overlay ── */
+.wdt-card__overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--wdt-card-overlay, transparent);
+  pointer-events: none;
+  z-index: 0;
+}
+.wdt-card__overlay ~ .wdt-card__inner { position: relative; z-index: 1; }
+
+/* ── Inner ── */
+.wdt-card__inner {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: var(--wdt-card-gap, 10px);
+}
+
+/* ── Layout: image top (default) ── */
+.wdt-card--grid.wdt-card--img-top   { flex-direction: column; }
+.wdt-card--grid.wdt-card--img-bottom { flex-direction: column-reverse; }
+
+/* ── Layout: image left / right ── */
+.wdt-card--grid.wdt-card--img-left  { flex-direction: row; align-items: flex-start; }
+.wdt-card--grid.wdt-card--img-right { flex-direction: row-reverse; align-items: flex-start; }
+
+/* ── Overlay card ── */
+.wdt-card--overlay { position: relative; min-height: 280px; }
+.wdt-card--overlay .wdt-card__inner { margin-top: auto; position: relative; z-index: 2; }
+
+/* ── Carousel slide ── */
+.wdt-content__slide { padding-inline: 0; }
+
+/* Fallback: if no slide is marked active (e.g. before Bootstrap JS runs),
+   keep the first slide visible so testimonials are never fully hidden. */
+.wdt-content__track.carousel-inner:not(:has(.carousel-item.active)) > .carousel-item:first-child {
+  display: block;
+}
+
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Testimonial Card",
+  "blocks": [
+    { "type": "wdt-image-static" },
+    { "type": "wdt-card-heading" },
+    { "type": "wdt-card-description" },
+    { "type": "wdt-custom-rating" },
+    { "type": "wdt-client-details" }
+  ],
+  "settings": [
+    {
+      "type": "header",
+      "content": "Card Layout"
+    },
+    {
+      "type": "select",
+      "id": "card_type",
+      "label": "Type",
+      "options": [
+        { "value": "grid",    "label": "Grid" },
+        { "value": "overlay", "label": "Overlay" }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "select",
+      "id": "card_image_position",
+      "label": "Image Position",
+      "info": "Applies when Type = Grid",
+      "options": [
+        { "value": "top",    "label": "Top" },
+        { "value": "bottom", "label": "Bottom" },
+        { "value": "left",   "label": "Left" },
+        { "value": "right",  "label": "Right" }
+      ],
+      "default": "top",
+      "visible_if": "{{ block.settings.card_type == 'grid' }}"
+    },
+    {
+      "type": "select",
+      "id": "card_alignment",
+      "label": "Alignment",
+      "options": [
+        { "value": "start",  "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "end",    "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "Gap between elements",
+      "min": 0, "max": 50, "step": 2, "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_overlay",
+      "label": "Enable Overlay",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay Color",
+      "default": "#000000",
+      "visible_if": "{{ block.settings.enable_overlay == true }}"
+    },
+    {
+      "type": "select",
+      "id": "overlay_style",
+      "label": "Overlay Style",
+      "options": [
+        { "value": "solid",    "label": "Solid" },
+        { "value": "gradient", "label": "Gradient" }
+      ],
+      "default": "solid",
+      "visible_if": "{{ block.settings.enable_overlay == true }}"
+    },
+    {
+      "type": "select",
+      "id": "overlay_direction",
+      "label": "Overlay Direction",
+      "info": "Applies when Overlay Style = Gradient",
+      "options": [
+        { "value": "to bottom", "label": "Top → Bottom" },
+        { "value": "to top",    "label": "Bottom → Top" }
+      ],
+      "default": "to bottom",
+      "visible_if": "{{ block.settings.enable_overlay == true and block.settings.overlay_style == 'gradient' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "inherit_color_scheme",
+      "label": "Inherit Color Scheme",
+      "default": true
+    },
+    {
+      "type": "color_scheme",
+      "id": "card_color_scheme",
+      "label": "Color Scheme",
+      "default": "scheme-1",
+      "visible_if": "{{ block.settings.inherit_color_scheme == false }}"
+    },
+    {
+      "type": "header",
+      "content": "Border"
+    },
+    {
+      "type": "select",
+      "id": "card_border_style",
+      "label": "Border Style",
+      "options": [
+        { "value": "none",  "label": "None" },
+        { "value": "solid", "label": "Solid" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range",
+      "id": "card_border_width",
+      "label": "Border Width",
+      "min": 1, "max": 5, "step": 1, "unit": "px",
+      "default": 1,
+      "visible_if": "{{ block.settings.card_border_style == 'solid' }}"
+    },
+    {
+      "type": "range",
+      "id": "card_border_opacity",
+      "label": "Border Opacity",
+      "min": 0, "max": 100, "step": 5, "unit": "%",
+      "default": 100,
+      "visible_if": "{{ block.settings.card_border_style == 'solid' }}"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Border Radius",
+      "min": 0, "max": 30, "step": 1, "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.card_border_style == 'solid' }}"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "card_pt",
+      "label": "Padding Top",
+      "min": 0, "max": 50, "step": 2, "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_pb",
+      "label": "Padding Bottom",
+      "min": 0, "max": 50, "step": 2, "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_pl",
+      "label": "Padding Left",
+      "min": 0, "max": 50, "step": 2, "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_pr",
+      "label": "Padding Right",
+      "min": 0, "max": 50, "step": 2, "unit": "px",
+      "default": 20
+    }
+  ]
+}
+{% endschema %}

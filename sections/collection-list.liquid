@@ -1,44 +1,36 @@
 {%- comment -%}
   ============================================================
-  Section : Collection List   (Selena theme)
+  Section : Collection List  —  Selena Theme  (OS 3.0)
   ============================================================
-  Modern theme-blocks architecture.
+  Architecture:
+  • Section owns the collection_list picker + loop
+  • For each collection, renders 5 fixed-slot blocks:
+      content_for 'block', type:'collection-image',       id:'cl-img'
+      content_for 'block', type:'collection-title',       id:'cl-title'
+      content_for 'block', type:'collection-description', id:'cl-desc'
+      content_for 'block', type:'collection-text',        id:'cl-text'
+      content_for 'block', type:'collection-button',      id:'cl-btn'
+  • closest.collection: col passed into each slot so each
+    block can read the per-iteration collection
+  • Every block renders once per collection with col's data;
+    none nest children (no content_for 'blocks' anywhere)
 
-  • Merchant adds one "collection-card" block per tile. The section renders
-    them all with a single {% content_for 'blocks' %} (Shopify allows only
-    one per file), wrapped in either a grid or a carousel.
-  • Each card (blocks/collection-card.liquid) picks its own collection and
-    passes it down to its child blocks as closest.collection. A card can also
-    show a custom image (override on the collection-image child block) for a
-    non-collection tile.
-  • Cards own the visual frame and render their child blocks
-    (image / title / description / text / button) via {% content_for 'blocks' %}.
-
-  Grid vs. carousel and the card/block settings compose every look, so the
-  section appears once in the "Add section" picker.
+  OS 3.0 rules correctly applied:
+    content_for 'block', id: → section Liquid ✅
+    id: in schema blocks     → NOT in schema, only in Liquid ✅
   ============================================================
 {%- endcomment -%}
 
 {%- liquid
   assign s = section.settings
 
-  comment — Outer wrapper width
-  endcomment
-  assign wrap_class = 'cl-wrap cl-wrap--full'
-  if s.enable_container
-    assign wrap_class = 'cl-wrap cl-wrap--boxed'
-  elsif s.width == 'container_fluid'
-    assign wrap_class = 'cl-wrap cl-wrap--fluid'
-  endif
-
-  comment — Carousel nav visibility
-  endcomment
   assign is_carousel = false
   if s.layout_type == 'carousel'
     assign is_carousel = true
   endif
+
   assign show_arrows = false
-  assign show_dots = false
+  assign show_dots   = false
   if s.carousel_nav == 'navigation' or s.carousel_nav == 'both'
     assign show_arrows = true
   endif
@@ -46,266 +38,295 @@
     assign show_dots = true
   endif
 
-  comment — Carousel nav border + scheme
-  endcomment
   assign nav_border_alpha = s.carousel_border_opacity | divided_by: 100.0
+
   assign nav_scheme_class = ''
   unless s.carousel_inherit_scheme
     assign nav_scheme_class = 'color-' | append: s.carousel_color_scheme
   endunless
+
+  assign wrap_class = 'cl-wrap'
+  if s.enable_container
+    assign wrap_class = wrap_class | append: ' cl-wrap--boxed'
+  elsif s.width == 'container_fluid'
+    assign wrap_class = wrap_class | append: ' cl-wrap--fluid'
+  else
+    assign wrap_class = wrap_class | append: ' cl-wrap--full'
+  endif
+
+  assign collections  = s.collections
+  assign border_alpha = s.card_border_opacity | divided_by: 100.0
+
+  assign card_classes = 'cl-collection-card'
+  assign card_classes = card_classes | append: ' cl-shape-'   | append: s.card_image_shape
+  assign card_classes = card_classes | append: ' cl-overlay-' | append: s.card_overlay_style
+  assign card_classes = card_classes | append: ' cl-align-'   | append: s.card_content_alignment
+  assign card_classes = card_classes | append: ' cl-pos-'     | append: s.card_content_position
 -%}
+
+{%- capture card_style -%} 
+  --cl-card-radius: {{ s.card_border_radius }}px;
+  --cl-arch-h:      {{ s.card_arch_height }}px;
+  --cl-arch-w:      {{ s.card_arch_width }}px;
+  --cl-img-pos:     {{ s.card_image_position }};
+  --cl-pad-t:       {{ s.card_padding_top }}px;
+  --cl-pad-b:       {{ s.card_padding_bottom }}px;
+  --cl-pad-l:       {{ s.card_padding_left }}px;
+  --cl-pad-r:       {{ s.card_padding_right }}px;
+  {%- if s.card_border_style != 'none' -%}
+    border: {{ s.card_border_width }}px solid rgba(0,0,0,{{ border_alpha }});
+  {%- endif -%}
+{%- endcapture -%}
 
 <style>
   #shopify-section-{{ section.id }} {
-    --cl-pt: {{ s.padding_top }}px;
-    --cl-pb: {{ s.padding_bottom }}px;
+    --cl-pt:           {{ s.padding_top }}px;
+    --cl-pb:           {{ s.padding_bottom }}px;
     --cl-cols-desktop: {{ s.columns_desktop }};
-    --cl-cols-mobile: {{ s.columns_mobile }};
-    --cl-col-gap: {{ s.column_gap }}px;
-    --cl-row-gap: {{ s.row_gap }}px;
-    --cl-nav-radius: {{ s.carousel_border_radius }}px;
-    {%- if s.carousel_border_style != 'none' %}
+    --cl-cols-mobile:  {{ s.columns_mobile | plus: 0 }};
+    --cl-col-gap:      {{ s.column_gap }}px;
+    --cl-row-gap:      {{ s.row_gap }}px;
+    --cl-nav-radius:   {{ s.carousel_border_radius }}px;
+    {%- if s.carousel_border_style != 'none' -%}
       --cl-nav-border: {{ s.carousel_border_width }}px solid rgba(128,128,128,{{ nav_border_alpha }});
-    {%- endif %}
+    {%- endif -%}
   }
 </style>
 
-<div
-  class="collection-list color-{{ s.color_scheme }}"
-  data-section-id="{{ section.id }}"
->
+<div class="collection-list color-{{ s.color_scheme }}" data-section-id="{{ section.id }}">
   <div class="{{ wrap_class }}">
-    {%- comment -%} Single content_for 'blocks' (Shopify allows only one per file);
-        the carousel wrapper/nav are layered around it conditionally. {%- endcomment -%}
-    {%- liquid
-      assign track_class = 'cl-grid'
-      if is_carousel
-        assign track_class = 'cl-carousel__track'
-      endif
-    -%}
-    {%- if is_carousel -%}<div class="cl-carousel" data-cl-carousel>{%- endif -%}
-      <div class="{{ track_class }}" role="list"{% if is_carousel %} data-cl-track{% endif %}>
-        {%- if section.blocks.size > 0 -%}
-          {% content_for 'blocks' %}
-        {%- else -%}
-          {%- render 'cl-placeholders' -%}
-        {%- endif -%}
-      </div>
-      {%- if is_carousel -%}
-        {%- if show_arrows and section.blocks.size > 0 -%}
+
+    {%- if is_carousel -%}
+      <div class="cl-carousel" data-cl-carousel>
+        <div class="cl-carousel__track" role="list" data-cl-track>
+    {%- else -%}
+      <div class="cl-grid" role="list">
+    {%- endif -%}
+
+          {%- if collections.size > 0 -%}
+            {%- for col in collections -%}
+              <div class="{{ card_classes }}" role="listitem" style="{{ card_style }}">
+                <div class="cl-card__inner">
+                  {%- comment -%}
+                    Fixed-slot calls — id: goes here in the Liquid tag only.
+                    Schema blocks array has NO id attribute.
+                    closest.collection: col passes the loop collection
+                    into each block so it renders col's data.
+                  {%- endcomment -%}
+                  {% content_for 'block', type: 'collection-image', id: 'cl-img', closest.collection: col %}
+                  {% content_for 'block', type: 'collection-title', id: 'cl-title', closest.collection: col %}
+                  {% content_for 'block', type: 'collection-description', id: 'cl-desc', closest.collection: col %}
+                  {% content_for 'block', type: 'collection-text', id: 'cl-text', closest.collection: col %}
+                  {% content_for 'block', type: 'collection-button', id: 'cl-btn', closest.collection: col %}
+                </div>
+              </div>
+            {%- endfor -%}
+          {%- else -%}
+            {%- render 'cl-placeholders' -%}
+          {%- endif -%}
+
+    {%- if is_carousel -%}
+        </div>
+        {%- if show_arrows -%}
           <div class="cl-carousel__nav {{ nav_scheme_class }}">
             <button type="button" class="cl-carousel__arrow" data-cl-prev aria-label="Previous">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M15 18l-6-6 6-6"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
             </button>
             <button type="button" class="cl-carousel__arrow" data-cl-next aria-label="Next">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M9 6l6 6-6 6"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
             </button>
           </div>
         {%- endif -%}
-        {%- if show_dots and section.blocks.size > 0 -%}
+        {%- if show_dots -%}
           <div class="cl-carousel__dots" data-cl-dots aria-hidden="true"></div>
         {%- endif -%}
       </div>
+    {%- else -%}
+      </div>
     {%- endif -%}
+
   </div>
 </div>
 
 {% stylesheet %}
-  .collection-list {
-    padding-top: var(--cl-pt, 50px);
-    padding-bottom: var(--cl-pb, 50px);
-    background: var(--color-background);
-    color: var(--color-foreground);
-  }
+.collection-list {
+  padding-top:    var(--cl-pt, 50px);
+  padding-bottom: var(--cl-pb, 50px);
+  background: var(--color-background);
+  color:      var(--color-foreground);
+}
+.cl-wrap--boxed  { max-width: var(--page-width,1400px); margin-inline: auto; padding-inline: var(--page-margin,20px); }
+.cl-wrap--fluid  { padding-inline: var(--page-margin,20px); }
+.cl-wrap--full   { padding-inline: 0; }
 
-  /* ── Wrapper widths ── */ 
-  .cl-wrap--boxed {
-    max-width: var(--page-width, 1400px);
-    margin-inline: auto;
-    padding-inline: var(--page-margin, 20px);
-  }
-  .cl-wrap--fluid {
-    max-width: 100%;
-    padding-inline: var(--page-margin, 20px);
-  }
-  .cl-wrap--full {
-    max-width: 100%;
-    padding-inline: 0;
-  }
+/* ── Grid ── */
+.cl-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cl-cols-mobile,2), minmax(0,1fr));
+  column-gap: var(--cl-col-gap,20px);
+  row-gap:    var(--cl-row-gap,20px);
+}
+@media (min-width: 750px) {
+  .cl-grid { grid-template-columns: repeat(var(--cl-cols-desktop,5), minmax(0,1fr)); }
+}
 
-  /* ── Grid ── */
-  .cl-grid {
-    display: grid;
-    grid-template-columns: repeat(var(--cl-cols-mobile, 2), minmax(0, 1fr));
-    column-gap: var(--cl-col-gap, 20px);
-    row-gap: var(--cl-row-gap, 20px);
-  }
-  @media (min-width: 750px) {
-    .cl-grid {
-      grid-template-columns: repeat(var(--cl-cols-desktop, 5), minmax(0, 1fr));
-    }
-  }
-
-  /* ── Carousel ── */
-  .cl-carousel { position: relative; }
-  .cl-carousel__track {
-    display: flex;
-    gap: var(--cl-col-gap, 20px);
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    padding-bottom: 4px;
-  }
-  .cl-carousel__track::-webkit-scrollbar { display: none; }
+/* ── Carousel ── */
+.cl-carousel { position: relative; }
+.cl-carousel__track {
+  display: flex; gap: var(--cl-col-gap,20px);
+  overflow-x: auto; scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 4px;
+}
+.cl-carousel__track::-webkit-scrollbar { display: none; }
+.cl-carousel__track > * {
+  scroll-snap-align: start;
+  flex: 0 0 calc((100% - (var(--cl-cols-mobile,2) - 1) * var(--cl-col-gap,20px)) / var(--cl-cols-mobile,2));
+}
+@media (min-width: 750px) {
   .cl-carousel__track > * {
-    scroll-snap-align: start;
-    flex: 0 0 calc((100% - (var(--cl-cols-mobile, 2) - 1) * var(--cl-col-gap, 20px)) / var(--cl-cols-mobile, 2));
+    flex-basis: calc((100% - (var(--cl-cols-desktop,5) - 1) * var(--cl-col-gap,20px)) / var(--cl-cols-desktop,5));
   }
-  @media (min-width: 750px) {
-    .cl-carousel__track > * {
-      flex-basis: calc((100% - (var(--cl-cols-desktop, 5) - 1) * var(--cl-col-gap, 20px)) / var(--cl-cols-desktop, 5));
-    }
-  }
+}
+.cl-carousel__nav {
+  position: absolute; inset: 0;
+  display: flex; justify-content: space-between; align-items: center;
+  pointer-events: none;
+}
+.cl-carousel__arrow {
+  pointer-events: auto;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; padding: 0;
+  border-radius: var(--cl-nav-radius,50%);
+  border: var(--cl-nav-border, 1px solid rgba(0,0,0,0.12));
+  background: var(--color-background,#fff); color: var(--color-foreground,#1a1a1a);
+  cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.10);
+  transition: opacity 0.2s ease, transform 0.2s ease; z-index: 2;
+}
+.cl-carousel__arrow:first-child { margin-left: -22px; }
+.cl-carousel__arrow:last-child  { margin-right: -22px; }
+.cl-carousel__arrow svg { width: 18px; height: 18px; display: block; }
+.cl-carousel__arrow:hover { transform: scale(1.08); }
+.cl-carousel__arrow[disabled] { opacity: 0.28; cursor: default; transform: none; }
+.cl-carousel__dots { display: flex; justify-content: center; gap: 0.45rem; margin-top: 1.25rem; }
+.cl-carousel__dot {
+  width: 8px; height: 8px; padding: 0; border: none; border-radius: 50%;
+  background: currentColor; opacity: 0.22; cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.cl-carousel__dot.is-active { opacity: 1; transform: scale(1.35); }
 
-  .cl-carousel__nav {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    pointer-events: none;
-  }
-  .cl-carousel__arrow {
-    pointer-events: auto;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    border-radius: var(--cl-nav-radius, 0);
-    border: var(--cl-nav-border, none);
-    background: var(--color-background, #fff);
-    color: var(--color-foreground, #1a1a1a);
-    cursor: pointer;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
-    transition: opacity 0.2s ease, transform 0.2s ease;
-  }
-  .cl-carousel__arrow:first-child { margin-left: -8px; }
-  .cl-carousel__arrow:last-child { margin-right: -8px; }
-  .cl-carousel__arrow svg { width: 20px; height: 20px; }
-  .cl-carousel__arrow:hover { transform: scale(1.06); }
-  .cl-carousel__arrow[disabled] { opacity: 0.3; cursor: default; transform: none; }
+/* ── Card tile ── */
+.cl-collection-card {
+  position: relative; display: flex; flex-direction: column;
+  height: 100%; border-radius: var(--cl-card-radius,0);
+  overflow: hidden; background: var(--color-background,transparent);
+  color: inherit; transition: box-shadow 0.25s ease;
+}
+.cl-collection-card:hover { box-shadow: 0 12px 32px rgba(0,0,0,0.10); }
+.cl-card__inner {
+  display: flex; flex-direction: column; gap: 0.5rem; flex: 1;
+  padding: var(--cl-pad-t,0) var(--cl-pad-r,0) var(--cl-pad-b,0) var(--cl-pad-l,0);
+}
+.cl-align-left   .cl-card__inner { align-items: flex-start; text-align: left; }
+.cl-align-center .cl-card__inner { align-items: center;     text-align: center; }
+.cl-align-right  .cl-card__inner { align-items: flex-end;   text-align: right; }
 
-  .cl-carousel__dots {
-    display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-top: 1.25rem;
-  }
-  .cl-carousel__dot {
-    width: 8px;
-    height: 8px;
-    padding: 0;
-    border: none;
-    border-radius: 50%;
-    background: currentColor;
-    opacity: 0.25;
-    cursor: pointer;
-    transition: opacity 0.2s ease, transform 0.2s ease;
-  }
-  .cl-carousel__dot.is-active { opacity: 1; transform: scale(1.3); }
+/* on-image overlay */
+.cl-overlay-on-image .cl-card__inner { position: relative; min-height: 260px; }
+.cl-overlay-on-image .cl-collection-image { position: absolute; inset: 0; z-index: 0; }
+.cl-overlay-on-image .cl-collection-image,
+.cl-overlay-on-image .cl-collection-image__media,
+.cl-overlay-on-image .cl-collection-image__img { height: 100%; border-radius: 0; }
+.cl-overlay-on-image .cl-collection-title,
+.cl-overlay-on-image .cl-collection-description,
+.cl-overlay-on-image .cl-text,
+.cl-overlay-on-image .cl-collection-button { position: relative; z-index: 1; }
+.cl-overlay-on-image.cl-pos-top    .cl-card__inner { justify-content: flex-start; }
+.cl-overlay-on-image.cl-pos-center .cl-card__inner { justify-content: center; }
+.cl-overlay-on-image.cl-pos-bottom .cl-card__inner { justify-content: flex-end; }
+.cl-overlay-below-image .cl-card__inner { justify-content: flex-start; }
 
-  /* ── Placeholder cards (empty state in editor) ── */
-  .cl-card--placeholder {
-    border-radius: 8px;
-    background: rgba(0, 0, 0, 0.04);
-    aspect-ratio: 3 / 4;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .cl-card--placeholder svg { width: 60%; height: 60%; opacity: 0.25; }
+/* image shapes */
+.cl-shape-circle .cl-collection-image__media { border-radius: 50%; aspect-ratio: 1/1; }
+.cl-shape-oval   .cl-collection-image__media { border-radius: 50%/42%; aspect-ratio: 4/5; }
+.cl-shape-pill   .cl-collection-image__media { border-radius: 999px; aspect-ratio: 3/4; }
+.cl-shape-rounded-rectangle .cl-collection-image__media { border-radius: 16px; }
+.cl-shape-custom-radius .cl-collection-image__media { border-radius: var(--cl-custom-radius,16px); }
+.cl-shape-arch .cl-collection-image__media {
+  height: var(--cl-arch-h,300px); aspect-ratio: auto;
+  border-radius: 50% 50% 0 0 / 65% 65% 0 0;
+}
+.cl-shape-rounded-arch .cl-collection-image__media {
+  height: var(--cl-arch-h,300px); aspect-ratio: auto;
+  border-radius: calc(var(--cl-arch-w,250px)/2) calc(var(--cl-arch-w,250px)/2) 0 0;
+}
+.cl-shape-circle .cl-collection-image,
+.cl-shape-oval   .cl-collection-image,
+.cl-shape-pill   .cl-collection-image { margin-inline: auto; }
+
+.cl-card--placeholder { aspect-ratio: 3/4; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.04); border-radius: var(--cl-card-radius,0); }
+.cl-placeholder__svg  { width: 56%; height: 56%; opacity: 0.2; }
+@media (prefers-reduced-motion: reduce) { .cl-collection-card { transition: none; } }
 {% endstylesheet %}
- 
+
 {% javascript %}
-  (function () {
-    'use strict';
-
-    function initCarousel(root) {
-      var track = root.querySelector('[data-cl-track]');
-      if (!track) return;
-
-      var items = Array.prototype.slice.call(track.children);
-      if (!items.length) return;
-
-      var prev = root.querySelector('[data-cl-prev]');
-      var next = root.querySelector('[data-cl-next]');
-      var dotsWrap = root.querySelector('[data-cl-dots]');
-      var dots = [];
-
-      function step() {
-        var first = items[0];
-        var second = items[1];
-        if (second) return second.offsetLeft - first.offsetLeft;
-        return first.getBoundingClientRect().width;
-      }
-
-      function activeIndex() {
-        var s = step() || 1;
-        return Math.round(track.scrollLeft / s);
-      }
-
-      function updateArrows() {
-        if (prev) prev.disabled = track.scrollLeft <= 2;
-        if (next) next.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 2;
-      }
-
-      function updateDots() {
-        if (!dots.length) return;
-        var idx = activeIndex();
-        dots.forEach(function (d, i) { d.classList.toggle('is-active', i === idx); });
-      }
-
-      if (prev) prev.addEventListener('click', function () { track.scrollBy({ left: -step(), behavior: 'smooth' }); });
-      if (next) next.addEventListener('click', function () { track.scrollBy({ left: step(), behavior: 'smooth' }); });
-
-      if (dotsWrap) {
-        items.forEach(function (_, i) {
-          var b = document.createElement('button');
-          b.type = 'button';
-          b.className = 'cl-carousel__dot';
-          b.setAttribute('aria-label', 'Go to item ' + (i + 1));
-          b.addEventListener('click', function () { track.scrollTo({ left: step() * i, behavior: 'smooth' }); });
-          dotsWrap.appendChild(b);
-          dots.push(b);
-        });
-      }
-
-      track.addEventListener('scroll', function () { updateArrows(); updateDots(); }, { passive: true });
-      updateArrows();
-      updateDots();
+(function () {
+  'use strict';
+  function initCarousel(root) {
+    var track = root.querySelector('[data-cl-track]');
+    if (!track) return;
+    var items = Array.prototype.slice.call(track.children);
+    if (!items.length) return;
+    var prev = root.querySelector('[data-cl-prev]');
+    var next = root.querySelector('[data-cl-next]');
+    var dotsWrap = root.querySelector('[data-cl-dots]');
+    var dots = [];
+    function sw() { return items[1] ? items[1].offsetLeft - items[0].offsetLeft : items[0].getBoundingClientRect().width; }
+    function ai() { return Math.round(track.scrollLeft / (sw() || 1)); }
+    function ua() { if (prev) prev.disabled = track.scrollLeft <= 2; if (next) next.disabled = (track.scrollLeft + track.clientWidth) >= (track.scrollWidth - 2); }
+    function ud() { var i = ai(); dots.forEach(function(d,j){ d.classList.toggle('is-active', j===i); }); }
+    if (prev) prev.addEventListener('click', function(){ track.scrollBy({left:-sw(),behavior:'smooth'}); });
+    if (next) next.addEventListener('click', function(){ track.scrollBy({left:sw(),behavior:'smooth'}); });
+    if (dotsWrap) {
+      items.forEach(function(_,i){
+        var b=document.createElement('button'); b.type='button'; b.className='cl-carousel__dot'; b.setAttribute('aria-label','Slide '+(i+1));
+        b.addEventListener('click',function(){ track.scrollTo({left:sw()*i,behavior:'smooth'}); });
+        dotsWrap.appendChild(b); dots.push(b);
+      });
     }
-
-    function initAll(scope) {
-      (scope || document).querySelectorAll('.collection-list [data-cl-carousel]').forEach(initCarousel);
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', function () { initAll(); });
-    } else {
-      initAll();
-    }
-
-    document.addEventListener('shopify:section:load', function (e) { initAll(e.target); });
-  })();
+    track.addEventListener('scroll', function(){ ua(); ud(); }, {passive:true});
+    ua(); ud();
+  }
+  function initAll(s) { (s||document).querySelectorAll('.collection-list [data-cl-carousel]').forEach(initCarousel); }
+  if (document.readyState==='loading') { document.addEventListener('DOMContentLoaded', function(){ initAll(); }); } else { initAll(); }
+  document.addEventListener('shopify:section:load', function(e){ initAll(e.target); });
+})();
 {% endjavascript %}
- 
+
 {% schema %}
 {
-  "name": "Collection List",
+  "name": "Collection list",
   "tag": "section",
+  "class": "section-collection-list",
+  "blocks": [
+    { "type": "collection-image" },
+    { "type": "collection-title" },
+    { "type": "collection-description" },
+    { "type": "collection-text" },
+    { "type": "collection-button" }
+  ],
   "settings": [
+    {
+      "type": "header",
+      "content": "Collections"
+    },
+    {
+      "type": "collection_list",
+      "id": "collections",
+      "label": "Collections",
+      "limit": 12,
+      "info": "Pick any number of collections. One tile renders per collection, all sharing the layout defined by the child blocks."
+    },
     {
       "type": "header",
       "content": "General"
@@ -314,19 +335,17 @@
       "type": "checkbox",
       "id": "enable_container",
       "label": "Enable container",
-      "default": true,
-      "info": "Constrains the section to the theme's max page width."
+      "default": true
     },
     {
       "type": "select",
       "id": "width",
       "label": "Width",
       "options": [
-        { "value": "full", "label": "Full width" },
+        { "value": "full",            "label": "Full width" },
         { "value": "container_fluid", "label": "Container fluid" }
       ],
-      "default": "full",
-      "info": "Used when Enable container is off."
+      "default": "full"
     },
     {
       "type": "color_scheme",
@@ -342,20 +361,14 @@
       "type": "range",
       "id": "padding_top",
       "label": "Padding top",
-      "min": 0,
-      "max": 200,
-      "step": 2,
-      "unit": "px",
+      "min": 0, "max": 200, "step": 2, "unit": "px",
       "default": 50
-    }, 
+    },
     {
       "type": "range",
       "id": "padding_bottom",
       "label": "Padding bottom",
-      "min": 0,
-      "max": 200,
-      "step": 2,
-      "unit": "px",
+      "min": 0, "max": 200, "step": 2, "unit": "px",
       "default": 50
     },
     {
@@ -367,7 +380,7 @@
       "id": "layout_type",
       "label": "Type",
       "options": [
-        { "value": "grid", "label": "Grid" },
+        { "value": "grid",     "label": "Grid" },
         { "value": "carousel", "label": "Carousel" }
       ],
       "default": "grid"
@@ -376,9 +389,7 @@
       "type": "range",
       "id": "columns_desktop",
       "label": "Desktop columns",
-      "min": 2,
-      "max": 6,
-      "step": 1,
+      "min": 1, "max": 8, "step": 1,
       "default": 5
     },
     {
@@ -395,20 +406,14 @@
       "type": "range",
       "id": "column_gap",
       "label": "Column gap",
-      "min": 0,
-      "max": 50,
-      "step": 1,
-      "unit": "px",
+      "min": 0, "max": 50, "step": 1, "unit": "px",
       "default": 20
     },
     {
       "type": "range",
       "id": "row_gap",
       "label": "Row gap",
-      "min": 0,
-      "max": 50,
-      "step": 1,
-      "unit": "px",
+      "min": 0, "max": 50, "step": 1, "unit": "px",
       "default": 20,
       "visible_if": "{{ section.settings.layout_type == 'grid' }}"
     },
@@ -420,12 +425,12 @@
     {
       "type": "select",
       "id": "carousel_nav",
-      "label": "Navigation style",
+      "label": "Navigation",
       "options": [
-        { "value": "navigation", "label": "Navigation" },
-        { "value": "pagination", "label": "Pagination" },
-        { "value": "both", "label": "Both" },
-        { "value": "none", "label": "None" }
+        { "value": "navigation", "label": "Arrows" },
+        { "value": "pagination", "label": "Dots" },
+        { "value": "both",       "label": "Both" },
+        { "value": "none",       "label": "None" }
       ],
       "default": "navigation",
       "visible_if": "{{ section.settings.layout_type == 'carousel' }}"
@@ -433,9 +438,9 @@
     {
       "type": "select",
       "id": "carousel_border_style",
-      "label": "Border style",
+      "label": "Arrow border style",
       "options": [
-        { "value": "none", "label": "None" },
+        { "value": "none",  "label": "None" },
         { "value": "solid", "label": "Solid" }
       ],
       "default": "none",
@@ -444,65 +449,206 @@
     {
       "type": "range",
       "id": "carousel_border_width",
-      "label": "Border width",
-      "min": 1,
-      "max": 5,
-      "step": 1,
-      "unit": "px",
+      "label": "Arrow border width",
+      "min": 1, "max": 5, "step": 1, "unit": "px",
       "default": 1,
       "visible_if": "{{ section.settings.layout_type == 'carousel' and section.settings.carousel_border_style != 'none' }}"
     },
     {
       "type": "range",
       "id": "carousel_border_opacity",
-      "label": "Border opacity",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "%",
+      "label": "Arrow border opacity",
+      "min": 0, "max": 100, "step": 1, "unit": "%",
       "default": 100,
       "visible_if": "{{ section.settings.layout_type == 'carousel' and section.settings.carousel_border_style != 'none' }}"
     },
     {
       "type": "range",
       "id": "carousel_border_radius",
-      "label": "Border radius",
-      "min": 0,
-      "max": 30,
-      "step": 1,
-      "unit": "px",
-      "default": 0,
-      "visible_if": "{{ section.settings.layout_type == 'carousel' }}"
+      "label": "Arrow border radius",
+      "min": 0, "max": 50, "step": 1, "unit": "px",
+      "default": 50
     },
     {
       "type": "checkbox",
       "id": "carousel_inherit_scheme",
-      "label": "Inherit color scheme",
+      "label": "Arrows inherit color scheme",
       "default": true,
       "visible_if": "{{ section.settings.layout_type == 'carousel' }}"
     },
     {
       "type": "color_scheme",
       "id": "carousel_color_scheme",
-      "label": "Color scheme",
+      "label": "Arrow color scheme",
       "default": "scheme-1",
       "visible_if": "{{ section.settings.layout_type == 'carousel' and section.settings.carousel_inherit_scheme == false }}"
+    },
+    {
+      "type": "header",
+      "content": "Card — Image shape"
+    },
+    {
+      "type": "select",
+      "id": "card_image_shape",
+      "label": "Image shape",
+      "options": [
+        { "value": "default",           "label": "Default" },
+        { "value": "arch",              "label": "Arch" },
+        { "value": "rounded-arch",      "label": "Rounded arch" },
+        { "value": "oval",              "label": "Oval" },
+        { "value": "circle",            "label": "Circle" },
+        { "value": "pill",              "label": "Pill" },
+        { "value": "rounded-rectangle", "label": "Rounded rectangle" },
+        { "value": "custom-radius",     "label": "Custom radius" }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "range",
+      "id": "card_custom_radius",
+      "label": "Custom radius",
+      "min": 0, "max": 50, "step": 1, "unit": "px",
+      "default": 16,
+      "visible_if": "{{ section.settings.card_image_shape == 'custom-radius' }}"
+    },
+    {
+      "type": "range",
+      "id": "card_arch_height",
+      "label": "Arch height",
+      "min": 100, "max": 500, "step": 10, "unit": "px",
+      "default": 300,
+      "visible_if": "{{ section.settings.card_image_shape == 'arch' or section.settings.card_image_shape == 'rounded-arch' }}"
+    },
+    {
+      "type": "range",
+      "id": "card_arch_width",
+      "label": "Arch width",
+      "min": 100, "max": 500, "step": 10, "unit": "px",
+      "default": 250,
+      "visible_if": "{{ section.settings.card_image_shape == 'rounded-arch' }}"
+    },
+    {
+      "type": "select",
+      "id": "card_image_position",
+      "label": "Image position",
+      "options": [
+        { "value": "top",    "label": "Top" },
+        { "value": "center", "label": "Center" },
+        { "value": "bottom", "label": "Bottom" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Card — Content"
+    },
+    {
+      "type": "select",
+      "id": "card_overlay_style",
+      "label": "Overlay style",
+      "options": [
+        { "value": "on-image",    "label": "On image" },
+        { "value": "below-image", "label": "Below image" }
+      ],
+      "default": "below-image"
+    },
+    {
+      "type": "select",
+      "id": "card_content_alignment",
+      "label": "Content alignment",
+      "options": [
+        { "value": "left",   "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right",  "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "card_content_position",
+      "label": "Content position",
+      "options": [
+        { "value": "top",    "label": "Top" },
+        { "value": "center", "label": "Center" },
+        { "value": "bottom", "label": "Bottom" }
+      ],
+      "default": "bottom",
+      "visible_if": "{{ section.settings.card_overlay_style == 'on-image' }}"
+    },
+    {
+      "type": "header",
+      "content": "Card — Border"
+    },
+    {
+      "type": "select",
+      "id": "card_border_style",
+      "label": "Border style",
+      "options": [
+        { "value": "none",  "label": "None" },
+        { "value": "solid", "label": "Solid" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range",
+      "id": "card_border_width",
+      "label": "Border width",
+      "min": 1, "max": 5, "step": 1, "unit": "px",
+      "default": 1,
+      "visible_if": "{{ section.settings.card_border_style != 'none' }}"
+    },
+    {
+      "type": "range",
+      "id": "card_border_opacity",
+      "label": "Border opacity",
+      "min": 0, "max": 100, "step": 1, "unit": "%",
+      "default": 100,
+      "visible_if": "{{ section.settings.card_border_style != 'none' }}"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Border radius",
+      "min": 0, "max": 30, "step": 1, "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Card — Padding"
+    },
+    {
+      "type": "range",
+      "id": "card_padding_top",
+      "label": "Padding top",
+      "min": 0, "max": 50, "step": 1, "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "card_padding_bottom",
+      "label": "Padding bottom",
+      "min": 0, "max": 50, "step": 1, "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "card_padding_left",
+      "label": "Padding left",
+      "min": 0, "max": 50, "step": 1, "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "card_padding_right",
+      "label": "Padding right",
+      "min": 0, "max": 50, "step": 1, "unit": "px",
+      "default": 0
     }
   ],
-  "blocks": [{ "type": "collection-card" }],
   "presets": [
     {
-      "name": "Collection List",
-      "blocks": [
-        {
-          "type": "collection-card",
-          "blocks": [
-            { "type": "collection-image" },
-            { "type": "collection-title" }
-          ]
-        }
-      ]
+      "name": "Collection list"
     }
   ]
-} 
-{% endschema %} 
+}
+{% endschema %}

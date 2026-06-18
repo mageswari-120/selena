@@ -1,44 +1,52 @@
 {% doc %}
-  Collection description block. Renders the closest collection's description.
+  blocks/collection-description.liquid  —  Selena Theme  (OS 3.0)
+  ────────────────────────────────────────────────────────────────
+  Fixed slot rendered by the section's content_for 'block' loop.
+  Reads closest.collection for description text.
 
-  @example
-  {% content_for 'block', type: 'collection-description', id: 'collection-description' %}
+  Section → content_for 'block', id:'cl-desc' → THIS FILE
 {% enddoc %}
 
-{%- liquid 
+{%- liquid
+  assign s          = block.settings
   assign collection = closest.collection
-  assign s = block.settings
 -%}
 
-{%- if collection.description != blank -%}
-  <div
-    class="cl-collection-description cl-collection-description--{{ s.text_case }}"
-    style="--cl-pt: {{ s.padding_top }}px; --cl-pb: {{ s.padding_bottom }}px;"
-    {{ block.shopify_attributes }}
-  >
-    {{ collection.description }}
-  </div>
-{%- else -%}
-  {%- comment -%} Editor-only placeholder so the block stays visible while empty {%- endcomment -%}
-  {%- if request.design_mode -%}
-    <div class="cl-collection-description" {{ block.shopify_attributes }}>
-      <p>Collection description appears here.</p>
+<div
+  class="cl-collection-description cl-desc--{{ s.text_case }}"
+  style="
+    --cl-desc-pt: {{ s.padding_top }}px;
+    --cl-desc-pb: {{ s.padding_bottom }}px;
+  "
+  {{ block.shopify_attributes }}
+>
+  {%- if collection.description != blank -%}
+    <div class="cl-desc__body">{{ collection.description }}</div>
+  {%- elsif request.design_mode -%}
+    <div class="cl-desc__body cl-desc__body--placeholder">
+      <p>Collection description will appear here.</p>
     </div>
   {%- endif -%}
-{%- endif -%}
+</div>
 
 {% stylesheet %}
-  .cl-collection-description {
-    padding-top: var(--cl-pt, 0);
-    padding-bottom: var(--cl-pb, 0);
-    color: inherit;
-    opacity: 0.8;
-    font-size: 0.9rem;
-    line-height: 1.5;
-  }
-  .cl-collection-description--uppercase { text-transform: uppercase; }
-  .cl-collection-description > :first-child { margin-top: 0; }
-  .cl-collection-description > :last-child { margin-bottom: 0; }
+.cl-collection-description {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top:    var(--cl-desc-pt, 0);
+  padding-bottom: var(--cl-desc-pb, 0);
+  color: inherit;
+}
+.cl-desc__body {
+  opacity: 0.78;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+.cl-desc__body > :first-child { margin-top: 0; }
+.cl-desc__body > :last-child  { margin-bottom: 0; }
+.cl-desc__body--placeholder   { opacity: 0.35; font-style: italic; }
+.cl-desc--uppercase .cl-desc__body { text-transform: uppercase; }
 {% endstylesheet %}
 
 {% schema %}
@@ -50,7 +58,7 @@
       "id": "text_case",
       "label": "Text case",
       "options": [
-        { "value": "default", "label": "Default" },
+        { "value": "default",   "label": "Default" },
         { "value": "uppercase", "label": "Uppercase" }
       ],
       "default": "default"
@@ -59,24 +67,16 @@
       "type": "range",
       "id": "padding_top",
       "label": "Padding top",
-      "min": 0,
-      "max": 30,
-      "step": 1,
-      "unit": "px",
-      "default": 0
+      "min": 0, "max": 30, "step": 1, "unit": "px",
+      "default": 4
     },
     {
       "type": "range",
       "id": "padding_bottom",
       "label": "Padding bottom",
-      "min": 0,
-      "max": 30,
-      "step": 1,
-      "unit": "px",
+      "min": 0, "max": 30, "step": 1, "unit": "px",
       "default": 0
     }
-  ],
-  "presets": [{ "name": "Collection description" }]
+  ]
 }
 {% endschema %}
-

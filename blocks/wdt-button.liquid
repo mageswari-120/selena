@@ -1,0 +1,83 @@
+{%- comment -%}
+  Block  : wdt-button.liquid
+  Type   : wdt-button
+  Parent : blocks/wdt-header.liquid
+{%- endcomment -%}
+
+{%- if block.settings.label != blank and block.settings.url != blank -%}
+  <div
+    class="wdt-hdr__btn-wrap"
+    {{ block.shopify_attributes }}
+    style="
+      padding-top: {{ block.settings.padding_top }}px;
+      padding-bottom: {{ block.settings.padding_bottom }}px;
+    "
+  > 
+    <a
+      href="{{ block.settings.url }}" 
+      class="wdt-hdr__btn"
+    >
+      {{- block.settings.label | escape -}}
+    </a>
+  </div>
+{%- endif -%} 
+
+{% stylesheet %}
+
+.wdt-hdr__btn-wrap {
+  display: flex;
+  justify-content: inherit;
+}
+
+.wdt-hdr__btn {
+  display: inline-block;
+  padding: var(--button-padding-vertical, 14px) var(--button-padding-horizontal, 28px);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  border-radius: var(--button-border-radius, 0px);
+  background: var(--button-primary-bg, #1a1a1a);
+  color: var(--button-primary-color, #fff);
+  border: 1px solid var(--button-primary-border, #1a1a1a);
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.wdt-hdr__btn:hover {
+  background: var(--button-primary-hover-bg, #333);
+  color: var(--button-primary-hover-color, #fff);
+  border-color: var(--button-primary-hover-border, #333);
+}
+
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Button",
+  "settings": [
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Button Label"
+    },
+    {
+      "type": "url",
+      "id": "url",
+      "label": "Button URL"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding Top",
+      "min": 0, "max": 50, "step": 2, "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding Bottom",
+      "min": 0, "max": 50, "step": 2, "unit": "px",
+      "default": 0
+    }
+  ]
+}
+{% endschema %}

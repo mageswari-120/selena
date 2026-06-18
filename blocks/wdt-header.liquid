@@ -1,0 +1,56 @@
+{%- comment -%}
+  Block    : wdt-header.liquid
+  Type     : wdt-header
+  Parent   : sections/testimonial.liquid (fixed slot via content_for 'block')
+  Children : wdt-heading · wdt-description · wdt-button
+             (merchant-reorderable via content_for 'blocks')
+{%- endcomment -%}
+
+<div
+  class="wdt-testimonial__header text-{{ block.settings.alignment }}"
+  {{ block.shopify_attributes }}
+  style="
+    --wdt-hdr-mb: {{ block.settings.margin_bottom }}px;
+  "
+>
+  {% content_for 'blocks' %}
+</div>
+
+{% stylesheet %}
+
+.wdt-testimonial__header {
+  margin-bottom: var(--wdt-hdr-mb, 40px);
+}   
+
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Header Block",
+  "blocks": [
+    { "type": "wdt-heading" },
+    { "type": "wdt-description" },
+    { "type": "wdt-button" }
+  ],
+  "settings": [
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alignment",
+      "options": [
+        { "value": "start",  "label": "Left"   },
+        { "value": "center", "label": "Center" },
+        { "value": "end",    "label": "Right"  }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "label": "Bottom Spacing",
+      "min": 0, "max": 100, "step": 4, "unit": "px",
+      "default": 40
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,132 @@
+{%- comment -%}
+  Block  : wdt-custom-rating.liquid
+  Type   : wdt-custom-rating
+  Parent : blocks/wdt-card.liquid
+{%- endcomment -%}
+
+{%- liquid
+  assign rating_num = block.settings.rating_count | times: 1.0
+  assign rating_pct = rating_num | divided_by: 5.0 | times: 100
+-%}
+
+<div
+  class="wdt-card__rating"
+  {{ block.shopify_attributes }}
+  aria-label="{{ rating_num }} out of 5 stars"
+  style="
+    --wdt-star-color: {{ block.settings.rating_color }};
+    --wdt-star-gap: {{ block.settings.star_gap }}px;
+    --wdt-rating-pct: {{ rating_pct }}%;
+    padding-top: {{ block.settings.padding_top }}px;
+    padding-bottom: {{ block.settings.padding_bottom }}px;
+    padding-left: {{ block.settings.padding_left }}px;
+    padding-right: {{ block.settings.padding_right }}px;
+  " 
+> 
+  <span class="wdt-card__stars" aria-hidden="true">
+    <span class="wdt-card__stars-empty">★★★★★</span>
+    <span class="wdt-card__stars-fill">★★★★★</span>
+  </span>
+</div>
+
+{% stylesheet %}
+
+.wdt-card__rating {
+  display: flex;
+  justify-content: inherit;
+}
+.wdt-card.text-center .wdt-card__rating { justify-content: center; }
+.wdt-card.text-end    .wdt-card__rating { justify-content: flex-end; }
+
+.wdt-card__stars {
+  position: relative;
+  display: inline-block;
+  font-size: 1.1rem;
+  letter-spacing: var(--wdt-star-gap, 4px);
+  line-height: 1;
+}
+.wdt-card__stars-empty {
+  color: rgba(0,0,0,.15);
+  display: block;
+}
+.wdt-card__stars-fill {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  width: var(--wdt-rating-pct, 100%);
+  color: var(--wdt-star-color, #f59e0b);
+  white-space: nowrap;
+  display: block;
+}
+
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Custom Rating",
+  "settings": [
+    {
+      "type": "select",
+      "id": "rating_count",
+      "label": "Rating",
+      "options": [
+        { "value": "1",   "label": "1"   },
+        { "value": "1.5", "label": "1.5" },
+        { "value": "2",   "label": "2"   },
+        { "value": "2.5", "label": "2.5" },
+        { "value": "3",   "label": "3"   },
+        { "value": "3.5", "label": "3.5" },
+        { "value": "4",   "label": "4"   },
+        { "value": "4.5", "label": "4.5" },
+        { "value": "5",   "label": "5"   }
+      ],
+      "default": "5"
+    },
+    {
+      "type": "color",
+      "id": "rating_color",
+      "label": "Star Color",
+      "default": "#F59E0B"
+    },
+    {
+      "type": "range",
+      "id": "star_gap",
+      "label": "Gap Between Stars",
+      "min": 0, "max": 30, "step": 2, "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding Top",
+      "min": 0, "max": 50, "step": 2, "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding Bottom",
+      "min": 0, "max": 50, "step": 2, "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "label": "Padding Left",
+      "min": 0, "max": 50, "step": 2, "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "label": "Padding Right",
+      "min": 0, "max": 50, "step": 2, "unit": "px",
+      "default": 0
+    }
+  ]
+}
+{% endschema %}
