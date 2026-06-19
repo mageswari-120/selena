@@ -8,6 +8,7 @@
 {%- endcomment -%}
 
 {%- liquid
+  assign product = closest.product | default: product
   assign current_variant = product.selected_or_first_available_variant
 -%}
 
@@ -22,7 +23,7 @@
     is a standalone file in /blocks/ and renders itself here.
     Merchant controls order, visibility, and settings of each.
   {%- endcomment -%}
-  {% content_for 'blocks' %}
+  {% content_for 'blocks', closest.product: product %}
 </div>
 
 {% stylesheet %}
@@ -40,7 +41,7 @@
 
 {% schema %}
 {
-  "name": "Product information",
+  "name": "Details",
   "blocks": [
     { "type": "product-vendor" },
     { "type": "product-title" },

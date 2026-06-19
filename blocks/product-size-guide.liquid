@@ -1,3 +1,4 @@
+{%- assign product = closest.product | default: product -%}
 {%- if block.settings.page_url != blank -%}
   <div class="product-size-guide" {{ block.shopify_attributes }}>
     <a

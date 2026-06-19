@@ -1,3 +1,4 @@
+{%- assign product = closest.product | default: product -%}
 <div class="product-share" {{ block.shopify_attributes }}>
   {%- if block.settings.label != blank -%}
     <span class="product-share__label">{{ block.settings.label }}</span>

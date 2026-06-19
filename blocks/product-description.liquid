@@ -1,3 +1,4 @@
+{%- assign product = closest.product | default: product -%}
 {%- if block.settings.collapsible -%}
   <details class="product-description product-description--collapsible" {{ block.shopify_attributes }}>
     <summary class="product-description__trigger">

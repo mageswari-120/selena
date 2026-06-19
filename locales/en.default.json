@@ -54,7 +54,8 @@
     "low_stock": "Low stock",
     "wishlist_add": "Add to wishlist",
     "wishlist_remove": "Remove from wishlist",
-    "quantity": "Quantity"
+    "quantity": "Quantity",
+    "select_product": "Select a product in section settings"
   },
   "collections": {
     "title": "Collections",

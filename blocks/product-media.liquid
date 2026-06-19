@@ -5,6 +5,7 @@
   Used via: {% content_for 'block', type: 'product-media', id: 'product_media' %}
 {%- endcomment -%}
 
+{%- assign product = closest.product | default: product -%}
 {%- liquid
   assign current_variant  = product.selected_or_first_available_variant
   assign display_type     = block.settings.display_type

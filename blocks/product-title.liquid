@@ -1,3 +1,4 @@
+{%- assign product = closest.product | default: product -%}
 <h1 class="product-title" {{ block.shopify_attributes }}>
   {{ product.title }}
 </h1>

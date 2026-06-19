@@ -4,25 +4,26 @@
   Parent   : blocks/wdt-content.liquid
   Children : wdt-image-static · wdt-card-heading · wdt-card-description
              wdt-custom-rating · wdt-client-details
-             (merchant-reorderable via content_for 'blocks')
+
+  KEY RULE — this block renders ONLY <article>.
+  The parent wdt-content.liquid owns carousel-item / grid-col wrapping
+  via JavaScript at runtime. No parent-detection logic here.
 {%- endcomment -%}
 
 {%- liquid
-  assign card_type      = block.settings.card_type
-  assign alignment      = block.settings.card_alignment
-  assign card_gap       = block.settings.card_gap
-  assign border_style   = block.settings.card_border_style
-  assign border_width   = block.settings.card_border_width
-  assign border_opacity = block.settings.card_border_opacity | divided_by: 100.0
-  assign border_radius  = block.settings.card_border_radius
-  assign enable_overlay = block.settings.enable_overlay
-  assign overlay_color  = block.settings.overlay_color
-  assign overlay_style  = block.settings.overlay_style
-  assign overlay_dir    = block.settings.overlay_direction
-  assign inherit_scheme = block.settings.inherit_color_scheme
+  assign card_type      = block.settings.card_type      | default: 'grid'
+  assign img_pos        = block.settings.card_image_position | default: 'top'
+  assign alignment      = block.settings.card_alignment  | default: 'center'
+  assign card_gap       = block.settings.card_gap        | default: 10
+  assign border_style   = block.settings.card_border_style   | default: 'none'
+  assign border_width   = block.settings.card_border_width   | default: 1
+  assign border_opacity = block.settings.card_border_opacity | default: 100 | divided_by: 100.0
+  assign border_radius  = block.settings.card_border_radius  | default: 0
+  assign enable_overlay = block.settings.enable_overlay  | default: false
+  assign inherit_scheme = block.settings.inherit_color_scheme | default: true
   assign card_scheme    = block.settings.card_color_scheme
-   
-  comment ── Build border CSS value ──
+
+  comment ── Border CSS ──
   endcomment
   if border_style == 'solid'
     assign border_css = border_width | append: 'px solid rgba(0,0,0,' | append: border_opacity | append: ')'
@@ -30,76 +31,54 @@
     assign border_css = 'none'
   endif
 
-  comment ── Build overlay CSS value ──
+  comment ── Overlay CSS ──
   endcomment
   if enable_overlay
-    if overlay_style == 'gradient'
-      assign overlay_css = 'linear-gradient(' | append: overlay_dir | append: ', ' | append: overlay_color | append: 'cc, transparent)'
+    assign ov_color = block.settings.overlay_color | default: '#000000'
+    if block.settings.overlay_style == 'gradient'
+      assign ov_dir = block.settings.overlay_direction | default: 'to bottom'
+      assign overlay_css = 'linear-gradient(' | append: ov_dir | append: ', ' | append: ov_color | append: 'cc, transparent)'
     else
-      assign overlay_css = overlay_color | append: '26'
+      assign overlay_css = ov_color | append: '26'
     endif
   else
     assign overlay_css = 'transparent'
   endif
 
-  comment ── Color scheme class ──
+  comment ── Scheme class ──
   endcomment
   unless inherit_scheme
     assign scheme_class = 'color-' | append: card_scheme
   else
     assign scheme_class = ''
   endunless
-
-  if card_type == 'overlay'
-    assign enable_overlay = true
-    if overlay_style == blank
-      assign overlay_style = 'gradient'
-    endif
-    if overlay_dir == blank
-      assign overlay_dir = 'to bottom'
-    endif
-  endif
-
-  comment ── Parent layout from section-level wdt-content block ──
-  endcomment
-  assign parent_layout = 'carousel'
-  assign cols_desktop = '3'
-  assign cols_mobile  = '1'
-  for b in section.blocks
-    if b.type == 'wdt-content'
-      assign parent_layout = b.settings.layout_type
-      assign cols_desktop = b.settings.columns_desktop
-      assign cols_mobile  = b.settings.columns_mobile
-      break
-    endif
-  endfor
 -%}
 
-<div class="{% if parent_layout == 'carousel' %}wdt-content__slide{% else %}wdt-content__grid-item col-12 col-sm-{{ 12 | divided_by: cols_mobile }} col-md-{{ 12 | divided_by: cols_desktop }}{% endif %}">
-  <article
-    class="wdt-card wdt-card--{{ card_type }} wdt-card--img-{{ block.settings.card_image_position }} {{ scheme_class }} text-{{ alignment }}"
-    {{ block.shopify_attributes }}
-    style="
-      --wdt-card-gap: {{ card_gap }}px;
-      --wdt-card-pt: {{ block.settings.card_pt }}px;
-      --wdt-card-pb: {{ block.settings.card_pb }}px;
-      --wdt-card-pl: {{ block.settings.card_pl }}px;
-      --wdt-card-pr: {{ block.settings.card_pr }}px;
-      --wdt-card-border: {{ border_css }};
-      --wdt-card-radius: {{ border_radius }}px;
-      --wdt-card-overlay: {{ overlay_css }};
-    "
-  >
-    {%- if enable_overlay -%}
-      <div class="wdt-card__overlay" aria-hidden="true"></div>
-    {%- endif -%}
+<article
+  class="wdt-card wdt-card--{{ card_type }} wdt-card--img-{{ img_pos }} {{ scheme_class }} text-{{ alignment }}"
+  {{ block.shopify_attributes }}
+  style="
+    --wdt-card-gap: {{ card_gap }}px;
+    --wdt-card-pt: {{ block.settings.card_pt | default: 20 }}px;
+    --wdt-card-pb: {{ block.settings.card_pb | default: 20 }}px;
+    --wdt-card-pl: {{ block.settings.card_pl | default: 20 }}px;
+    --wdt-card-pr: {{ block.settings.card_pr | default: 20 }}px;
+    --wdt-card-border: {{ border_css }};
+    --wdt-card-radius: {{ border_radius }}px;
+    --wdt-card-overlay: {{ overlay_css }};
+  "
+>
 
-    <div class="wdt-card__inner">
-      {% content_for 'blocks' %}
-    </div>
+  {%- if enable_overlay -%}
+    <div class="wdt-card__overlay" aria-hidden="true"></div>
+  {%- endif -%}
 
-  </article>
-</div>
+  <div class="wdt-card__inner">
+    {% content_for 'blocks' %}
+  </div>
+
+</article>
+
 {% stylesheet %}
 
 /* ── Card base ── */
@@ -126,65 +105,40 @@
 
 /* ── Overlay ── */
 .wdt-card__overlay {
-  position: absolute;
-  inset: 0;
+  position: absolute; inset: 0;
   background: var(--wdt-card-overlay, transparent);
-  pointer-events: none;
-  z-index: 0;
+  pointer-events: none; z-index: 0;
 }
-.wdt-card__overlay ~ .wdt-card__inner { position: relative; z-index: 1; }
-
-/* ── Inner ── */
 .wdt-card__inner {
-  display: flex;
-  flex-direction: column;
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column;
   flex: 1;
   gap: var(--wdt-card-gap, 10px);
 }
 
-/* ── Layout: image top (default) ── */
-.wdt-card--grid.wdt-card--img-top   { flex-direction: column; }
+/* ── Layout: grid image positions ── */
+.wdt-card--grid.wdt-card--img-top    { flex-direction: column; }
 .wdt-card--grid.wdt-card--img-bottom { flex-direction: column-reverse; }
+.wdt-card--grid.wdt-card--img-left  {
+  flex-direction: row; align-items: flex-start;
+}
+.wdt-card--grid.wdt-card--img-right {
+  flex-direction: row-reverse; align-items: flex-start;
+}
+.wdt-card--grid.wdt-card--img-left .wdt-card__inner,
+.wdt-card--grid.wdt-card--img-right .wdt-card__inner { flex: 1; }
 
-/* ── Layout: image left / right ── */
-.wdt-card--grid.wdt-card--img-left  { flex-direction: row; align-items: flex-start; }
-.wdt-card--grid.wdt-card--img-right { flex-direction: row-reverse; align-items: flex-start; }
+/* ── Layout: overlay ── */
+.wdt-card--overlay { position: relative; min-height: 280px; }
+.wdt-card--overlay .wdt-card__inner { margin-top: auto; }
 
-/* ── Overlay card ── */
-.wdt-card--overlay {
-  position: relative;
-  min-height: 280px;
-  padding: 0;
-  color: #fff;
+/* ── Responsive ── */
+@media (max-width: 575.98px) {
+  .wdt-card--grid.wdt-card--img-left,
+  .wdt-card--grid.wdt-card--img-right {
+    flex-direction: column;
+  }
 }
-.wdt-card--overlay .wdt-card__inner {
-  margin-top: auto;
-  position: relative;
-  z-index: 2;
-  padding: 1.25rem;
-}
-.wdt-card--overlay .wdt-card__image-wrap {
-  position: absolute;
-  inset: 0;
-  padding: 0 !important;
-  z-index: 0;
-}
-.wdt-card--overlay .wdt-card__image {
-  width: 100%;
-  height: 100%;
-  min-height: 280px;
-  object-fit: cover;
-}
-.wdt-card--overlay .wdt-card__client-prof {
-  opacity: 0.75;
-}
-.wdt-card--overlay .wdt-card__overlay {
-  background: linear-gradient(to bottom, transparent, rgba(0,0,0,.75));
-  z-index: 1;
-}
-
-/* ── Carousel slide wrapper ── */
-.wdt-content__slide { padding-inline: 0; }
 
 {% endstylesheet %}
 
@@ -277,7 +231,6 @@
       "type": "select",
       "id": "overlay_direction",
       "label": "Overlay Direction",
-      "info": "Applies when Overlay Style = Gradient",
       "options": [
         { "value": "to bottom", "label": "Top → Bottom" },
         { "value": "to top",    "label": "Bottom → Top" }

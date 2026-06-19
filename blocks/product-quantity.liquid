@@ -1,3 +1,4 @@
+{%- assign product = closest.product | default: product -%}
 <div class="product-quantity" {{ block.shopify_attributes }}>
   <label for="Qty-{{ section.id }}" class="product-quantity__label">
     {{ 'products.quantity' | t }}

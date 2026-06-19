@@ -1,0 +1,307 @@
+{%- comment -%}
+  Featured Product — Selena Theme
+  OS 3.0 content_for 'block' pattern with product picker.
+  Section renders two fixed named blocks:
+    • featured_media → blocks/product-media.liquid
+    • featured_info  → blocks/product-info.liquid  (uses content_for 'blocks' internally)
+  closest.product is passed so all product-* blocks work on any template.
+{%- endcomment -%}
+
+{%- liquid
+  assign featured_product = section.settings.product
+  assign container_class = 'featured-product__inner'
+  if section.settings.layout == 'full_width'
+    assign container_class = 'featured-product__inner featured-product__inner--full'
+  elsif section.settings.layout == 'container_fluid'
+    assign container_class = 'featured-product__inner featured-product__inner--fluid'
+  endif
+  assign product_form_id = 'FeaturedProductForm-' | append: section.id
+-%}
+
+<div
+  class="featured-product color-{{ section.settings.color_scheme }}"
+  data-section-id="{{ section.id }}"
+  style="
+    --featured-product-pt: {{ section.settings.padding_top }}px;
+    --featured-product-pb: {{ section.settings.padding_bottom }}px;
+  "
+>
+  <div class="{{ container_class }}">
+    {%- if section.settings.heading != blank or section.settings.subheading != blank -%}
+      <div class="featured-product__header">
+        {%- if section.settings.subheading != blank -%}
+          <p class="featured-product__subheading">{{ section.settings.subheading }}</p>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="featured-product__heading">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if featured_product != blank -%}
+      <product-form
+        data-cart-add-url="{{ routes.cart_add_url }}"
+        data-cart-url="{{ routes.cart_url }}"
+      >
+        {%- form 'product', featured_product, id: product_form_id, class: 'featured-product__form' -%}
+          {% content_for 'block', type: 'product-media', id: 'featured_media', closest.product: featured_product %}
+          {% content_for 'block', type: 'product-info', id: 'featured_info', closest.product: featured_product %}
+        {%- endform -%}
+      </product-form>
+    {%- else -%}
+      {%- render 'featured-product-placeholder' -%}
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .featured-product {
+    padding-top: var(--featured-product-pt, 60px);
+    padding-bottom: var(--featured-product-pb, 60px);
+  }
+
+  .color-scheme-1 { background: var(--color-background); color: var(--color-foreground); }
+  .color-scheme-2 { background: var(--color-secondary, #f5f5f5); color: var(--color-foreground); }
+  .color-scheme-3 { background: var(--color-primary); color: var(--color-background); }
+
+  .featured-product__inner {
+    max-width: var(--page-width, 1400px);
+    margin-inline: auto;
+    padding-inline: var(--page-margin, 20px);
+  }
+  .featured-product__inner--full {
+    max-width: 100%;
+    padding-inline: 0;
+  }
+  .featured-product__inner--fluid {
+    max-width: 100%;
+    padding-inline: var(--page-margin, 20px);
+  }
+
+  .featured-product__header {
+    text-align: center;
+    margin-bottom: clamp(1.5rem, 4vw, 3rem);
+  }
+  .featured-product__subheading {
+    margin: 0 0 0.5rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.65;
+  }
+  .featured-product__heading {
+    margin: 0;
+    font-family: var(--font-heading--family, inherit);
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    line-height: 1.2;
+  }
+
+  .featured-product__form {
+    display: grid;
+    grid-template-columns: var(--product-media-width, 55%) 1fr;
+    gap: clamp(1.5rem, 4vw, 4rem);
+    align-items: start;
+  }
+  @media (max-width: 768px) {
+    .featured-product__form { grid-template-columns: 1fr; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Featured product",
+  "tag": "section",
+  "class": "shopify-section--featured-product",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product"
+    },
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Container type",
+      "options": [
+        { "value": "container", "label": "Container" },
+        { "value": "full_width", "label": "Full width" },
+        { "value": "container_fluid", "label": "Container fluid" }
+      ],
+      "default": "container"
+    },
+    {
+      "type": "header",
+      "content": "Color scheme"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "options": [
+        { "value": "scheme-1", "label": "Scheme 1 — Default" },
+        { "value": "scheme-2", "label": "Scheme 2 — Subtle" },
+        { "value": "scheme-3", "label": "Scheme 3 — Inverse" }
+      ],
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 150,
+      "step": 2,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 150,
+      "step": 2,
+      "unit": "px",
+      "default": 60
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured product",
+      "blocks": {
+        "featured_media": {
+          "type": "product-media",
+          "static": true,
+          "settings": {
+            "media_position": "left",
+            "media_width": "55",
+            "show_border": false,
+            "border_radius": 0,
+            "display_type": "carousel",
+            "carousel_nav_style": "thumbnails",
+            "zoom_type": "none",
+            "video_autoplay": false,
+            "video_loop": false
+          }
+        },
+        "featured_info": {
+          "type": "product-info",
+          "static": true,
+          "blocks": {
+            "inventory": {
+              "type": "product-inventory",
+              "settings": {}
+            },
+            "title": {
+              "type": "product-title",
+              "settings": {}
+            },
+            "price": {
+              "type": "product-price",
+              "settings": {}
+            },
+            "separator_1": {
+              "type": "product-separator",
+              "settings": {}
+            },
+            "variant_picker": {
+              "type": "product-variant-picker",
+              "settings": {
+                "picker_style": "pill",
+                "show_selected_value": true
+              }
+            },
+            "quantity": {
+              "type": "product-quantity",
+              "settings": {}
+            },
+            "add_to_cart": {
+              "type": "product-add-to-cart",
+              "settings": {
+                "show_buy_now": false,
+                "show_dynamic_checkout": false
+              }
+            },
+            "separator_2": {
+              "type": "product-separator",
+              "settings": {}
+            },
+            "description": {
+              "type": "product-description",
+              "settings": {
+                "collapsible": false,
+                "heading": "Description"
+              }
+            },
+            "complementary": {
+              "type": "product-complementary",
+              "settings": {
+                "products_to_show": 3,
+                "heading": "Pairs well with"
+              }
+            },
+            "icon_text": {
+              "type": "product-icon-text",
+              "settings": {
+                "icon_1": "🚚",
+                "text_1": "Estimate delivery times",
+                "icon_2": "↩",
+                "text_2": "Free return within 30 days"
+              }
+            },
+            "share": {
+              "type": "product-share",
+              "settings": {
+                "label": "Share:",
+                "show_facebook": true,
+                "show_twitter": true,
+                "show_pinterest": false
+              }
+            }
+          },
+          "block_order": [
+            "inventory",
+            "title",
+            "price",
+            "separator_1",
+            "variant_picker",
+            "quantity",
+            "add_to_cart",
+            "separator_2",
+            "description",
+            "complementary",
+            "icon_text",
+            "share"
+          ],
+          "settings": {}
+        }
+      }
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  }
+}
+{% endschema %}

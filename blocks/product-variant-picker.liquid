@@ -1,3 +1,4 @@
+{%- assign product = closest.product | default: product -%}
 {%- unless product.has_only_default_variant -%}
   <div
     class="product-variant-picker variant-picker--{{ block.settings.picker_style }}"

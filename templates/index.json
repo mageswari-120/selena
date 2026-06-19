@@ -4,6 +4,126 @@
       "type": "hello-world",
       "settings": {}
     },
+    "featured_product_home": {
+      "type": "featured-product",
+      "settings": {
+        "product": "",
+        "subheading": "",
+        "heading": "",
+        "layout": "container",
+        "color_scheme": "scheme-1",
+        "padding_top": 60,
+        "padding_bottom": 60
+      },
+      "blocks": {
+        "featured_media": {
+          "type": "product-media",
+          "static": true,
+          "settings": {
+            "media_position": "left",
+            "media_width": "55",
+            "show_border": false,
+            "border_radius": 0,
+            "display_type": "carousel",
+            "carousel_nav_style": "thumbnails",
+            "zoom_type": "none",
+            "video_autoplay": false,
+            "video_loop": false
+          }
+        },
+        "featured_info": {
+          "type": "product-info",
+          "static": true,
+          "blocks": {
+            "inventory": {
+              "type": "product-inventory",
+              "settings": {}
+            },
+            "title": {
+              "type": "product-title",
+              "settings": {}
+            },
+            "price": {
+              "type": "product-price",
+              "settings": {}
+            },
+            "separator_1": {
+              "type": "product-separator",
+              "settings": {}
+            },
+            "variant_picker": {
+              "type": "product-variant-picker",
+              "settings": {
+                "picker_style": "pill",
+                "show_selected_value": true
+              }
+            },
+            "quantity": {
+              "type": "product-quantity",
+              "settings": {}
+            },
+            "add_to_cart": {
+              "type": "product-add-to-cart",
+              "settings": {
+                "show_buy_now": false,
+                "show_dynamic_checkout": false
+              }
+            },
+            "separator_2": {
+              "type": "product-separator",
+              "settings": {}
+            },
+            "description": {
+              "type": "product-description",
+              "settings": {
+                "collapsible": false,
+                "heading": "Description"
+              }
+            },
+            "complementary": {
+              "type": "product-complementary",
+              "settings": {
+                "products_to_show": 3,
+                "heading": "Pairs well with"
+              }
+            },
+            "icon_text": {
+              "type": "product-icon-text",
+              "settings": {
+                "icon_1": "🚚",
+                "text_1": "Estimate delivery times",
+                "icon_2": "↩",
+                "text_2": "Free return within 30 days"
+              }
+            },
+            "share": {
+              "type": "product-share",
+              "settings": {
+                "label": "Share:",
+                "show_facebook": true,
+                "show_twitter": true,
+                "show_pinterest": false
+              }
+            }
+          },
+          "block_order": [
+            "inventory",
+            "title",
+            "price",
+            "separator_1",
+            "variant_picker",
+            "quantity",
+            "add_to_cart",
+            "separator_2",
+            "description",
+            "complementary",
+            "icon_text",
+            "share"
+          ],
+          "settings": {}
+        }
+      }
+    },
     "collection_list_3TnLmW": {
       "type": "collection-list",
       "blocks": {
@@ -120,5 +240,5 @@
       }
     }
   },
-  "order": ["main", "collection_list_3TnLmW", "testimonial_home"]
+  "order": ["main", "featured_product_home", "collection_list_3TnLmW", "testimonial_home"]
 }

@@ -1,3 +1,4 @@
+{%- assign product = closest.product | default: product -%}
 {%- if product.vendor != blank -%}
   <p class="product-vendor" {{ block.shopify_attributes }}>
     {{ product.vendor }}
