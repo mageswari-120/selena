@@ -19,7 +19,24 @@
         "cl-card": {
           "type": "collection-card",
           "static": true,
-          "settings": {},
+          "settings": {
+            "card_image_shape": "default",
+            "card_custom_radius": 16,
+            "card_arch_height": 300,
+            "card_arch_width": 250,
+            "card_image_position": "center",
+            "card_overlay_style": "below-image",
+            "card_content_alignment": "center",
+            "card_content_position": "bottom",
+            "card_border_style": "none",
+            "card_border_width": 1,
+            "card_border_opacity": 100,
+            "card_border_radius": 0,
+            "card_padding_top": 0,
+            "card_padding_bottom": 0,
+            "card_padding_left": 0,
+            "card_padding_right": 0
+          },
           "blocks": {
             "collection_description_XTYr7M": {
               "type": "collection-description",
@@ -119,34 +136,430 @@
         "columns_mobile": "2",
         "column_gap": 20,
         "row_gap": 20,
+        "carousel_loop": false,
+        "carousel_autoplay": 0,
         "carousel_nav": "navigation",
         "carousel_border_style": "none",
         "carousel_border_width": 1,
         "carousel_border_opacity": 100,
         "carousel_border_radius": 50,
         "carousel_inherit_scheme": true,
-        "carousel_color_scheme": "",
-        "card_image_shape": "default",
-        "card_custom_radius": 16,
-        "card_arch_height": 300,
-        "card_arch_width": 250,
-        "card_image_position": "center",
-        "card_overlay_style": "below-image",
-        "card_content_alignment": "center",
-        "card_content_position": "bottom",
-        "card_border_style": "none",
-        "card_border_width": 1,
-        "card_border_opacity": 100,
-        "card_border_radius": 0,
-        "card_padding_top": 0,
-        "card_padding_bottom": 0,
-        "card_padding_left": 0,
-        "card_padding_right": 0
+        "carousel_color_scheme": ""
+      }
+    },
+    "testimonial_ak78dC": {
+      "type": "testimonial",
+      "blocks": {
+        "testimonial_header": {
+          "type": "testimonial-header",
+          "static": true,
+          "settings": {
+            "alignment": "center",
+            "margin_bottom": 40
+          },
+          "blocks": {
+            "testimonial_heading_VdNjBU": {
+              "type": "testimonial-heading",
+              "settings": {
+                "variant": "section",
+                "heading": "Shop our latest collection",
+                "tag": "h2",
+                "padding_top": 0,
+                "padding_bottom": 12,
+                "padding_left": 0,
+                "padding_right": 0
+              },
+              "blocks": {}
+            },
+            "testimonial_text_qt4Cr6": {
+              "type": "testimonial-text",
+              "settings": {
+                "variant": "section",
+                "text": "<p>Best selling products</p>",
+                "padding_top": 0,
+                "padding_bottom": 16,
+                "padding_left": 0,
+                "padding_right": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "testimonial_heading_VdNjBU",
+            "testimonial_text_qt4Cr6"
+          ]
+        },
+        "testimonial_content": {
+          "type": "testimonial-content",
+          "static": true,
+          "settings": {
+            "layout_type": "carousel",
+            "column_gap": 20,
+            "row_gap": 20,
+            "columns_desktop": "3",
+            "columns_mobile": "1",
+            "autoplay_speed": 0,
+            "carousel_loop": true,
+            "nav_style": "both",
+            "nav_border_style": "none",
+            "nav_border_width": 5,
+            "nav_border_opacity": 100,
+            "nav_border_radius": 20,
+            "nav_inherit_color_scheme": true,
+            "nav_color_scheme": "scheme-1",
+            "padding_top": 20,
+            "padding_bottom": 20,
+            "padding_left": 20,
+            "padding_right": 20
+          },
+          "blocks": {
+            "testimonial_card_mVmncH": {
+              "type": "testimonial-card",
+              "settings": {
+                "card_type": "overlay",
+                "card_image_position": "top",
+                "card_alignment": "start",
+                "card_gap": 10,
+                "enable_overlay": false,
+                "overlay_color": "#000000",
+                "overlay_style": "solid",
+                "overlay_direction": "to bottom",
+                "inherit_color_scheme": false,
+                "card_color_scheme": "scheme-2",
+                "card_border_style": "solid",
+                "card_border_width": 1,
+                "card_border_opacity": 100,
+                "card_border_radius": 0,
+                "card_pt": 0,
+                "card_pb": 0,
+                "card_pl": 0,
+                "card_pr": 0
+              },
+              "blocks": {
+                "testimonial_image_wQTP9c": {
+                  "type": "testimonial-image",
+                  "settings": {
+                    "image": "shopify://shop_images/Rectangle_g_copy_1.jpg",
+                    "padding_top": 14,
+                    "padding_bottom": 20,
+                    "padding_left": 22,
+                    "padding_right": 16
+                  },
+                  "blocks": {}
+                },
+                "testimonial_text_dcCVf8": {
+                  "type": "testimonial-text",
+                  "settings": {
+                    "variant": "card",
+                    "text": "<p>The fabric quality exceeded my expectations. Will definitely order again.</p>",
+                    "padding_top": 0,
+                    "padding_bottom": 16,
+                    "padding_left": 0,
+                    "padding_right": 0
+                  },
+                  "blocks": {}
+                },
+                "testimonial_client_7BVggT": {
+                  "type": "testimonial-client",
+                  "settings": {
+                    "name": "Priya Sharma",
+                    "profession": "Chennai",
+                    "image_position": "left",
+                    "aspect_ratio": "circle",
+                    "client_gap": 10,
+                    "padding_top": 10,
+                    "padding_bottom": 0,
+                    "padding_left": 0,
+                    "padding_right": 0
+                  },
+                  "blocks": {}
+                },
+                "testimonial_rating_Q3WUG6": {
+                  "type": "testimonial-rating",
+                  "settings": {
+                    "rating_count": "5",
+                    "rating_color": "#f5c518",
+                    "star_gap": 4,
+                    "padding_top": 0,
+                    "padding_bottom": 10,
+                    "padding_left": 0,
+                    "padding_right": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "testimonial_image_wQTP9c",
+                "testimonial_text_dcCVf8",
+                "testimonial_client_7BVggT",
+                "testimonial_rating_Q3WUG6"
+              ]
+            },
+            "testimonial_card_KracDi": {
+              "type": "testimonial-card",
+              "settings": {
+                "card_type": "overlay",
+                "card_image_position": "top",
+                "card_alignment": "start",
+                "card_gap": 10,
+                "enable_overlay": false,
+                "overlay_color": "#000000",
+                "overlay_style": "solid",
+                "overlay_direction": "to bottom",
+                "inherit_color_scheme": true,
+                "card_color_scheme": "",
+                "card_border_style": "none",
+                "card_border_width": 1,
+                "card_border_opacity": 100,
+                "card_border_radius": 0,
+                "card_pt": 20,
+                "card_pb": 20,
+                "card_pl": 20,
+                "card_pr": 20
+              },
+              "blocks": {
+                "testimonial_image_qJtBmh": {
+                  "type": "testimonial-image",
+                  "settings": {
+                    "padding_top": 0,
+                    "padding_bottom": 0,
+                    "padding_left": 0,
+                    "padding_right": 0
+                  },
+                  "blocks": {}
+                },
+                "testimonial_text_LyakBX": {
+                  "type": "testimonial-text",
+                  "settings": {
+                    "variant": "card",
+                    "text": "<p>The fabric quality exceeded my expectations. Will definitely order again.</p>",
+                    "padding_top": 0,
+                    "padding_bottom": 16,
+                    "padding_left": 0,
+                    "padding_right": 0
+                  },
+                  "blocks": {}
+                },
+                "testimonial_client_ndF9FP": {
+                  "type": "testimonial-client",
+                  "settings": {
+                    "name": "Priya Sharma",
+                    "profession": "Chennai",
+                    "image_position": "left",
+                    "aspect_ratio": "circle",
+                    "client_gap": 10,
+                    "padding_top": 10,
+                    "padding_bottom": 0,
+                    "padding_left": 0,
+                    "padding_right": 0
+                  },
+                  "blocks": {}
+                },
+                "testimonial_rating_mYD4Rh": {
+                  "type": "testimonial-rating",
+                  "settings": {
+                    "rating_count": "5",
+                    "rating_color": "#f5c518",
+                    "star_gap": 4,
+                    "padding_top": 0,
+                    "padding_bottom": 10,
+                    "padding_left": 0,
+                    "padding_right": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "testimonial_image_qJtBmh",
+                "testimonial_text_LyakBX",
+                "testimonial_client_ndF9FP",
+                "testimonial_rating_mYD4Rh"
+              ]
+            },
+            "testimonial_card_LcnGhg": {
+              "type": "testimonial-card",
+              "settings": {
+                "card_type": "overlay",
+                "card_image_position": "top",
+                "card_alignment": "start",
+                "card_gap": 10,
+                "enable_overlay": false,
+                "overlay_color": "#000000",
+                "overlay_style": "solid",
+                "overlay_direction": "to bottom",
+                "inherit_color_scheme": true,
+                "card_color_scheme": "",
+                "card_border_style": "none",
+                "card_border_width": 1,
+                "card_border_opacity": 100,
+                "card_border_radius": 0,
+                "card_pt": 20,
+                "card_pb": 20,
+                "card_pl": 20,
+                "card_pr": 20
+              },
+              "blocks": {
+                "testimonial_image_XPMm3f": {
+                  "type": "testimonial-image",
+                  "settings": {
+                    "padding_top": 0,
+                    "padding_bottom": 0,
+                    "padding_left": 0,
+                    "padding_right": 0
+                  },
+                  "blocks": {}
+                },
+                "testimonial_text_zygd4F": {
+                  "type": "testimonial-text",
+                  "settings": {
+                    "variant": "card",
+                    "text": "<p>The fabric quality exceeded my expectations. Will definitely order again.</p>",
+                    "padding_top": 0,
+                    "padding_bottom": 16,
+                    "padding_left": 0,
+                    "padding_right": 0
+                  },
+                  "blocks": {}
+                },
+                "testimonial_client_U6mjeR": {
+                  "type": "testimonial-client",
+                  "settings": {
+                    "name": "Priya Sharma",
+                    "profession": "Chennai",
+                    "image_position": "left",
+                    "aspect_ratio": "circle",
+                    "client_gap": 10,
+                    "padding_top": 10,
+                    "padding_bottom": 0,
+                    "padding_left": 0,
+                    "padding_right": 0
+                  },
+                  "blocks": {}
+                },
+                "testimonial_rating_KdhQA3": {
+                  "type": "testimonial-rating",
+                  "settings": {
+                    "rating_count": "5",
+                    "rating_color": "#f5c518",
+                    "star_gap": 4,
+                    "padding_top": 0,
+                    "padding_bottom": 10,
+                    "padding_left": 0,
+                    "padding_right": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "testimonial_image_XPMm3f",
+                "testimonial_text_zygd4F",
+                "testimonial_client_U6mjeR",
+                "testimonial_rating_KdhQA3"
+              ]
+            },
+            "testimonial_card_rCciC4": {
+              "type": "testimonial-card",
+              "settings": {
+                "card_type": "overlay",
+                "card_image_position": "top",
+                "card_alignment": "start",
+                "card_gap": 10,
+                "enable_overlay": false,
+                "overlay_color": "#000000",
+                "overlay_style": "solid",
+                "overlay_direction": "to bottom",
+                "inherit_color_scheme": true,
+                "card_color_scheme": "",
+                "card_border_style": "none",
+                "card_border_width": 1,
+                "card_border_opacity": 100,
+                "card_border_radius": 0,
+                "card_pt": 20,
+                "card_pb": 20,
+                "card_pl": 20,
+                "card_pr": 20
+              },
+              "blocks": {
+                "testimonial_image_Vz8Mge": {
+                  "type": "testimonial-image",
+                  "settings": {
+                    "padding_top": 0,
+                    "padding_bottom": 0,
+                    "padding_left": 0,
+                    "padding_right": 0
+                  },
+                  "blocks": {}
+                },
+                "testimonial_text_XyAACn": {
+                  "type": "testimonial-text",
+                  "settings": {
+                    "variant": "card",
+                    "text": "<p>The fabric quality exceeded my expectations. Will definitely order again.</p>",
+                    "padding_top": 0,
+                    "padding_bottom": 16,
+                    "padding_left": 0,
+                    "padding_right": 0
+                  },
+                  "blocks": {}
+                },
+                "testimonial_client_yKRKkA": {
+                  "type": "testimonial-client",
+                  "settings": {
+                    "name": "Priya Sharma",
+                    "profession": "Chennai",
+                    "image_position": "left",
+                    "aspect_ratio": "circle",
+                    "client_gap": 10,
+                    "padding_top": 10,
+                    "padding_bottom": 0,
+                    "padding_left": 0,
+                    "padding_right": 0
+                  },
+                  "blocks": {}
+                },
+                "testimonial_rating_7Xm8UW": {
+                  "type": "testimonial-rating",
+                  "settings": {
+                    "rating_count": "5",
+                    "rating_color": "#f5c518",
+                    "star_gap": 4,
+                    "padding_top": 0,
+                    "padding_bottom": 10,
+                    "padding_left": 0,
+                    "padding_right": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "testimonial_image_Vz8Mge",
+                "testimonial_text_XyAACn",
+                "testimonial_client_yKRKkA",
+                "testimonial_rating_7Xm8UW"
+              ]
+            }
+          },
+          "block_order": [
+            "testimonial_card_mVmncH",
+            "testimonial_card_KracDi",
+            "testimonial_card_LcnGhg",
+            "testimonial_card_rCciC4"
+          ]
+        }
+      },
+      "name": "t:sections.testimonial.presets.name",
+      "settings": {
+        "enable_container": true,
+        "width_type": "full_width",
+        "color_scheme": "",
+        "padding_top": 40,
+        "padding_bottom": 40
       }
     }
   },
   "order": [
     "main",
-    "collection_list_NnXJhC"
+    "collection_list_NnXJhC",
+    "testimonial_ak78dC"
   ]
 }
