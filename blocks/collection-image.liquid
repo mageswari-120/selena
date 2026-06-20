@@ -132,78 +132,78 @@
 
 {% schema %}
 {
-  "name": "Collection image",
+  "name": "t:blocks.collection_image.name",
   "settings": [
     {
       "type": "header",
-      "content": "Display"
+      "content": "t:blocks.collection_image.headers.display"
     },
     {
       "type": "select",
       "id": "image_ratio",
-      "label": "Image ratio",
+      "label": "t:labels.image_ratio",
       "options": [
-        { "value": "square",    "label": "Square" },
-        { "value": "landscape", "label": "Landscape" },
-        { "value": "portrait",  "label": "Portrait" },
-        { "value": "adapt",     "label": "Adapt to image" }
+        { "value": "square",    "label": "t:options.image_ratio.square" },
+        { "value": "landscape", "label": "t:options.image_ratio.landscape" },
+        { "value": "portrait",  "label": "t:options.image_ratio.portrait" },
+        { "value": "adapt",     "label": "t:options.image_ratio.adapt" }
       ],
       "default": "adapt"
     },
     {
       "type": "select",
       "id": "image_fit",
-      "label": "Image fit",
+      "label": "t:labels.image_fit",
       "options": [
-        { "value": "cover",   "label": "Cover (fill)" },
-        { "value": "contain", "label": "Contain (show whole image)" }
+        { "value": "cover",   "label": "t:options.image_fit.cover" },
+        { "value": "contain", "label": "t:options.image_fit.contain" }
       ],
       "default": "cover"
     },
     {
       "type": "checkbox",
       "id": "transparent_bg",
-      "label": "Transparent background",
+      "label": "t:blocks.collection_image.transparent_background",
       "default": false,
-      "info": "Removes the grey backdrop. Use with Contain fit for isolated images."
+      "info": "t:blocks.collection_image.transparent_background_info"
     },
     {
       "type": "header",
-      "content": "Overlay"
+      "content": "t:blocks.collection_image.headers.overlay"
     },
     {
       "type": "checkbox",
       "id": "media_overlay",
-      "label": "Enable overlay",
+      "label": "t:blocks.collection_image.show_overlay",
       "default": false,
-      "info": "Dark scrim over the image. Useful when text sits on top."
+      "info": "t:blocks.collection_image.show_overlay_info"
     },
     {
       "type": "range",
       "id": "overlay",
-      "label": "Overlay intensity",
+      "label": "t:blocks.collection_image.overlay_intensity",
       "min": 0, "max": 9, "step": 1,
       "default": 2,
       "visible_if": "{{ block.settings.media_overlay }}"
     },
     {
       "type": "header",
-      "content": "Border"
+      "content": "t:blocks.collection_image.headers.border"
     },
     {
       "type": "select",
       "id": "border_style",
-      "label": "Border style",
+      "label": "t:labels.border_style",
       "options": [
-        { "value": "none",  "label": "None" },
-        { "value": "solid", "label": "Solid" }
+        { "value": "none",  "label": "t:options.border.none" },
+        { "value": "solid", "label": "t:options.border.solid" }
       ],
       "default": "none"
     },
     {
       "type": "range",
       "id": "border_width",
-      "label": "Border width",
+      "label": "t:labels.border_width",
       "min": 1, "max": 5, "step": 1, "unit": "px",
       "default": 1,
       "visible_if": "{{ block.settings.border_style != 'none' }}"
@@ -211,7 +211,7 @@
     {
       "type": "range",
       "id": "border_opacity",
-      "label": "Border opacity",
+      "label": "t:labels.border_opacity",
       "min": 0, "max": 100, "step": 1, "unit": "%",
       "default": 100,
       "visible_if": "{{ block.settings.border_style != 'none' }}"
@@ -219,7 +219,7 @@
     {
       "type": "range",
       "id": "border_radius",
-      "label": "Border radius",
+      "label": "t:labels.border_radius",
       "min": 0, "max": 30, "step": 1, "unit": "px",
       "default": 0
     }

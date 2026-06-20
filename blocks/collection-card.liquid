@@ -112,9 +112,11 @@
 
 {% schema %}
 {
-  "name": "Collection card",
+  "name": "t:blocks.collection_card.name",
   "tag": null,
   "blocks": [
+    { "type": "collection-image" },
+    { "type": "collection-title" },
     { "type": "collection-description" },
     { "type": "collection-button" },
     { "type": "collection-text" }
@@ -122,28 +124,28 @@
   "settings": [
     {
       "type": "header",
-      "content": "Card — Image shape"
+      "content": "t:blocks.collection_card.headers.image_shape"
     },
     {
       "type": "select",
       "id": "card_image_shape",
-      "label": "Image shape",
+      "label": "t:labels.image_shape",
       "options": [
-        { "value": "default",           "label": "Default" },
-        { "value": "arch",              "label": "Arch" },
-        { "value": "rounded-arch",      "label": "Rounded arch" },
-        { "value": "oval",              "label": "Oval" },
-        { "value": "circle",            "label": "Circle" },
-        { "value": "pill",              "label": "Pill" },
-        { "value": "rounded-rectangle", "label": "Rounded rectangle" },
-        { "value": "custom-radius",     "label": "Custom radius" }
+        { "value": "default",           "label": "t:options.image_shape.default" },
+        { "value": "arch",              "label": "t:options.image_shape.arch" },
+        { "value": "rounded-arch",      "label": "t:options.image_shape.rounded_arch" },
+        { "value": "oval",              "label": "t:options.image_shape.oval" },
+        { "value": "circle",            "label": "t:options.image_shape.circle" },
+        { "value": "pill",              "label": "t:options.image_shape.pill" },
+        { "value": "rounded-rectangle", "label": "t:options.image_shape.rounded_rectangle" },
+        { "value": "custom-radius",     "label": "t:options.image_shape.custom_radius" }
       ],
       "default": "default"
     },
     {
       "type": "range",
       "id": "card_custom_radius",
-      "label": "Custom radius",
+      "label": "t:blocks.collection_card.custom_radius",
       "min": 0, "max": 50, "step": 1, "unit": "px",
       "default": 16,
       "visible_if": "{{ block.settings.card_image_shape == 'custom-radius' }}"
@@ -151,7 +153,7 @@
     {
       "type": "range",
       "id": "card_arch_height",
-      "label": "Arch height",
+      "label": "t:blocks.collection_card.arch_height",
       "min": 100, "max": 500, "step": 10, "unit": "px",
       "default": 300,
       "visible_if": "{{ block.settings.card_image_shape == 'arch' or block.settings.card_image_shape == 'rounded-arch' }}"
@@ -159,7 +161,7 @@
     {
       "type": "range",
       "id": "card_arch_width",
-      "label": "Arch width",
+      "label": "t:blocks.collection_card.arch_width",
       "min": 100, "max": 500, "step": 10, "unit": "px",
       "default": 250,
       "visible_if": "{{ block.settings.card_image_shape == 'rounded-arch' }}"
@@ -167,69 +169,69 @@
     {
       "type": "select",
       "id": "card_image_position",
-      "label": "Image position",
+      "label": "t:labels.image_position",
       "options": [
-        { "value": "top",    "label": "Top" },
-        { "value": "center", "label": "Center" },
-        { "value": "bottom", "label": "Bottom" }
+        { "value": "top",    "label": "t:options.image_position.top" },
+        { "value": "center", "label": "t:options.image_position.center" },
+        { "value": "bottom", "label": "t:options.image_position.bottom" }
       ],
       "default": "center"
     },
     {
       "type": "header",
-      "content": "Card — Content"
+      "content": "t:blocks.collection_card.headers.content"
     },
     {
       "type": "select",
       "id": "card_overlay_style",
-      "label": "Overlay style",
+      "label": "t:blocks.collection_card.content_placement",
       "options": [
-        { "value": "on-image",    "label": "On image" },
-        { "value": "below-image", "label": "Below image" }
+        { "value": "on-image",    "label": "t:options.content_placement.on_image" },
+        { "value": "below-image", "label": "t:options.content_placement.below_image" }
       ],
       "default": "below-image"
     },
     {
       "type": "select",
       "id": "card_content_alignment",
-      "label": "Content alignment",
+      "label": "t:blocks.collection_card.content_alignment",
       "options": [
-        { "value": "left",   "label": "Left" },
-        { "value": "center", "label": "Center" },
-        { "value": "right",  "label": "Right" }
+        { "value": "left",   "label": "t:options.alignment.left" },
+        { "value": "center", "label": "t:options.alignment.center" },
+        { "value": "right",  "label": "t:options.alignment.right" }
       ],
       "default": "center"
     },
     {
       "type": "select",
       "id": "card_content_position",
-      "label": "Content position",
+      "label": "t:blocks.collection_card.vertical_position",
       "options": [
-        { "value": "top",    "label": "Top" },
-        { "value": "center", "label": "Center" },
-        { "value": "bottom", "label": "Bottom" }
+        { "value": "top",    "label": "t:options.vertical_position.top" },
+        { "value": "center", "label": "t:options.vertical_position.center" },
+        { "value": "bottom", "label": "t:options.vertical_position.bottom" }
       ],
       "default": "bottom",
       "visible_if": "{{ block.settings.card_overlay_style == 'on-image' }}"
     },
     {
       "type": "header",
-      "content": "Card — Border"
+      "content": "t:blocks.collection_card.headers.border"
     },
     {
       "type": "select",
       "id": "card_border_style",
-      "label": "Border style",
+      "label": "t:labels.border_style",
       "options": [
-        { "value": "none",  "label": "None" },
-        { "value": "solid", "label": "Solid" }
+        { "value": "none",  "label": "t:options.border.none" },
+        { "value": "solid", "label": "t:options.border.solid" }
       ],
       "default": "none"
     },
     {
       "type": "range",
       "id": "card_border_width",
-      "label": "Border width",
+      "label": "t:labels.border_width",
       "min": 1, "max": 5, "step": 1, "unit": "px",
       "default": 1,
       "visible_if": "{{ block.settings.card_border_style != 'none' }}"
@@ -237,7 +239,7 @@
     {
       "type": "range",
       "id": "card_border_opacity",
-      "label": "Border opacity",
+      "label": "t:labels.border_opacity",
       "min": 0, "max": 100, "step": 1, "unit": "%",
       "default": 100,
       "visible_if": "{{ block.settings.card_border_style != 'none' }}"
@@ -245,39 +247,39 @@
     {
       "type": "range",
       "id": "card_border_radius",
-      "label": "Border radius",
+      "label": "t:labels.border_radius",
       "min": 0, "max": 30, "step": 1, "unit": "px",
       "default": 0
     },
     {
       "type": "header",
-      "content": "Card — Padding"
+      "content": "t:blocks.collection_card.headers.padding"
     },
     {
       "type": "range",
       "id": "card_padding_top",
-      "label": "Padding top",
+      "label": "t:labels.top_padding",
       "min": 0, "max": 50, "step": 1, "unit": "px",
       "default": 0
     },
     {
       "type": "range",
       "id": "card_padding_bottom",
-      "label": "Padding bottom",
+      "label": "t:labels.bottom_padding",
       "min": 0, "max": 50, "step": 1, "unit": "px",
       "default": 0
     },
     {
       "type": "range",
       "id": "card_padding_left",
-      "label": "Padding left",
+      "label": "t:labels.left_padding",
       "min": 0, "max": 50, "step": 1, "unit": "px",
       "default": 0
     },
     {
       "type": "range",
       "id": "card_padding_right",
-      "label": "Padding right",
+      "label": "t:labels.right_padding",
       "min": 0, "max": 50, "step": 1, "unit": "px",
       "default": 0
     }

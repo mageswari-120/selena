@@ -9,6 +9,7 @@
     "collection": "Collection",
     "collections": "Collections",
     "collection_card": "Collection card",
+    "collection_list": "Collection list",
     "collections_grid": "Collections grid",
     "colors": "Colors",
     "column": "Column",
@@ -50,6 +51,32 @@
     "free_shipping_threshold": "Free shipping threshold",
     "free_shipping_threshold_info": "Amount in your store currency. Set to 0 to hide the bar.",
     "padding": "Padding",
+    "top_padding": "Top padding",
+    "bottom_padding": "Bottom padding",
+    "left_padding": "Left padding",
+    "right_padding": "Right padding",
+    "border": "Border",
+    "border_style": "Border style",
+    "border_width": "Border width",
+    "border_opacity": "Border opacity",
+    "border_radius": "Border radius",
+    "heading_size": "Heading size",
+    "text_case": "Text case",
+    "color_scheme": "Color scheme",
+    "image_ratio": "Image ratio",
+    "image_fit": "Image fit",
+    "image_shape": "Image shape",
+    "image_position": "Image position",
+    "horizontal_alignment": "Horizontal alignment",
+    "button_label": "Button label",
+    "button_link": "Button link",
+    "button_style": "Button style",
+    "display_style": "Display style",
+    "layout_type": "Layout",
+    "columns_desktop": "Columns on desktop",
+    "columns_mobile": "Columns on mobile",
+    "column_gap": "Horizontal spacing",
+    "row_gap": "Vertical spacing",
     "page_margin": "Page margin",
     "page_width": "Page width",
     "show_payment_icons": "Show payment icons",
@@ -78,6 +105,84 @@
       "title": "Title",
       "subtitle": "Subtitle",
       "normal": "Normal text"
+    },
+    "border": {
+      "none": "None",
+      "solid": "Solid"
+    },
+    "text_case": {
+      "default": "Default",
+      "uppercase": "Uppercase"
+    },
+    "layout": {
+      "grid": "Grid",
+      "carousel": "Carousel"
+    },
+    "navigation": {
+      "arrows": "Arrows",
+      "dots": "Dots",
+      "both": "Both",
+      "none": "None"
+    },
+    "width": {
+      "full": "Full width",
+      "container_fluid": "Container fluid"
+    },
+    "vertical_position": {
+      "top": "Top",
+      "center": "Center",
+      "bottom": "Bottom"
+    },
+    "image_position": {
+      "top": "Top",
+      "center": "Center",
+      "bottom": "Bottom"
+    },
+    "image_ratio": {
+      "square": "Square",
+      "landscape": "Landscape",
+      "portrait": "Portrait",
+      "adapt": "Adapt to image"
+    },
+    "image_fit": {
+      "cover": "Cover",
+      "contain": "Contain"
+    },
+    "image_shape": {
+      "default": "Default",
+      "arch": "Arch",
+      "rounded_arch": "Rounded arch",
+      "oval": "Oval",
+      "circle": "Circle",
+      "pill": "Pill",
+      "rounded_rectangle": "Rounded rectangle",
+      "custom_radius": "Custom corner radius"
+    },
+    "content_placement": {
+      "on_image": "Overlaid on image",
+      "below_image": "Below image"
+    },
+    "button_style": {
+      "primary": "Primary",
+      "secondary": "Secondary",
+      "link": "Link",
+      "arrow": "Arrow button"
+    },
+    "display_style": {
+      "heading": "Heading",
+      "badge": "Badge"
+    },
+    "heading_level": {
+      "h3": "H3",
+      "h4": "H4",
+      "h5": "H5",
+      "h6": "H6"
+    },
+    "arrow_style": {
+      "filled_circle": "Filled circle",
+      "outline_circle": "Outline circle",
+      "square": "Square",
+      "minimal": "Minimal"
     }
   },
   "settings_schema": {
@@ -197,6 +302,97 @@
       "twitter": "X (Twitter) URL",
       "youtube": "YouTube URL",
       "pinterest": "Pinterest URL"
+    }
+  },
+  "sections": {
+    "collection_list": {
+      "name": "Collection list",
+      "presets": {
+        "name": "Collection list"
+      },
+      "headers": {
+        "collections": "Collections",
+        "general": "General",
+        "spacing": "Spacing",
+        "layout": "Layout",
+        "carousel": "Carousel"
+      },
+      "collections": "Collections",
+      "collections_info": "Pick any number of collections. One tile renders per collection, all sharing the layout defined by the child blocks.",
+      "use_container": "Use container",
+      "width": "Width",
+      "columns_desktop_info": "In carousel mode this is the number of slides shown per view on desktop. The carousel only slides when you have more collections than this.",
+      "columns_mobile_info": "In carousel mode this is the number of slides shown per view on mobile.",
+      "carousel_loop": "Loop slides",
+      "autoplay_speed": "Autoplay speed",
+      "autoplay_speed_info": "Seconds between slides. 0 turns autoplay off.",
+      "navigation": "Navigation",
+      "arrow_border_style": "Arrow border style",
+      "arrow_border_width": "Arrow border width",
+      "arrow_border_opacity": "Arrow border opacity",
+      "arrow_border_radius": "Arrow border radius",
+      "arrow_inherit_scheme": "Arrows inherit color scheme",
+      "arrow_color_scheme": "Arrow color scheme"
+    }
+  },
+  "blocks": {
+    "collection_card": {
+      "name": "Collection card",
+      "headers": {
+        "image_shape": "Image shape",
+        "content": "Content",
+        "border": "Border",
+        "padding": "Padding"
+      },
+      "custom_radius": "Custom corner radius",
+      "arch_height": "Arch height",
+      "arch_width": "Arch width",
+      "content_placement": "Content placement",
+      "content_alignment": "Content alignment",
+      "vertical_position": "Vertical position"
+    },
+    "collection_heading": {
+      "name": "Collection heading",
+      "show_product_count": "Show product count"
+    },
+    "collection_image": {
+      "name": "Collection image",
+      "headers": {
+        "display": "Display",
+        "overlay": "Overlay",
+        "border": "Border"
+      },
+      "transparent_background": "Transparent background",
+      "transparent_background_info": "Removes the grey backdrop. Use with Contain fit for isolated images.",
+      "show_overlay": "Show overlay",
+      "show_overlay_info": "Dark scrim over the image. Useful when text sits on top.",
+      "overlay_intensity": "Overlay intensity"
+    },
+    "collection_description": {
+      "name": "Collection description",
+      "preset_name": "Collection description"
+    },
+    "collection_text": {
+      "name": "Collection text",
+      "preset_name": "Collection text",
+      "badge_background": "Badge background color",
+      "badge_background_info": "Leave blank for translucent white.",
+      "display_style_info": "Badge renders as a small rounded pill, for example an age-range label."
+    },
+    "collection_button": {
+      "name": "Collection button",
+      "preset_name": "Collection button",
+      "open_new_tab": "Open link in new tab",
+      "link_info": "Leave blank to link to the collection automatically.",
+      "show_button_label": "Show button label",
+      "show_button_label_info": "Turn off for an icon-only arrow button.",
+      "show_arrow_icon": "Show arrow icon",
+      "arrow_style": "Arrow style",
+      "arrow_size": "Arrow size",
+      "placement_header": "Placement",
+      "align_inherit": "Inherit from card",
+      "pin_bottom": "Pin to bottom of card",
+      "pin_bottom_info": "Pushes the button to the bottom edge of the card."
     }
   }
 }

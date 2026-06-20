@@ -65,47 +65,47 @@ h6.cl-collection-title { font-size: 0.85rem; letter-spacing: 0.04em; }
 
 {% schema %}
 {
-  "name": "Collection title",
+  "name": "t:blocks.collection_heading.name",
   "settings": [
     {
       "type": "select",
       "id": "heading_size",
-      "label": "Heading size",
+      "label": "t:labels.heading_size",
       "options": [
-        { "value": "h3", "label": "H3" },
-        { "value": "h4", "label": "H4" },
-        { "value": "h5", "label": "H5" },
-        { "value": "h6", "label": "H6" }
+        { "value": "h3", "label": "t:options.heading_level.h3" },
+        { "value": "h4", "label": "t:options.heading_level.h4" },
+        { "value": "h5", "label": "t:options.heading_level.h5" },
+        { "value": "h6", "label": "t:options.heading_level.h6" }
       ],
       "default": "h4"
     },
     {
       "type": "select",
       "id": "text_case",
-      "label": "Text case",
+      "label": "t:labels.text_case",
       "options": [
-        { "value": "default",   "label": "Default" },
-        { "value": "uppercase", "label": "Uppercase" }
+        { "value": "default",   "label": "t:options.text_case.default" },
+        { "value": "uppercase", "label": "t:options.text_case.uppercase" }
       ],
       "default": "default"
     },
     {
       "type": "checkbox",
       "id": "show_product_count",
-      "label": "Show product count",
+      "label": "t:blocks.collection_heading.show_product_count",
       "default": false
     },
     {
       "type": "range",
       "id": "padding_top",
-      "label": "Padding top",
+      "label": "t:labels.top_padding",
       "min": 0, "max": 30, "step": 1, "unit": "px",
       "default": 8
     },
     {
       "type": "range",
       "id": "padding_bottom",
-      "label": "Padding bottom",
+      "label": "t:labels.bottom_padding",
       "min": 0, "max": 30, "step": 1, "unit": "px",
       "default": 0
     }

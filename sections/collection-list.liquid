@@ -1,28 +1,4 @@
-{%- comment -%}
-  ============================================================
-  Section : Collection List  —  Selena Theme  (OS 3.0)
-  ============================================================
-  Architecture (static wrapper + dynamic children):
-  • Section owns the collection_list picker, layout (grid/carousel),
-    and container/spacing settings.
-  • For each collection it renders ONE static wrapper block:
-      content_for 'block', type:'collection-card', id:'cl-card',
-        closest.collection: col, is_carousel:…
-  • blocks/collection-card.liquid owns card appearance settings and
-    renders:
-      – collection-image  (static, fixed)
-      – collection-title  (static, fixed)
-      – content_for 'blocks'  → DYNAMIC children the merchant can
-        add / remove / reorder: description, button, text.
-
-  Why a wrapper: Shopify allows STATIC blocks inside a for-loop but
-  NOT dynamic ({% content_for 'blocks' %}). Nesting the dynamic
-  children inside a statically-rendered card is the only valid way
-  to get reorderable per-collection blocks — same pattern as
-  blocks/product-info.liquid.
-  ============================================================
-{%- endcomment -%}
-
+ 
 {%- liquid
   assign s = section.settings
 
@@ -64,6 +40,14 @@
   endif
 
   assign collections = s.collections
+
+  assign card_settings = blank
+  for block in section.blocks
+    if block.type == 'collection-card'
+      assign card_settings = block.settings
+      break
+    endif
+  endfor
 -%}
 
 <style>
@@ -146,7 +130,7 @@
               {% content_for 'block', type: 'collection-card', id: 'cl-card', closest.collection: col, is_carousel: is_carousel %}
             {%- endfor -%}
           {%- else -%}
-            {%- render 'cl-placeholders', is_carousel: is_carousel -%}
+            {%- render 'cl-placeholders', is_carousel: is_carousel, card_settings: card_settings -%}
           {%- endif -%}
 
     {%- if is_carousel -%}
@@ -205,14 +189,11 @@
 .collection-list-carousel .swiper-pagination { bottom: 0; }
 .collection-list-carousel .swiper-pagination-bullet { opacity: 0.3; transition: opacity 0.2s ease, transform 0.2s ease; }
 .collection-list-carousel .swiper-pagination-bullet-active { opacity: 1; transform: scale(1.25); }
-
-.cl-card--placeholder { aspect-ratio: 3/4; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.04); border-radius: var(--cl-card-radius,0); }
-.cl-placeholder__svg  { width: 56%; height: 56%; opacity: 0.2; }
 {% endstylesheet %}
 
 {% schema %}
 {
-  "name": "Collection list",
+  "name": "t:sections.collection_list.name",
   "tag": "section",
   "class": "section-collection-list",
   "blocks": [
@@ -221,137 +202,137 @@
   "settings": [
     {
       "type": "header",
-      "content": "Collections"
+      "content": "t:sections.collection_list.headers.collections"
     },
     {
       "type": "collection_list",
       "id": "collections",
-      "label": "Collections",
+      "label": "t:sections.collection_list.collections",
       "limit": 12,
-      "info": "Pick any number of collections. One tile renders per collection, all sharing the layout defined by the child blocks."
+      "info": "t:sections.collection_list.collections_info"
     },
     {
       "type": "header",
-      "content": "General"
+      "content": "t:sections.collection_list.headers.general"
     },
     {
       "type": "checkbox",
       "id": "enable_container",
-      "label": "Enable container",
+      "label": "t:sections.collection_list.use_container",
       "default": true
     },
     {
       "type": "select",
       "id": "width",
-      "label": "Width",
+      "label": "t:sections.collection_list.width",
       "options": [
-        { "value": "full",            "label": "Full width" },
-        { "value": "container_fluid", "label": "Container fluid" }
+        { "value": "full",            "label": "t:options.width.full" },
+        { "value": "container_fluid", "label": "t:options.width.container_fluid" }
       ],
       "default": "full"
     },
     {
       "type": "color_scheme",
       "id": "color_scheme",
-      "label": "Color scheme",
+      "label": "t:labels.color_scheme",
       "default": "scheme-1"
     },
     {
       "type": "header",
-      "content": "Spacing"
+      "content": "t:sections.collection_list.headers.spacing"
     },
     {
       "type": "range",
       "id": "padding_top",
-      "label": "Padding top",
+      "label": "t:labels.top_padding",
       "min": 0, "max": 200, "step": 2, "unit": "px",
       "default": 50
     },
     {
       "type": "range",
       "id": "padding_bottom",
-      "label": "Padding bottom",
+      "label": "t:labels.bottom_padding",
       "min": 0, "max": 200, "step": 2, "unit": "px",
       "default": 50
     },
     {
       "type": "header",
-      "content": "Layout"
+      "content": "t:sections.collection_list.headers.layout"
     },
     {
       "type": "select",
       "id": "layout_type",
-      "label": "Type",
+      "label": "t:labels.layout_type",
       "options": [
-        { "value": "grid",     "label": "Grid" },
-        { "value": "carousel", "label": "Carousel" }
+        { "value": "grid",     "label": "t:options.layout.grid" },
+        { "value": "carousel", "label": "t:options.layout.carousel" }
       ],
       "default": "grid"
     },
     {
       "type": "range",
       "id": "columns_desktop",
-      "label": "Desktop columns",
+      "label": "t:labels.columns_desktop",
       "min": 1, "max": 8, "step": 1,
       "default": 5,
-      "info": "In carousel mode this is the number of slides shown per view on desktop. The carousel only slides when you have more collections than this."
+      "info": "t:sections.collection_list.columns_desktop_info"
     },
     {
       "type": "select",
       "id": "columns_mobile",
-      "label": "Mobile columns",
+      "label": "t:labels.columns_mobile",
       "options": [
         { "value": "1", "label": "1" },
         { "value": "2", "label": "2" }
       ],
       "default": "2",
-      "info": "In carousel mode this is the number of slides shown per view on mobile."
+      "info": "t:sections.collection_list.columns_mobile_info"
     },
     {
       "type": "range",
       "id": "column_gap",
-      "label": "Column gap",
+      "label": "t:labels.column_gap",
       "min": 0, "max": 50, "step": 1, "unit": "px",
       "default": 20
     },
     {
       "type": "range",
       "id": "row_gap",
-      "label": "Row gap",
+      "label": "t:labels.row_gap",
       "min": 0, "max": 50, "step": 1, "unit": "px",
       "default": 20,
       "visible_if": "{{ section.settings.layout_type == 'grid' }}"
     },
     {
       "type": "header",
-      "content": "Carousel",
+      "content": "t:sections.collection_list.headers.carousel",
       "visible_if": "{{ section.settings.layout_type == 'carousel' }}"
     },
     {
       "type": "checkbox",
       "id": "carousel_loop",
-      "label": "Loop slides",
+      "label": "t:sections.collection_list.carousel_loop",
       "default": false,
       "visible_if": "{{ section.settings.layout_type == 'carousel' }}"
     },
     {
       "type": "range",
       "id": "carousel_autoplay",
-      "label": "Autoplay speed",
+      "label": "t:sections.collection_list.autoplay_speed",
       "min": 0, "max": 10, "step": 1, "unit": "s",
       "default": 0,
-      "info": "Seconds between slides. 0 turns autoplay off.",
+      "info": "t:sections.collection_list.autoplay_speed_info",
       "visible_if": "{{ section.settings.layout_type == 'carousel' }}"
     },
     {
       "type": "select",
       "id": "carousel_nav",
-      "label": "Navigation",
+      "label": "t:sections.collection_list.navigation",
       "options": [
-        { "value": "navigation", "label": "Arrows" },
-        { "value": "pagination", "label": "Dots" },
-        { "value": "both",       "label": "Both" },
-        { "value": "none",       "label": "None" }
+        { "value": "navigation", "label": "t:options.navigation.arrows" },
+        { "value": "pagination", "label": "t:options.navigation.dots" },
+        { "value": "both",       "label": "t:options.navigation.both" },
+        { "value": "none",       "label": "t:options.navigation.none" }
       ],
       "default": "navigation",
       "visible_if": "{{ section.settings.layout_type == 'carousel' }}"
@@ -359,10 +340,10 @@
     {
       "type": "select",
       "id": "carousel_border_style",
-      "label": "Arrow border style",
+      "label": "t:sections.collection_list.arrow_border_style",
       "options": [
-        { "value": "none",  "label": "None" },
-        { "value": "solid", "label": "Solid" }
+        { "value": "none",  "label": "t:options.border.none" },
+        { "value": "solid", "label": "t:options.border.solid" }
       ],
       "default": "none",
       "visible_if": "{{ section.settings.layout_type == 'carousel' }}"
@@ -370,7 +351,7 @@
     {
       "type": "range",
       "id": "carousel_border_width",
-      "label": "Arrow border width",
+      "label": "t:sections.collection_list.arrow_border_width",
       "min": 1, "max": 5, "step": 1, "unit": "px",
       "default": 1,
       "visible_if": "{{ section.settings.layout_type == 'carousel' and section.settings.carousel_border_style != 'none' }}"
@@ -378,7 +359,7 @@
     {
       "type": "range",
       "id": "carousel_border_opacity",
-      "label": "Arrow border opacity",
+      "label": "t:sections.collection_list.arrow_border_opacity",
       "min": 0, "max": 100, "step": 1, "unit": "%",
       "default": 100,
       "visible_if": "{{ section.settings.layout_type == 'carousel' and section.settings.carousel_border_style != 'none' }}"
@@ -386,7 +367,7 @@
     {
       "type": "range",
       "id": "carousel_border_radius",
-      "label": "Arrow border radius",
+      "label": "t:sections.collection_list.arrow_border_radius",
       "min": 0, "max": 50, "step": 1, "unit": "px",
       "default": 50,
       "visible_if": "{{ section.settings.layout_type == 'carousel' }}"
@@ -394,26 +375,25 @@
     {
       "type": "checkbox",
       "id": "carousel_inherit_scheme",
-      "label": "Arrows inherit color scheme",
+      "label": "t:sections.collection_list.arrow_inherit_scheme",
       "default": true,
       "visible_if": "{{ section.settings.layout_type == 'carousel' }}"
     },
     {
       "type": "color_scheme",
       "id": "carousel_color_scheme",
-      "label": "Arrow color scheme",
+      "label": "t:sections.collection_list.arrow_color_scheme",
       "default": "scheme-1",
       "visible_if": "{{ section.settings.layout_type == 'carousel' and section.settings.carousel_inherit_scheme == false }}"
     }
   ],
   "presets": [
     {
-      "name": "Collection list",
-      "blocks": [
-        {
+      "name": "t:sections.collection_list.presets.name",
+      "blocks": {
+        "cl-card": {
           "type": "collection-card",
           "static": true,
-          "id": "cl-card",
           "settings": {
             "card_image_shape": "default",
             "card_custom_radius": 16,
@@ -432,13 +412,33 @@
             "card_padding_left": 0,
             "card_padding_right": 0
           },
-          "blocks": [
-            { "type": "collection-description" },
-            { "type": "collection-text" },
-            { "type": "collection-button" }
-          ]
+          "blocks": {
+            "cl-img": {
+              "type": "collection-image",
+              "static": true,
+              "settings": {}
+            },
+            "cl-title": {
+              "type": "collection-title",
+              "static": true,
+              "settings": {}
+            },
+            "cl-desc": {
+              "type": "collection-description",
+              "settings": {}
+            },
+            "cl-text": {
+              "type": "collection-text",
+              "settings": { "text": "Text" }
+            },
+            "cl-btn": {
+              "type": "collection-button",
+              "settings": {}
+            }
+          },
+          "block_order": ["cl-desc", "cl-text", "cl-btn"]
         }
-      ]
+      }
     }
   ]
 }

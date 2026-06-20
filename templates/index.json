@@ -156,21 +156,18 @@
             },
             "cl-desc": {
               "type": "collection-description",
-              "static": true,
               "settings": {}
             },
             "cl-text": {
               "type": "collection-text",
-              "static": true,
               "settings": {}
             },
             "cl-btn": {
               "type": "collection-button",
-              "static": true,
               "settings": {}
             }
           },
-          "block_order": ["cl-img", "cl-title", "cl-desc", "cl-text", "cl-btn"]
+          "block_order": ["cl-desc", "cl-text", "cl-btn"]
         }
       },
       "block_order": [],

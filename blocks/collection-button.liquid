@@ -127,63 +127,63 @@
 
 {% schema %}
 {
-  "name": "Collection button",
+  "name": "t:blocks.collection_button.name",
   "tag": null,
   "settings": [
     {
       "type": "text",
       "id": "button_label",
-      "label": "Button label",
+      "label": "t:labels.button_label",
       "default": "Shop Now"
     },
     {
       "type": "url",
       "id": "button_link",
-      "label": "Button link",
-      "info": "Leave blank to link to the collection automatically."
+      "label": "t:labels.button_link",
+      "info": "t:blocks.collection_button.link_info"
     },
     {
       "type": "checkbox",
       "id": "open_new_tab",
-      "label": "Open link in new tab",
+      "label": "t:blocks.collection_button.open_new_tab",
       "default": false
     },
     {
       "type": "select",
       "id": "button_style",
-      "label": "Button style",
+      "label": "t:labels.button_style",
       "options": [
-        { "value": "primary",   "label": "Primary" },
-        { "value": "secondary", "label": "Secondary" },
-        { "value": "link",      "label": "Link" },
-        { "value": "arrow",     "label": "Arrow button" }
+        { "value": "primary",   "label": "t:options.button_style.primary" },
+        { "value": "secondary", "label": "t:options.button_style.secondary" },
+        { "value": "link",      "label": "t:options.button_style.link" },
+        { "value": "arrow",     "label": "t:options.button_style.arrow" }
       ],
       "default": "primary"
     },
     {
       "type": "checkbox",
       "id": "show_label",
-      "label": "Show label text",
+      "label": "t:blocks.collection_button.show_button_label",
       "default": true,
-      "info": "Turn off for an icon-only arrow button.",
+      "info": "t:blocks.collection_button.show_button_label_info",
       "visible_if": "{{ block.settings.button_style == 'arrow' }}"
     },
     {
       "type": "checkbox",
       "id": "arrow_button",
-      "label": "Show arrow icon",
+      "label": "t:blocks.collection_button.show_arrow_icon",
       "default": true,
       "visible_if": "{{ block.settings.button_style == 'arrow' }}"
     },
     {
       "type": "select",
       "id": "arrow_style",
-      "label": "Arrow style",
+      "label": "t:blocks.collection_button.arrow_style",
       "options": [
-        { "value": "filled-circle",  "label": "Filled circle" },
-        { "value": "outline-circle", "label": "Outline circle" },
-        { "value": "square",         "label": "Square" },
-        { "value": "minimal",        "label": "Minimal" }
+        { "value": "filled-circle",  "label": "t:options.arrow_style.filled_circle" },
+        { "value": "outline-circle", "label": "t:options.arrow_style.outline_circle" },
+        { "value": "square",         "label": "t:options.arrow_style.square" },
+        { "value": "minimal",        "label": "t:options.arrow_style.minimal" }
       ],
       "default": "filled-circle",
       "visible_if": "{{ block.settings.button_style == 'arrow' }}"
@@ -191,33 +191,38 @@
     {
       "type": "range",
       "id": "arrow_size",
-      "label": "Arrow size",
+      "label": "t:blocks.collection_button.arrow_size",
       "min": 20, "max": 60, "step": 2, "unit": "px",
       "default": 32,
       "visible_if": "{{ block.settings.button_style == 'arrow' }}"
     },
     {
       "type": "header",
-      "content": "Placement"
+      "content": "t:blocks.collection_button.placement_header"
     },
     {
       "type": "select",
       "id": "align",
-      "label": "Horizontal alignment",
+      "label": "t:labels.horizontal_alignment",
       "options": [
-        { "value": "auto",   "label": "Inherit from card" },
-        { "value": "left",   "label": "Left" },
-        { "value": "center", "label": "Center" },
-        { "value": "right",  "label": "Right" }
+        { "value": "auto",   "label": "t:blocks.collection_button.align_inherit" },
+        { "value": "left",   "label": "t:options.alignment.left" },
+        { "value": "center", "label": "t:options.alignment.center" },
+        { "value": "right",  "label": "t:options.alignment.right" }
       ],
       "default": "auto"
     },
     {
       "type": "checkbox",
       "id": "pin_bottom",
-      "label": "Pin to bottom of card",
+      "label": "t:blocks.collection_button.pin_bottom",
       "default": false,
-      "info": "Pushes the button to the card's bottom edge — useful for a bottom-left arrow CTA."
+      "info": "t:blocks.collection_button.pin_bottom_info"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.collection_button.preset_name"
     }
   ]
 }

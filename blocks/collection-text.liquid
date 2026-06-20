@@ -61,72 +61,72 @@ h6.cl-text { font-size: 0.85rem; letter-spacing: 0.04em; }
 
 {% schema %}
 {
-  "name": "Text",
+  "name": "t:blocks.collection_text.name",
   "settings": [
     {
       "type": "inline_richtext",
       "id": "text",
-      "label": "Text",
+      "label": "t:labels.text",
       "default": "Text"
     },
     {
       "type": "select",
       "id": "display_style",
-      "label": "Display style",
+      "label": "t:labels.display_style",
       "options": [
-        { "value": "heading", "label": "Heading" },
-        { "value": "badge",   "label": "Badge (pill)" }
+        { "value": "heading", "label": "t:options.display_style.heading" },
+        { "value": "badge",   "label": "t:options.display_style.badge" }
       ],
       "default": "heading",
-      "info": "Badge renders as a small rounded pill — e.g. an age-range label."
+      "info": "t:blocks.collection_text.display_style_info"
     },
     {
       "type": "color",
       "id": "badge_background",
-      "label": "Badge background color",
-      "info": "Leave blank for translucent white.",
+      "label": "t:blocks.collection_text.badge_background",
+      "info": "t:blocks.collection_text.badge_background_info",
       "visible_if": "{{ block.settings.display_style == 'badge' }}"
     },
     {
       "type": "select",
       "id": "heading_size",
-      "label": "Heading size",
+      "label": "t:labels.heading_size",
       "options": [
-        { "value": "h3", "label": "H3" },
-        { "value": "h4", "label": "H4" },
-        { "value": "h5", "label": "H5" },
-        { "value": "h6", "label": "H6" }
+        { "value": "h3", "label": "t:options.heading_level.h3" },
+        { "value": "h4", "label": "t:options.heading_level.h4" },
+        { "value": "h5", "label": "t:options.heading_level.h5" },
+        { "value": "h6", "label": "t:options.heading_level.h6" }
       ],
       "default": "h5"
     },
     {
       "type": "select",
       "id": "text_case",
-      "label": "Text case",
+      "label": "t:labels.text_case",
       "options": [
-        { "value": "default",   "label": "Default" },
-        { "value": "uppercase", "label": "Uppercase" }
+        { "value": "default",   "label": "t:options.text_case.default" },
+        { "value": "uppercase", "label": "t:options.text_case.uppercase" }
       ],
       "default": "default"
     },
     {
       "type": "header",
-      "content": "Border"
+      "content": "t:labels.border"
     },
     {
       "type": "select",
       "id": "border_style",
-      "label": "Border style",
+      "label": "t:labels.border_style",
       "options": [
-        { "value": "none",  "label": "None" },
-        { "value": "solid", "label": "Solid" }
+        { "value": "none",  "label": "t:options.border.none" },
+        { "value": "solid", "label": "t:options.border.solid" }
       ],
       "default": "none"
     },
     {
       "type": "range",
       "id": "border_width",
-      "label": "Border width",
+      "label": "t:labels.border_width",
       "min": 1, "max": 5, "step": 1, "unit": "px",
       "default": 1,
       "visible_if": "{{ block.settings.border_style != 'none' }}"
@@ -134,7 +134,7 @@ h6.cl-text { font-size: 0.85rem; letter-spacing: 0.04em; }
     {
       "type": "range",
       "id": "border_opacity",
-      "label": "Border opacity",
+      "label": "t:labels.border_opacity",
       "min": 0, "max": 100, "step": 1, "unit": "%",
       "default": 100,
       "visible_if": "{{ block.settings.border_style != 'none' }}"
@@ -142,27 +142,32 @@ h6.cl-text { font-size: 0.85rem; letter-spacing: 0.04em; }
     {
       "type": "range",
       "id": "border_radius",
-      "label": "Border radius",
+      "label": "t:labels.border_radius",
       "min": 0, "max": 30, "step": 1, "unit": "px",
       "default": 0
     },
     {
       "type": "header",
-      "content": "Padding"
+      "content": "t:labels.padding"
     },
     {
       "type": "range",
       "id": "padding_top",
-      "label": "Padding top",
+      "label": "t:labels.top_padding",
       "min": 0, "max": 30, "step": 1, "unit": "px",
       "default": 0
     },
     {
       "type": "range",
       "id": "padding_bottom",
-      "label": "Padding bottom",
+      "label": "t:labels.bottom_padding",
       "min": 0, "max": 30, "step": 1, "unit": "px",
       "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.collection_text.preset_name"
     }
   ]
 }

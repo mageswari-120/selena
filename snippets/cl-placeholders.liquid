@@ -1,30 +1,57 @@
-{%- comment -%}
-  snippets/cl-placeholders.liquid  —  Selena Theme
-  ─────────────────────────────────────────────────
-  Renders 5 skeleton placeholder cards when the Collection List
-  section has no blocks yet (empty state in the theme editor).
-  Uses the same grid/carousel track classes as the real cards so
-  layout is identical.
-{%- endcomment -%}
-
+ 
 {%- liquid
-  assign placeholder_class = 'cl-card--placeholder card border-0'
+  assign bs = card_settings
+  assign shape = bs.card_image_shape | default: 'default'
+
+  assign placeholder_class = 'cl-card--placeholder cl-collection-card card h-100 border-0 bg-transparent'
+  assign placeholder_class = placeholder_class | append: ' cl-shape-' | append: shape
+
   if is_carousel
     assign placeholder_class = placeholder_class | append: ' swiper-slide'
   endif
 -%}
 
 {%- for i in (1..5) -%}
-  <div class="{{ placeholder_class }}" aria-hidden="true">
+  <div
+    class="{{ placeholder_class }}"
+    {% if bs %}
+      style="{% render 'cl-card-style', settings: bs %}"
+    {% endif %}
+    aria-hidden="true"
+  >
     {{- 'collection-' | append: i | placeholder_svg_tag: 'cl-placeholder__svg' -}}
   </div>
 {%- endfor -%}
 
 {% stylesheet %}
+.cl-card--placeholder {
+  aspect-ratio: 3/4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.04);
+  border-radius: var(--cl-card-radius, 0);
+  overflow: hidden;
+}
 .cl-placeholder__svg {
-  width: 100%;
-  height: 100%;
+  width: 56%;
+  height: 56%;
   display: block;
-  opacity: 0.18;
+  opacity: 0.2;
+}
+.cl-card--placeholder.cl-shape-circle { border-radius: 50%; aspect-ratio: 1/1; }
+.cl-card--placeholder.cl-shape-oval   { border-radius: 50%/42%; aspect-ratio: 4/5; }
+.cl-card--placeholder.cl-shape-pill   { border-radius: 999px; aspect-ratio: 3/4; }
+.cl-card--placeholder.cl-shape-rounded-rectangle { border-radius: 16px; }
+.cl-card--placeholder.cl-shape-custom-radius { border-radius: var(--cl-custom-radius, 16px); }
+.cl-card--placeholder.cl-shape-arch {
+  height: var(--cl-arch-h, 300px);
+  aspect-ratio: auto;
+  border-radius: 50% 50% 0 0 / 65% 65% 0 0;
+}
+.cl-card--placeholder.cl-shape-rounded-arch {
+  height: var(--cl-arch-h, 300px);
+  aspect-ratio: auto;
+  border-radius: calc(var(--cl-arch-w, 250px) / 2) calc(var(--cl-arch-w, 250px) / 2) 0 0;
 }
 {% endstylesheet %}
