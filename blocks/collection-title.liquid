@@ -1,8 +1,8 @@
 {% doc %}
   blocks/collection-title.liquid  —  Selena Theme  (OS 3.0)
   ──────────────────────────────────────────────────────────
-  Renders the collection's title (or a custom heading) as a
-  linked heading element.  Optionally shows the product count.
+  Renders the collection's title as a linked heading element.
+  Optionally shows the product count.
 
   Reads:  closest.collection  (passed by the parent card)
 {% enddoc %}
@@ -11,8 +11,8 @@
   assign s          = block.settings
   assign collection = closest.collection
   assign tag        = s.heading_size
-  assign heading    = s.heading | default: collection.title | default: 'Collection'
--%} 
+  assign heading    = collection.title | default: 'Collection'
+-%}
 
 <{{ tag }} 
   class="cl-collection-title cl-title--{{ s.text_case }}"
@@ -70,12 +70,6 @@ h6.cl-collection-title { font-size: 0.85rem; letter-spacing: 0.04em; }
 {
   "name": "Collection title",
   "settings": [
-    {
-      "type": "text",
-      "id": "heading",
-      "label": "Custom heading",
-      "info": "Leave blank to use the collection title."
-    },
     {
       "type": "select",
       "id": "heading_size",

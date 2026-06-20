@@ -1,7 +1,7 @@
 {% doc %}
   blocks/collection-image.liquid  —  Selena Theme  (OS 3.0)
   ──────────────────────────────────────────────────────────
-  Renders the collection's featured image (or a custom upload).
+  Renders the collection's featured image.
   Must be a child of blocks/collection-card.liquid.
 
   Reads:  closest.collection  (passed by the parent card via
@@ -18,9 +18,6 @@
   assign collection = closest.collection
 
   assign image = collection.featured_image
-  if s.image_source == 'custom' and s.image != blank
-    assign image = s.image
-  endif
 
   assign border_alpha = s.border_opacity | divided_by: 100.0
 
@@ -137,27 +134,6 @@
 {
   "name": "Collection image",
   "settings": [
-    {
-      "type": "header",
-      "content": "Image source"
-    },
-    {
-      "type": "select",
-      "id": "image_source",
-      "label": "Image source",
-      "options": [
-        { "value": "collection", "label": "Collection image" },
-        { "value": "custom",     "label": "Custom image" }
-      ],
-      "default": "collection",
-      "info": "Custom image overrides the collection's featured image."
-    },
-    {
-      "type": "image_picker",
-      "id": "image",
-      "label": "Custom image",
-      "visible_if": "{{ block.settings.image_source == 'custom' }}"
-    },
     {
       "type": "header",
       "content": "Display"
