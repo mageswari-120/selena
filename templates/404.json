@@ -7,14 +7,146 @@
  * made to this file may be overwritten.
  * ------------------------------------------------------------
  */
- {
+{
   "sections": {
     "main": {
       "type": "404",
       "settings": {}
+    },
+    "collection_list_NnXJhC": {
+      "type": "collection-list",
+      "blocks": {
+        "cl-card": {
+          "type": "collection-card",
+          "static": true,
+          "settings": {},
+          "blocks": {
+            "collection_description_XTYr7M": {
+              "type": "collection-description",
+              "settings": {
+                "text_case": "default",
+                "padding_top": 4,
+                "padding_bottom": 0
+              },
+              "blocks": {}
+            },
+            "collection_text_b9M94n": {
+              "type": "collection-text",
+              "settings": {
+                "text": "Text",
+                "display_style": "heading",
+                "badge_background": "",
+                "heading_size": "h5",
+                "text_case": "default",
+                "border_style": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_radius": 0,
+                "padding_top": 0,
+                "padding_bottom": 0
+              },
+              "blocks": {}
+            },
+            "collection_button_GRFe3K": {
+              "type": "collection-button",
+              "settings": {
+                "button_label": "Shop Now",
+                "button_link": "",
+                "open_new_tab": false,
+                "button_style": "primary",
+                "show_label": true,
+                "arrow_button": true,
+                "arrow_style": "filled-circle",
+                "arrow_size": 32,
+                "align": "auto",
+                "pin_bottom": false
+              },
+              "blocks": {}
+            },
+            "cl-img": {
+              "type": "collection-image",
+              "static": true,
+              "settings": {
+                "image_ratio": "adapt",
+                "image_fit": "cover",
+                "transparent_bg": false,
+                "media_overlay": false,
+                "overlay": 2,
+                "border_style": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_radius": 0
+              },
+              "blocks": {}
+            },
+            "cl-title": {
+              "type": "collection-title",
+              "static": true,
+              "settings": {
+                "heading_size": "h4",
+                "text_case": "default",
+                "show_product_count": false,
+                "padding_top": 8,
+                "padding_bottom": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "collection_description_XTYr7M",
+            "collection_text_b9M94n",
+            "collection_button_GRFe3K"
+          ]
+        }
+      },
+      "name": "Collection list",
+      "settings": {
+        "collections": [
+          "collection",
+          "featured-blog",
+          "around-the-world",
+          "frontpage",
+          "shop",
+          "surfing-in-sea"
+        ],
+        "enable_container": true,
+        "width": "full",
+        "color_scheme": "",
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "layout_type": "carousel",
+        "columns_desktop": 5,
+        "columns_mobile": "2",
+        "column_gap": 20,
+        "row_gap": 20,
+        "carousel_nav": "navigation",
+        "carousel_border_style": "none",
+        "carousel_border_width": 1,
+        "carousel_border_opacity": 100,
+        "carousel_border_radius": 50,
+        "carousel_inherit_scheme": true,
+        "carousel_color_scheme": "",
+        "card_image_shape": "default",
+        "card_custom_radius": 16,
+        "card_arch_height": 300,
+        "card_arch_width": 250,
+        "card_image_position": "center",
+        "card_overlay_style": "below-image",
+        "card_content_alignment": "center",
+        "card_content_position": "bottom",
+        "card_border_style": "none",
+        "card_border_width": 1,
+        "card_border_opacity": 100,
+        "card_border_radius": 0,
+        "card_padding_top": 0,
+        "card_padding_bottom": 0,
+        "card_padding_left": 0,
+        "card_padding_right": 0
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "collection_list_NnXJhC"
   ]
 }
