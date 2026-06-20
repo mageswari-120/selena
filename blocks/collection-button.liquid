@@ -6,15 +6,15 @@
   custom URL.
 
   Supports four button styles:
-    primary   — filled primary-colour button
-    secondary — outline button
-    link      — plain underlined text link
+    primary   — Bootstrap btn-primary
+    secondary — Bootstrap btn-outline-secondary
+    link      — Bootstrap btn-link
     arrow     — label + directional arrow icon (four icon styles)
 
   Reads:  closest.collection  (passed by the parent card)
-{% enddoc %} 
+{% enddoc %}
 
-{%- liquid  
+{%- liquid
   assign s          = block.settings
   assign collection = closest.collection
 
@@ -27,13 +27,28 @@
   endif
 
   assign label = s.button_label | default: 'Shop Now'
+
+  assign wrap_class = 'd-inline-flex'
+  if s.pin_bottom
+    assign wrap_class = wrap_class | append: ' mt-auto'
+  endif
+  if s.align == 'left'
+    assign wrap_class = wrap_class | append: ' align-self-start'
+  elsif s.align == 'center'
+    assign wrap_class = wrap_class | append: ' align-self-center'
+  elsif s.align == 'right'
+    assign wrap_class = wrap_class | append: ' align-self-end'
+  endif
+
+  assign btn_class = 'btn btn-primary'
+  if s.button_style == 'secondary'
+    assign btn_class = 'btn btn-outline-secondary'
+  elsif s.button_style == 'link'
+    assign btn_class = 'btn btn-link'
+  endif
 -%}
 
-<div
-  class="cl-collection-button{% if s.pin_bottom %} cl-btn-wrap--pin{% endif %}{% if s.align != 'auto' %} cl-btn-wrap--{{ s.align }}{% endif %}"
-  {{ block.shopify_attributes }}
->
-
+<div class="cl-collection-button {{ wrap_class }}" {{ block.shopify_attributes }}>
   {%- if s.button_style == 'arrow' -%}
     <a
       class="cl-arrow-btn cl-arrow-btn--{{ s.arrow_style }}{% unless s.show_label and label != blank %} cl-arrow-btn--icon-only{% endunless %}"
@@ -54,82 +69,18 @@
         </span>
       {%- endif -%}
     </a>
-
   {%- else -%}
     <a
-      class="cl-btn cl-btn--{{ s.button_style }}"
+      class="{{ btn_class }}"
       href="{{ link }}"
       {%- if s.open_new_tab %} target="_blank" rel="noopener"{%- endif -%}
     >
       {{- label -}}
     </a>
   {%- endif -%}
-
 </div>
 
 {% stylesheet %}
-/* ─────────────────────────────────────────────
-   Collection Button — block styles
-───────────────────────────────────────────── */
-
-.cl-collection-button {
-  display: inline-flex;
-}
-
-/* Vertical pinning / horizontal alignment within the card column */
-.cl-btn-wrap--pin    { margin-top: auto; }
-.cl-btn-wrap--left   { align-self: flex-start; }
-.cl-btn-wrap--center { align-self: center; }
-.cl-btn-wrap--right  { align-self: flex-end; }
-
-/* ── Standard buttons ── */
-.cl-btn {
-  display: inline-block;
-  padding: var(--button-padding-vertical, 14px) var(--button-padding-horizontal, 28px);
-  border: 1px solid transparent;
-  border-radius: var(--button-border-radius, 0);
-  font: inherit;
-  font-size: 0.9rem;
-  line-height: 1;
-  text-align: center;
-  text-decoration: none;
-  cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-}
-
-.cl-btn--primary {
-  background:   var(--button-primary-bg);
-  color:        var(--button-primary-color);
-  border-color: var(--button-primary-border, transparent);
-}
-.cl-btn--primary:hover {
-  background:   var(--button-primary-hover-bg);
-  color:        var(--button-primary-hover-color);
-  border-color: var(--button-primary-hover-border, transparent);
-}
-
-.cl-btn--secondary {
-  background:   var(--button-outline-bg, transparent);
-  color:        var(--button-outline-color);
-  border-color: var(--button-outline-border);
-}
-.cl-btn--secondary:hover {
-  background:   var(--button-outline-hover-bg);
-  color:        var(--button-outline-hover-color);
-  border-color: var(--button-outline-hover-border);
-}
-
-.cl-btn--link {
-  padding-inline: 0;
-  background: none;
-  border: none;
-  color: inherit;
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-.cl-btn--link:hover { opacity: 0.75; }
-
-/* ── Arrow button ── */
 .cl-arrow-btn {
   display: inline-flex;
   align-items: center;
@@ -139,7 +90,6 @@
   font: inherit;
 }
 .cl-arrow-btn--icon-only { gap: 0; }
-
 .cl-arrow-btn__icon {
   display: inline-flex;
   align-items: center;
@@ -150,7 +100,6 @@
   transition: transform 0.2s ease, background 0.2s ease;
 }
 .cl-arrow-btn__icon svg { width: 52%; height: 52%; display: block; }
-
 .cl-arrow-btn--filled-circle .cl-arrow-btn__icon {
   border-radius: 50%;
   background: var(--button-primary-bg);
@@ -169,7 +118,6 @@
   width: auto;
   height: auto;
 }
-
 @media (prefers-reduced-motion: no-preference) {
   .cl-arrow-btn:hover .cl-arrow-btn__icon { transform: translateX(4px); }
 }

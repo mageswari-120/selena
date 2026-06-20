@@ -46,23 +46,34 @@
   endunless
   assign nav_scheme_class = 'color-' | append: nav_scheme
 
-  assign wrap_class = 'cl-wrap'
   if s.enable_container
-    assign wrap_class = wrap_class | append: ' cl-wrap--boxed'
-  elsif s.width == 'container_fluid'
-    assign wrap_class = wrap_class | append: ' cl-wrap--fluid'
+    if s.width == 'container_fluid'
+      assign wrap_class = 'container-fluid'
+    else
+      assign wrap_class = 'container'
+    endif
   else
-    assign wrap_class = wrap_class | append: ' cl-wrap--full'
+    assign wrap_class = 'w-100 px-0'
+  endif
+
+  assign grid_row_class = 'row row-cols-' | append: s.columns_mobile
+  if s.columns_desktop <= 6
+    assign grid_row_class = grid_row_class | append: ' row-cols-md-' | append: s.columns_desktop
+  else
+    assign grid_row_class = grid_row_class | append: ' cl-grid-row--dt-' | append: s.columns_desktop
   endif
 
   assign collections  = s.collections
   assign border_alpha = s.card_border_opacity | divided_by: 100.0
 
-  assign card_classes = 'cl-collection-card'
+  assign card_classes = 'cl-collection-card card h-100 d-flex flex-column border-0 bg-transparent'
   assign card_classes = card_classes | append: ' cl-shape-'   | append: s.card_image_shape
   assign card_classes = card_classes | append: ' cl-overlay-' | append: s.card_overlay_style
   assign card_classes = card_classes | append: ' cl-align-'   | append: s.card_content_alignment
   assign card_classes = card_classes | append: ' cl-pos-'     | append: s.card_content_position
+  if is_carousel
+    assign card_classes = card_classes | append: ' swiper-slide'
+  endif
 -%}
 
 {%- capture card_style -%}
@@ -93,16 +104,70 @@
       --cl-nav-border: {{ s.carousel_border_width }}px solid color-mix(in srgb, var(--color-foreground) {{ s.carousel_border_opacity }}%, transparent);
     {%- endif -%}
   }
+  {%- if is_carousel -%}
+  #shopify-section-{{ section.id }} .collection-list-carousel:not(.swiper-initialized) .swiper-wrapper {
+    display: flex;
+    gap: var(--cl-col-gap, 20px);
+  }
+  #shopify-section-{{ section.id }} .collection-list-carousel:not(.swiper-initialized) .swiper-slide {
+    flex: 0 0 calc((100% - (var(--cl-cols-mobile, 2) - 1) * var(--cl-col-gap, 20px)) / var(--cl-cols-mobile, 2));
+    max-width: calc((100% - (var(--cl-cols-mobile, 2) - 1) * var(--cl-col-gap, 20px)) / var(--cl-cols-mobile, 2));
+  }
+  @media (min-width: 750px) {
+    #shopify-section-{{ section.id }} .collection-list-carousel:not(.swiper-initialized) .swiper-slide {
+      flex: 0 0 calc((100% - (var(--cl-cols-desktop, 5) - 1) * var(--cl-col-gap, 20px)) / var(--cl-cols-desktop, 5));
+      max-width: calc((100% - (var(--cl-cols-desktop, 5) - 1) * var(--cl-col-gap, 20px)) / var(--cl-cols-desktop, 5));
+    }
+  }
+  {%- endif -%}
+  {%- unless is_carousel -%}
+  {%- if s.columns_desktop > 6 -%}
+  @media (min-width: 768px) {
+    #shopify-section-{{ section.id }} .cl-grid-row--dt-{{ s.columns_desktop }} > * {
+      flex: 0 0 auto;
+      width: {{ 100.0 | divided_by: s.columns_desktop }}%;
+    }
+  }
+  {%- endif -%}
+  {%- endunless -%}
 </style>
+
+{{ 'bootstrap.min.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'bootstrap.bundle.min.js' | asset_url }}" defer></script>
+
+{%- comment -%}
+  Swiper 11 (swiperjs.com) — self-hosted in /assets so it's same-origin
+  (no CSP issues). Liquid tags load the library on full page loads; JS also
+  dynamically loads Swiper when the theme editor switches Grid → Carousel
+  (AJAX-injected script tags do not re-execute).
+{%- endcomment -%}
+{%- if is_carousel -%}
+  {{ 'swiper-bundle.min.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'swiper-bundle.min.js' | asset_url }}" defer></script>
+{%- endif -%}
 
 <div class="collection-list color-{{ s.color_scheme }}" data-section-id="{{ section.id }}">
   <div class="{{ wrap_class }}">
 
     {%- if is_carousel -%}
-      <div class="collection-list-carousel" data-cl-carousel>
-        <div class="collection-list-carousel__track" role="list" data-cl-track>
+      <div
+        class="collection-list-carousel swiper {{ nav_scheme_class }}{% if show_dots %} collection-list-carousel--dots{% endif %}"
+        data-cl-swiper
+        data-swiper-js="{{ 'swiper-bundle.min.js' | asset_url }}"
+        data-cols-desktop="{{ s.columns_desktop }}"
+        data-cols-mobile="{{ s.columns_mobile }}"
+        data-gap="{{ s.column_gap }}"
+        data-nav="{{ s.carousel_nav }}"
+        data-loop="{{ s.carousel_loop }}"
+        data-autoplay="{{ s.carousel_autoplay }}"
+      >
+        <div class="swiper-wrapper" role="list">
     {%- else -%}
-      <div class="cl-grid" role="list">
+      <div
+        class="{{ grid_row_class }}"
+        role="list"
+        style="--bs-gutter-x: {{ s.column_gap }}px; --bs-gutter-y: {{ s.row_gap }}px;"
+      >
     {%- endif -%}
 
           {%- if collections.size > 0 -%}
@@ -120,25 +185,19 @@
               {% content_for 'block', type: 'collection-card', id: 'cl-card', closest.collection: col, card_class: card_classes, card_style: card_style %}
             {%- endfor -%}
           {%- else -%}
-            {%- render 'cl-placeholders' -%}
+            {%- render 'cl-placeholders', card_class: card_classes -%}
           {%- endif -%}
 
     {%- if is_carousel -%}
-        </div>
+        </div>{%- comment -%} /.swiper-wrapper {%- endcomment -%}
         {%- if show_arrows -%}
-          <div class="collection-list-carousel__nav {{ nav_scheme_class }}">
-            <button type="button" class="collection-list-carousel__arrow" data-cl-prev aria-label="Previous">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
-            </button>
-            <button type="button" class="collection-list-carousel__arrow" data-cl-next aria-label="Next">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
-            </button>
-          </div>
+          <div class="collection-list-carousel__arrow swiper-button-prev" aria-label="Previous"></div>
+          <div class="collection-list-carousel__arrow swiper-button-next" aria-label="Next"></div>
         {%- endif -%}
         {%- if show_dots -%}
-          <div class="collection-list-carousel__dots" data-cl-dots aria-hidden="true"></div>
+          <div class="collection-list-carousel__pagination swiper-pagination"></div>
         {%- endif -%}
-      </div>
+      </div>{%- comment -%} /.swiper {%- endcomment -%}
     {%- else -%}
       </div>
     {%- endif -%}
@@ -153,107 +212,42 @@
   background: var(--color-background);
   color:      var(--color-foreground);
 }
-.cl-wrap--boxed  { max-width: var(--page-width,1400px); margin-inline: auto; padding-inline: var(--page-margin,20px); }
-.cl-wrap--fluid  { padding-inline: var(--page-margin,20px); }
-.cl-wrap--full   { padding-inline: 0; }
 
-/* ── Grid ── */
-.cl-grid {
-  display: grid;
-  grid-template-columns: repeat(var(--cl-cols-mobile,2), minmax(0,1fr));
-  column-gap: var(--cl-col-gap,20px);
-  row-gap:    var(--cl-row-gap,20px);
+/* ── Carousel (Swiper) ── */
+.collection-list-carousel {
+  position: relative;
+  overflow: hidden;
+  --swiper-navigation-color:  var(--color-foreground);
+  --swiper-navigation-size:   20px;
+  --swiper-pagination-color:  var(--color-foreground);
+  --swiper-pagination-bullet-inactive-color: var(--color-foreground);
 }
-@media (min-width: 750px) {
-  .cl-grid { grid-template-columns: repeat(var(--cl-cols-desktop,5), minmax(0,1fr)); }
-}
-
-/* ── Carousel ── */
-.collection-list-carousel { position: relative; }
-.collection-list-carousel__track {
-  display: flex; gap: var(--cl-col-gap,20px);
-  overflow-x: auto; scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 4px;
-}
-.collection-list-carousel__track::-webkit-scrollbar { display: none; }
-.collection-list-carousel__track > * {
-  scroll-snap-align: start;
-  flex: 0 0 calc((100% - (var(--cl-cols-mobile,2) - 1) * var(--cl-col-gap,20px)) / var(--cl-cols-mobile,2));
-}
-@media (min-width: 750px) {
-  .collection-list-carousel__track > * {
-    flex-basis: calc((100% - (var(--cl-cols-desktop,5) - 1) * var(--cl-col-gap,20px)) / var(--cl-cols-desktop,5));
-  }
-}
-.collection-list-carousel__nav {
-  position: absolute; inset: 0;
-  display: flex; justify-content: space-between; align-items: center;
-  pointer-events: none;
-}
-.collection-list-carousel__arrow {
-  pointer-events: auto;
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 44px; height: 44px; padding: 0;
-  border-radius: var(--cl-nav-radius,50%);
+.collection-list-carousel--dots { padding-bottom: 2.25rem; }
+.collection-list-carousel--dots .swiper-button-prev,
+.collection-list-carousel--dots .swiper-button-next { margin-top: calc(-1.125rem - var(--swiper-navigation-size, 20px) / 2); }
+.collection-list-carousel .swiper-slide { height: auto; }
+.collection-list-carousel .swiper-button-prev,
+.collection-list-carousel .swiper-button-next {
+  width: 44px; height: 44px;
+  border-radius: var(--cl-nav-radius, 50%);
   border: var(--cl-nav-border, 1px solid rgba(0,0,0,0.12));
-  background: var(--color-background,#fff); color: var(--color-foreground,#1a1a1a);
-  cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.10);
-  transition: opacity 0.2s ease, transform 0.2s ease; z-index: 2;
+  background: var(--color-background, #fff);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.10);
+  transition: transform 0.2s ease;
 }
-.collection-list-carousel__arrow:first-child { margin-left: -22px; }
-.collection-list-carousel__arrow:last-child  { margin-right: -22px; }
-.collection-list-carousel__arrow svg { width: 18px; height: 18px; display: block; }
-.collection-list-carousel__arrow:hover { transform: scale(1.08); }
-.collection-list-carousel__arrow[disabled] { opacity: 0.28; cursor: default; transform: none; }
-.collection-list-carousel__dots { display: flex; justify-content: center; gap: 0.45rem; margin-top: 1.25rem; }
-.collection-list-carousel__dot {
-  width: 8px; height: 8px; padding: 0; border: none; border-radius: 50%;
-  background: currentColor; opacity: 0.22; cursor: pointer;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-.collection-list-carousel__dot.is-active { opacity: 1; transform: scale(1.35); }
+.collection-list-carousel .swiper-button-prev { left: 0; }
+.collection-list-carousel .swiper-button-next { right: 0; }
+.collection-list-carousel .swiper-button-prev:hover,
+.collection-list-carousel .swiper-button-next:hover { transform: scale(1.08); }
+.collection-list-carousel .swiper-button-prev::after,
+.collection-list-carousel .swiper-button-next::after { font-size: var(--swiper-navigation-size); font-weight: 700; }
+.collection-list-carousel .swiper-pagination { bottom: 0; }
+.collection-list-carousel .swiper-pagination-bullet { opacity: 0.3; transition: opacity 0.2s ease, transform 0.2s ease; }
+.collection-list-carousel .swiper-pagination-bullet-active { opacity: 1; transform: scale(1.25); }
 
-/* ── Empty-state placeholders ──
-   Card tile, overlay, image-shape and alignment styles now live in
-   blocks/collection-card.liquid (co-located with their markup).
-   Theme stylesheet blocks are merged theme-wide, so they still apply. */
 .cl-card--placeholder { aspect-ratio: 3/4; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.04); border-radius: var(--cl-card-radius,0); }
 .cl-placeholder__svg  { width: 56%; height: 56%; opacity: 0.2; }
 {% endstylesheet %}
-
-{% javascript %}
-(function () {
-  'use strict';
-  function initCarousel(root) {
-    var track = root.querySelector('[data-cl-track]');
-    if (!track) return;
-    var items = Array.prototype.slice.call(track.children);
-    if (!items.length) return;
-    var prev = root.querySelector('[data-cl-prev]');
-    var next = root.querySelector('[data-cl-next]');
-    var dotsWrap = root.querySelector('[data-cl-dots]');
-    var dots = [];
-    function sw() { return items[1] ? items[1].offsetLeft - items[0].offsetLeft : items[0].getBoundingClientRect().width; }
-    function ai() { return Math.round(track.scrollLeft / (sw() || 1)); }
-    function ua() { if (prev) prev.disabled = track.scrollLeft <= 2; if (next) next.disabled = (track.scrollLeft + track.clientWidth) >= (track.scrollWidth - 2); }
-    function ud() { var i = ai(); dots.forEach(function(d,j){ d.classList.toggle('is-active', j===i); }); }
-    if (prev) prev.addEventListener('click', function(){ track.scrollBy({left:-sw(),behavior:'smooth'}); });
-    if (next) next.addEventListener('click', function(){ track.scrollBy({left:sw(),behavior:'smooth'}); });
-    if (dotsWrap) {
-      items.forEach(function(_,i){
-        var b=document.createElement('button'); b.type='button'; b.className='collection-list-carousel__dot'; b.setAttribute('aria-label','Slide '+(i+1));
-        b.addEventListener('click',function(){ track.scrollTo({left:sw()*i,behavior:'smooth'}); });
-        dotsWrap.appendChild(b); dots.push(b);
-      });
-    }
-    track.addEventListener('scroll', function(){ ua(); ud(); }, {passive:true});
-    ua(); ud();
-  }
-  function initAll(s) { (s||document).querySelectorAll('.collection-list [data-cl-carousel]').forEach(initCarousel); }
-  if (document.readyState==='loading') { document.addEventListener('DOMContentLoaded', function(){ initAll(); }); } else { initAll(); }
-  document.addEventListener('shopify:section:load', function(e){ initAll(e.target); });
-})();
-{% endjavascript %}
 
 {% schema %}
 {
@@ -338,7 +332,8 @@
       "id": "columns_desktop",
       "label": "Desktop columns",
       "min": 1, "max": 8, "step": 1,
-      "default": 5
+      "default": 5,
+      "info": "In carousel mode this is the number of slides shown per view on desktop. The carousel only slides when you have more collections than this."
     },
     {
       "type": "select",
@@ -348,7 +343,8 @@
         { "value": "1", "label": "1" },
         { "value": "2", "label": "2" }
       ],
-      "default": "2"
+      "default": "2",
+      "info": "In carousel mode this is the number of slides shown per view on mobile."
     },
     {
       "type": "range",
@@ -368,6 +364,22 @@
     {
       "type": "header",
       "content": "Carousel",
+      "visible_if": "{{ section.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "carousel_loop",
+      "label": "Loop slides",
+      "default": false,
+      "visible_if": "{{ section.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "range",
+      "id": "carousel_autoplay",
+      "label": "Autoplay speed",
+      "min": 0, "max": 10, "step": 1, "unit": "s",
+      "default": 0,
+      "info": "Seconds between slides. 0 turns autoplay off.",
       "visible_if": "{{ section.settings.layout_type == 'carousel' }}"
     },
     {

@@ -21,73 +21,44 @@
 
 {%- liquid
   assign collection = closest.collection
+
+  assign content_align = 'text-center align-items-center'
+  if card_class contains 'cl-align-left'
+    assign content_align = 'text-start align-items-start'
+  elsif card_class contains 'cl-align-right'
+    assign content_align = 'text-end align-items-end'
+  endif
 -%}
 
 <div
-  class="{{ card_class | default: 'cl-collection-card' }}"
+  class="{{ card_class | default: 'cl-collection-card card h-100 d-flex flex-column border-0 bg-transparent' }}"
   role="listitem"
   style="{{ card_style }}"
   {{ block.shopify_attributes }}
 >
-  <div class="cl-card__inner">
-    {%- comment -%} Static, fixed slots — always present, not reorderable {%- endcomment -%}
+  <div
+    class="cl-card__inner d-flex flex-column gap-2 flex-fill"
+    style="padding: var(--cl-pad-t,0) var(--cl-pad-r,0) var(--cl-pad-b,0) var(--cl-pad-l,0);"
+  >
     {% content_for 'block', type: 'collection-image', id: 'cl-img', closest.collection: collection %}
 
-    <div class="cl-card__content">
+    <div class="cl-card__content d-flex flex-column gap-2 {{ content_align }}">
       {% content_for 'block', type: 'collection-title', id: 'cl-title', closest.collection: collection %}
-
-      {%- comment -%}
-        Dynamic children — description, button, text.
-        Merchant adds / removes / reorders these in the theme editor.
-      {%- endcomment -%}
       {% content_for 'blocks', closest.collection: collection %}
     </div>
   </div>
 </div>
 
 {% stylesheet %}
-/* ─────────────────────────────────────────────
-   Collection Card — tile, overlay, image shapes
-   (moved here from the section so it lives with
-   the markup it styles; theme stylesheet blocks
-   are merged theme-wide so selectors still apply)
-───────────────────────────────────────────── */
-
 .cl-collection-card {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
   border-radius: var(--cl-card-radius, 0);
   overflow: hidden;
-  background: var(--color-background, transparent);
   color: inherit;
   transition: box-shadow 0.25s ease;
 }
 .cl-collection-card:hover { box-shadow: 0 12px 32px rgba(0,0,0,0.10); }
 
-.cl-card__inner {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  flex: 1;
-  padding: var(--cl-pad-t,0) var(--cl-pad-r,0) var(--cl-pad-b,0) var(--cl-pad-l,0);
-}
-.cl-card__content {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-/* Content alignment */
-.cl-align-left   .cl-card__content { align-items: flex-start; text-align: left; }
-.cl-align-center .cl-card__content { align-items: center;     text-align: center; }
-.cl-align-right  .cl-card__content { align-items: flex-end;   text-align: right; }
-
-/* ── On-image overlay ──
-   Image stays in normal flow inside a single grid cell, so the card
-   height follows the chosen image ratio (no more fixed min-height).
-   The content shares that same cell and is layered on top. */
 .cl-overlay-on-image .cl-card__inner {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -107,10 +78,8 @@
 .cl-overlay-on-image.cl-pos-center .cl-card__content { justify-content: center; }
 .cl-overlay-on-image.cl-pos-bottom .cl-card__content { justify-content: flex-end; }
 
-/* Below-image overlay: default flow (image, then content) */
 .cl-overlay-below-image .cl-card__inner { justify-content: flex-start; }
 
-/* ── Image shapes (driven by CSS vars set in card_style on this root) ── */
 .cl-shape-circle .cl-collection-image__media { border-radius: 50%; aspect-ratio: 1/1; }
 .cl-shape-oval   .cl-collection-image__media { border-radius: 50%/42%; aspect-ratio: 4/5; }
 .cl-shape-pill   .cl-collection-image__media { border-radius: 999px; aspect-ratio: 3/4; }
@@ -134,6 +103,7 @@
 {% schema %}
 {
   "name": "Collection card",
+  "tag": null,
   "blocks": [
     { "type": "collection-description" },
     { "type": "collection-button" },
