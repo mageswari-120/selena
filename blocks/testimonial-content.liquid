@@ -37,12 +37,12 @@
     display: flex;
     gap: var(--wdt-col-gap, 20px);
   }
-  #shopify-section-{{ section.id }} .wdt-content__carousel:not(.swiper-initialized) .wdt-card {
+  #shopify-section-{{ section.id }} .wdt-content__carousel:not(.swiper-initialized) .swiper-wrapper > .shopify-block {
     flex: 0 0 calc((100% - (var(--wdt-cols-mb, 1) - 1) * var(--wdt-col-gap, 20px)) / var(--wdt-cols-mb, 1));
     max-width: calc((100% - (var(--wdt-cols-mb, 1) - 1) * var(--wdt-col-gap, 20px)) / var(--wdt-cols-mb, 1));
   }
   @media (min-width: 750px) {
-    #shopify-section-{{ section.id }} .wdt-content__carousel:not(.swiper-initialized) .wdt-card {
+    #shopify-section-{{ section.id }} .wdt-content__carousel:not(.swiper-initialized) .swiper-wrapper > .shopify-block {
       flex: 0 0 calc((100% - (var(--wdt-cols-dt, 3) - 1) * var(--wdt-col-gap, 20px)) / var(--wdt-cols-dt, 3));
       max-width: calc((100% - (var(--wdt-cols-dt, 3) - 1) * var(--wdt-col-gap, 20px)) / var(--wdt-cols-dt, 3));
     }
@@ -76,7 +76,7 @@
       data-cols-mobile="{{ cols_mb }}"
       data-gap="{{ col_gap }}"
       data-nav="{{ nav_style }}"
-      data-loop="{{ loop }}"
+      data-loop="{% if loop %}true{% else %}false{% endif %}"
       data-autoplay="{{ autoplay }}"
     >
       <div class="swiper-wrapper" role="list">
@@ -120,7 +120,9 @@
 .wdt-content__carousel--dots .swiper-button-next {
   margin-top: calc(-1.125rem - var(--swiper-navigation-size, 20px) / 2);
 }
-.wdt-content__carousel .wdt-card { height: auto; }
+.wdt-content__carousel .shopify-block.swiper-slide,
+.wdt-content__carousel .swiper-slide { height: auto; }
+.wdt-content__carousel .swiper-wrapper > .shopify-block > .wdt-card { height: 100%; }
 .wdt-content__carousel .swiper-button-prev,
 .wdt-content__carousel .swiper-button-next {
   width: 44px;

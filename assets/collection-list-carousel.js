@@ -12,6 +12,19 @@
     return 'clInit';
   }
 
+  function prepWdtSlides(el) {
+    var wrapper = el.querySelector('.swiper-wrapper');
+    if (!wrapper) return 0;
+
+    var count = 0;
+    Array.prototype.forEach.call(wrapper.children, function (child) {
+      if (!child.classList.contains('shopify-block')) return;
+      child.classList.add('swiper-slide');
+      count += 1;
+    });
+    return count;
+  }
+
   function destroyAll(root) {
     var scope = root || document;
 
@@ -30,12 +43,18 @@
     var initKey = getInitKey(el);
     if (el.dataset[initKey] || !window.Swiper) return;
 
+    if (el.hasAttribute('data-wdt-swiper')) {
+      prepWdtSlides(el);
+    }
+
     var gap = parseInt(el.dataset.gap, 10) || 0;
     var nav = el.dataset.nav || 'navigation';
     var opts = {
       slidesPerView: parseInt(el.dataset.colsMobile, 10) || 2,
       spaceBetween: gap,
       watchOverflow: true,
+      observer: true,
+      observeParents: true,
       breakpoints: {
         750: {
           slidesPerView: parseInt(el.dataset.colsDesktop, 10) || 5,
@@ -43,10 +62,6 @@
         }
       }
     };
-
-    if (el.hasAttribute('data-wdt-swiper')) {
-      opts.slideClass = 'wdt-card';
-    }
 
     if (el.dataset.loop === 'true') opts.loop = true;
 
@@ -90,8 +105,23 @@
     initAll(root);
   }
 
+  function waitForSwiper(root, attempts) {
+    attempts = attempts || 0;
+
+    if (window.Swiper) {
+      boot(root);
+      return;
+    }
+
+    if (attempts < 30) {
+      setTimeout(function () {
+        waitForSwiper(root, attempts + 1);
+      }, 100);
+    }
+  }
+
   function onReady() {
-    boot();
+    waitForSwiper();
   }
 
   if (document.readyState === 'loading') {
@@ -103,7 +133,8 @@
   window.addEventListener('load', onReady);
 
   document.addEventListener('shopify:section:load', function (e) {
-    boot(e.target);
+    destroyAll(e.target);
+    waitForSwiper(e.target);
   });
 
   document.addEventListener('shopify:section:unload', function (e) {
@@ -111,6 +142,11 @@
   });
 
   document.addEventListener('shopify:section:select', function (e) {
-    boot(e.target);
+    waitForSwiper(e.target);
+  });
+
+  document.addEventListener('shopify:block:select', function (e) {
+    var section = e.target.closest('.shopify-section');
+    if (section) waitForSwiper(section);
   });
 })();
