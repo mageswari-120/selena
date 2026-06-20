@@ -10,6 +10,7 @@
     "collections": "Collections",
     "collection_card": "Collection card",
     "collection_list": "Collection list",
+    "testimonial": "Testimonial",
     "collections_grid": "Collections grid",
     "colors": "Colors",
     "column": "Column",
@@ -68,6 +69,7 @@
     "image_shape": "Image shape",
     "image_position": "Image position",
     "horizontal_alignment": "Horizontal alignment",
+    "image": "Image",
     "button_label": "Button label",
     "button_link": "Button link",
     "button_style": "Button style",
@@ -126,6 +128,7 @@
     },
     "width": {
       "full": "Full width",
+      "full_width": "Full width",
       "container_fluid": "Container fluid"
     },
     "vertical_position": {
@@ -183,6 +186,36 @@
       "outline_circle": "Outline circle",
       "square": "Square",
       "minimal": "Minimal"
+    },
+    "card_layout": {
+      "grid": "Grid",
+      "overlay": "Overlay"
+    },
+    "image_position_card": {
+      "top": "Top",
+      "bottom": "Bottom",
+      "left": "Left",
+      "right": "Right"
+    },
+    "overlay_style": {
+      "solid": "Solid",
+      "gradient": "Gradient"
+    },
+    "overlay_direction": {
+      "top_bottom": "Top → Bottom",
+      "bottom_top": "Bottom → Top"
+    },
+    "heading_variant": {
+      "section": "Section heading",
+      "card": "Card heading"
+    },
+    "text_variant": {
+      "section": "Section description",
+      "card": "Card text"
+    },
+    "client_image_position": {
+      "top": "Top",
+      "left": "Left"
     }
   },
   "settings_schema": {
@@ -333,6 +366,23 @@
       "arrow_border_radius": "Arrow border radius",
       "arrow_inherit_scheme": "Arrows inherit color scheme",
       "arrow_color_scheme": "Arrow color scheme"
+    },
+    "testimonial": {
+      "name": "Testimonial",
+      "presets": {
+        "name": "Testimonial",
+        "overlay_grid": "Overlay grid",
+        "client_says_carousel": "Client says carousel",
+        "real_stories": "Real stories",
+        "happy_customers": "Happy customers"
+      },
+      "headers": {
+        "container": "Container",
+        "color_scheme": "Color scheme",
+        "spacing": "Spacing"
+      },
+      "enable_container": "Enable container",
+      "width": "Width"
     }
   },
   "blocks": {
@@ -393,6 +443,92 @@
       "align_inherit": "Inherit from card",
       "pin_bottom": "Pin to bottom of card",
       "pin_bottom_info": "Pushes the button to the bottom edge of the card."
+    },
+    "testimonial_header": {
+      "name": "Header block",
+      "preset_name": "Header block",
+      "bottom_spacing": "Bottom spacing"
+    },
+    "testimonial_content": {
+      "name": "Testimonial content",
+      "preset_name": "Testimonial content",
+      "headers": {
+        "layout": "Layout",
+        "columns": "Columns",
+        "carousel": "Carousel",
+        "navigation": "Navigation",
+        "padding": "Padding"
+      },
+      "layout_type": "Type",
+      "row_gap_info": "Applies when Type = Grid",
+      "columns_desktop": "Desktop columns",
+      "columns_mobile": "Mobile columns",
+      "autoplay_speed": "Change slide every (seconds)",
+      "autoplay_speed_info": "Set to 0 to disable autoplay",
+      "carousel_loop": "Loop",
+      "nav_style": "Navigation style",
+      "nav_style_navigation": "Navigation (Arrows)",
+      "nav_style_pagination": "Pagination (Dots)",
+      "nav_inherit_color_scheme": "Inherit color"
+    },
+    "testimonial_card": {
+      "name": "Testimonial card",
+      "preset_name": "Testimonial card",
+      "headers": {
+        "card_layout": "Card layout",
+        "appearance": "Appearance",
+        "border": "Border",
+        "padding": "Padding"
+      },
+      "card_type": "Type",
+      "card_image_position": "Image position",
+      "card_image_position_info": "Applies when Type = Grid",
+      "card_gap": "Gap between elements",
+      "enable_overlay": "Enable overlay",
+      "overlay_color": "Overlay color",
+      "overlay_style": "Overlay style",
+      "overlay_direction": "Overlay direction",
+      "inherit_color_scheme": "Inherit color scheme"
+    },
+    "testimonial_heading": {
+      "name": "Heading",
+      "preset_name": "Heading",
+      "variant": "Style",
+      "heading": "Heading",
+      "html_tag": "HTML tag",
+      "tag_paragraph": "Paragraph"
+    },
+    "testimonial_text": {
+      "name": "Text",
+      "preset_name": "Text",
+      "variant": "Style"
+    },
+    "testimonial_button": {
+      "name": "Button",
+      "preset_name": "Button",
+      "open_new_tab": "Open in new tab"
+    },
+    "testimonial_image": {
+      "name": "Image (Static)",
+      "preset_name": "Image"
+    },
+    "testimonial_rating": {
+      "name": "Custom rating",
+      "preset_name": "Custom rating",
+      "rating": "Rating",
+      "star_color": "Star color",
+      "star_gap": "Gap between stars"
+    },
+    "testimonial_client": {
+      "name": "Client details",
+      "preset_name": "Client details",
+      "client_image": "Client image",
+      "name_label": "Name",
+      "profession": "Profession",
+      "headers": {
+        "image_options": "Image options"
+      },
+      "client_gap": "Gap (image to name)"
     }
   }
 }

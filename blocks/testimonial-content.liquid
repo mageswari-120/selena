@@ -1,0 +1,345 @@
+{% doc %}
+  blocks/testimonial-content.liquid  —  Selena Theme  (OS 3.0)
+  Parent: sections/testimonial.liquid via content_for 'block', id: 'testimonial_content'
+  Children: testimonial-card × N
+  Swiper init: assets/collection-list-carousel.js ([data-wdt-swiper])
+{% enddoc %}
+
+{%- liquid 
+  assign layout_type = block.settings.layout_type
+  assign col_gap     = block.settings.column_gap
+  assign row_gap     = block.settings.row_gap
+  assign cols_dt     = block.settings.columns_desktop
+  assign cols_mb     = block.settings.columns_mobile
+  assign autoplay    = block.settings.autoplay_speed
+  assign loop        = block.settings.carousel_loop
+  assign nav_style   = block.settings.nav_style
+
+  assign show_arrows = false
+  assign show_dots   = false
+  if nav_style == 'navigation' or nav_style == 'both'
+    assign show_arrows = true
+  endif
+  if nav_style == 'pagination' or nav_style == 'both'
+    assign show_dots = true
+  endif
+
+  assign nav_scheme = section.settings.color_scheme
+  unless block.settings.nav_inherit_color_scheme
+    assign nav_scheme = block.settings.nav_color_scheme
+  endunless
+  assign nav_scheme_class = 'color-' | append: nav_scheme
+-%}
+
+{%- if layout_type == 'carousel' -%}
+{% style %}
+  #shopify-section-{{ section.id }} .wdt-content__carousel:not(.swiper-initialized) .swiper-wrapper {
+    display: flex;
+    gap: var(--wdt-col-gap, 20px);
+  }
+  #shopify-section-{{ section.id }} .wdt-content__carousel:not(.swiper-initialized) .wdt-card {
+    flex: 0 0 calc((100% - (var(--wdt-cols-mb, 1) - 1) * var(--wdt-col-gap, 20px)) / var(--wdt-cols-mb, 1));
+    max-width: calc((100% - (var(--wdt-cols-mb, 1) - 1) * var(--wdt-col-gap, 20px)) / var(--wdt-cols-mb, 1));
+  }
+  @media (min-width: 750px) {
+    #shopify-section-{{ section.id }} .wdt-content__carousel:not(.swiper-initialized) .wdt-card {
+      flex: 0 0 calc((100% - (var(--wdt-cols-dt, 3) - 1) * var(--wdt-col-gap, 20px)) / var(--wdt-cols-dt, 3));
+      max-width: calc((100% - (var(--wdt-cols-dt, 3) - 1) * var(--wdt-col-gap, 20px)) / var(--wdt-cols-dt, 3));
+    }
+  }
+{% endstyle %}
+{%- endif -%}
+
+<div
+  class="wdt-testimonial__content"
+  {{ block.shopify_attributes }}
+  style="
+    --wdt-col-gap: {{ col_gap }}px;
+    --wdt-row-gap: {{ row_gap }}px;
+    --wdt-cols-dt: {{ cols_dt }};
+    --wdt-cols-mb: {{ cols_mb }};
+    --wdt-nav-radius: {{ block.settings.nav_border_radius }}px;
+    {%- if block.settings.nav_border_style != 'none' -%}
+      --wdt-nav-border: {{ block.settings.nav_border_width }}px solid color-mix(in srgb, var(--color-foreground) {{ block.settings.nav_border_opacity }}%, transparent);
+    {%- endif -%}
+    padding-top: {{ block.settings.padding_top }}px;
+    padding-bottom: {{ block.settings.padding_bottom }}px;
+    padding-left: {{ block.settings.padding_left }}px;
+    padding-right: {{ block.settings.padding_right }}px;
+  "
+>
+  {%- if layout_type == 'carousel' -%}
+    <div
+      class="wdt-content__carousel swiper {{ nav_scheme_class }}{% if show_dots %} wdt-content__carousel--dots{% endif %}"
+      data-wdt-swiper
+      data-cols-desktop="{{ cols_dt }}"
+      data-cols-mobile="{{ cols_mb }}"
+      data-gap="{{ col_gap }}"
+      data-nav="{{ nav_style }}"
+      data-loop="{{ loop }}"
+      data-autoplay="{{ autoplay }}"
+    >
+      <div class="swiper-wrapper" role="list">
+  {%- else -%}
+    <div
+      class="wdt-content__grid row row-cols-{{ cols_mb }} row-cols-md-{{ cols_dt }}"
+      role="list"
+      style="--bs-gutter-x: {{ col_gap }}px; --bs-gutter-y: {{ row_gap }}px;"
+    >
+  {%- endif -%}
+
+  {% content_for 'blocks' %}
+
+  {%- if layout_type == 'carousel' -%}
+      </div>
+      {%- if show_arrows -%}
+        <div class="wdt-content__arrow swiper-button-prev" aria-label="Previous"></div>
+        <div class="wdt-content__arrow swiper-button-next" aria-label="Next"></div>
+      {%- endif -%}
+      {%- if show_dots -%}
+        <div class="wdt-content__pagination swiper-pagination"></div>
+      {%- endif -%}
+    </div>
+  {%- else -%}
+    </div>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+.wdt-testimonial__content { position: relative; }
+.wdt-content__carousel {
+  position: relative;
+  overflow: hidden;
+  --swiper-navigation-color:  var(--color-foreground);
+  --swiper-navigation-size:   20px;
+  --swiper-pagination-color:  var(--color-foreground);
+  --swiper-pagination-bullet-inactive-color: var(--color-foreground);
+}
+.wdt-content__carousel--dots { padding-bottom: 2.25rem; }
+.wdt-content__carousel--dots .swiper-button-prev,
+.wdt-content__carousel--dots .swiper-button-next {
+  margin-top: calc(-1.125rem - var(--swiper-navigation-size, 20px) / 2);
+}
+.wdt-content__carousel .wdt-card { height: auto; }
+.wdt-content__carousel .swiper-button-prev,
+.wdt-content__carousel .swiper-button-next {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--wdt-nav-radius, 50%);
+  border: var(--wdt-nav-border, 1px solid rgba(0,0,0,0.12));
+  background: var(--color-background, #fff);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.10);
+  transition: transform 0.2s ease;
+}
+.wdt-content__carousel .swiper-button-prev { left: 0; }
+.wdt-content__carousel .swiper-button-next { right: 0; }
+.wdt-content__carousel .swiper-button-prev:hover,
+.wdt-content__carousel .swiper-button-next:hover { transform: scale(1.08); }
+.wdt-content__carousel .swiper-button-prev::after,
+.wdt-content__carousel .swiper-button-next::after {
+  font-size: var(--swiper-navigation-size);
+  font-weight: 700;
+}
+.wdt-content__carousel .swiper-pagination { bottom: 0; }
+.wdt-content__carousel .swiper-pagination-bullet {
+  opacity: 0.3;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.wdt-content__carousel .swiper-pagination-bullet-active {
+  opacity: 1;
+  transform: scale(1.25);
+}
+.wdt-content__grid > .wdt-card { height: 100%; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:blocks.testimonial_content.name",
+  "blocks": [
+    { "type": "testimonial-card" }
+  ],
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:blocks.testimonial_content.headers.layout"
+    },
+    {
+      "type": "select",
+      "id": "layout_type",
+      "label": "t:blocks.testimonial_content.layout_type",
+      "options": [
+        { "value": "grid",     "label": "t:options.layout.grid" },
+        { "value": "carousel", "label": "t:options.layout.carousel" }
+      ],
+      "default": "carousel"
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "t:labels.column_gap",
+      "min": 0, "max": 50, "step": 2, "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "row_gap",
+      "label": "t:labels.row_gap",
+      "info": "t:blocks.testimonial_content.row_gap_info",
+      "min": 0, "max": 50, "step": 2, "unit": "px",
+      "default": 20,
+      "visible_if": "{{ block.settings.layout_type == 'grid' }}"
+    },
+    {
+      "type": "header",
+      "content": "t:blocks.testimonial_content.headers.columns"
+    },
+    {
+      "type": "select",
+      "id": "columns_desktop",
+      "label": "t:blocks.testimonial_content.columns_desktop",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" },
+        { "value": "4", "label": "4" }
+      ],
+      "default": "3"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "t:blocks.testimonial_content.columns_mobile",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "header",
+      "content": "t:blocks.testimonial_content.headers.carousel",
+      "visible_if": "{{ block.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": "t:blocks.testimonial_content.autoplay_speed",
+      "info": "t:blocks.testimonial_content.autoplay_speed_info",
+      "min": 0, "max": 5, "step": 1, "unit": "s",
+      "default": 0,
+      "visible_if": "{{ block.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "carousel_loop",
+      "label": "t:blocks.testimonial_content.carousel_loop",
+      "default": true,
+      "visible_if": "{{ block.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "header",
+      "content": "t:blocks.testimonial_content.headers.navigation",
+      "visible_if": "{{ block.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "select",
+      "id": "nav_style",
+      "label": "t:blocks.testimonial_content.nav_style",
+      "options": [
+        { "value": "navigation", "label": "t:blocks.testimonial_content.nav_style_navigation" },
+        { "value": "pagination", "label": "t:blocks.testimonial_content.nav_style_pagination" },
+        { "value": "both",       "label": "t:options.navigation.both" },
+        { "value": "none",       "label": "t:options.navigation.none" }
+      ],
+      "default": "navigation",
+      "visible_if": "{{ block.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "select",
+      "id": "nav_border_style",
+      "label": "t:labels.border_style",
+      "options": [
+        { "value": "none",  "label": "t:options.border.none" },
+        { "value": "solid", "label": "t:options.border.solid" }
+      ],
+      "default": "none",
+      "visible_if": "{{ block.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "range",
+      "id": "nav_border_width",
+      "label": "t:labels.border_width",
+      "min": 1, "max": 5, "step": 1, "unit": "px",
+      "default": 1,
+      "visible_if": "{{ block.settings.layout_type == 'carousel' and block.settings.nav_border_style != 'none' }}"
+    },
+    {
+      "type": "range",
+      "id": "nav_border_opacity",
+      "label": "t:labels.border_opacity",
+      "min": 0, "max": 100, "step": 1, "unit": "%",
+      "default": 100,
+      "visible_if": "{{ block.settings.layout_type == 'carousel' and block.settings.nav_border_style != 'none' }}"
+    },
+    {
+      "type": "range",
+      "id": "nav_border_radius",
+      "label": "t:labels.border_radius",
+      "min": 0, "max": 30, "step": 1, "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "nav_inherit_color_scheme",
+      "label": "t:blocks.testimonial_content.nav_inherit_color_scheme",
+      "default": true,
+      "visible_if": "{{ block.settings.layout_type == 'carousel' }}"
+    },
+    {
+      "type": "color_scheme",
+      "id": "nav_color_scheme",
+      "label": "t:labels.color_scheme",
+      "default": "scheme-1",
+      "visible_if": "{{ block.settings.layout_type == 'carousel' and block.settings.nav_inherit_color_scheme == false }}"
+    },
+    {
+      "type": "header",
+      "content": "t:blocks.testimonial_content.headers.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:labels.top_padding",
+      "min": 0, "max": 50, "step": 2, "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:labels.bottom_padding",
+      "min": 0, "max": 50, "step": 2, "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "label": "t:labels.left_padding",
+      "min": 0, "max": 50, "step": 2, "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "label": "t:labels.right_padding",
+      "min": 0, "max": 50, "step": 2, "unit": "px",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.testimonial_content.preset_name"
+    }
+  ]
+}
+{% endschema %}

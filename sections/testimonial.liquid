@@ -1,8 +1,7 @@
 {%- comment -%}
   Section  : testimonial.liquid
   Theme    : Selena — SHThemes
-  Pattern  : OS 3.0 content_for 'block' — fixed named slots + Bootstrap 5
-  Prefix   : wdt-
+  Pattern  : OS 3.0 content_for 'block' — fixed named slots + Bootstrap 5 + Swiper
 {%- endcomment -%}
 {%- liquid
   assign sec_id       = section.id
@@ -34,107 +33,105 @@
   "
 >
   <div class="{{ wrap_class }}">
-    {% content_for 'block', type: 'wdt-header', id: 'wdt_header' %}
-    {% content_for 'block', type: 'wdt-content', id: 'wdt_content' %}
+    {% content_for 'block', type: 'testimonial-header', id: 'testimonial_header' %}
+    {% content_for 'block', type: 'testimonial-content', id: 'testimonial_content' %} 
   </div>
 </div>
 
 {% stylesheet %}
-
 .wdt-testimonial {
   padding-top: var(--wdt-sec-pt, 40px);
   padding-bottom: var(--wdt-sec-pb, 40px);
   background-color: var(--color-background, #fff);
   color: var(--color-foreground, #1a1a1a);
 }
-
-{% endstylesheet %}
+{% endstylesheet %} 
 
 {% schema %}
 {
-  "name": "Testimonial",
+  "name": "t:sections.testimonial.name",
   "tag": "section",
   "class": "shopify-section--testimonial",
   "blocks": [
-    { "type": "wdt-header" },
-    { "type": "wdt-content" }
+    { "type": "testimonial-header" },
+    { "type": "testimonial-content" }
   ],
   "settings": [
     {
       "type": "header",
-      "content": "Container"
+      "content": "t:sections.testimonial.headers.container"
     },
     {
       "type": "checkbox",
       "id": "enable_container",
-      "label": "Enable Container",
+      "label": "t:sections.testimonial.enable_container",
       "default": true
     },
     {
-      "type": "select",
+      "type": "select", 
       "id": "width_type",
-      "label": "Width",
+      "label": "t:sections.testimonial.width",
       "options": [
-        { "value": "full_width",      "label": "Full Width" },
-        { "value": "container_fluid", "label": "Container Fluid" }
+        { "value": "full_width",      "label": "t:options.width.full_width" },
+        { "value": "container_fluid", "label": "t:options.width.container_fluid" }
       ],
       "default": "full_width"
     },
     {
       "type": "header",
-      "content": "Color Scheme"
+      "content": "t:sections.testimonial.headers.color_scheme"
     },
     {
       "type": "color_scheme",
       "id": "color_scheme",
-      "label": "Color Scheme",
+      "label": "t:labels.color_scheme",
       "default": "scheme-1"
     },
     {
       "type": "header",
-      "content": "Padding"
+      "content": "t:sections.testimonial.headers.spacing"
     },
     {
       "type": "range",
       "id": "padding_top",
-      "label": "Padding Top",
+      "label": "t:labels.top_padding",
       "min": 0, "max": 200, "step": 2, "unit": "px",
       "default": 40
     },
     {
       "type": "range",
       "id": "padding_bottom",
-      "label": "Padding Bottom",
+      "label": "t:labels.bottom_padding",
       "min": 0, "max": 200, "step": 2, "unit": "px",
       "default": 40
     }
   ],
   "presets": [
     {
-      "name": "Overlay grid",
+      "name": "t:sections.testimonial.presets.name",
       "blocks": {
-        "wdt_header": {
-          "type": "wdt-header",
+        "testimonial_header": {
+          "type": "testimonial-header",
           "static": true,
           "blocks": {
             "heading": {
-              "type": "wdt-heading",
+              "type": "testimonial-heading",
               "settings": {
                 "heading": "Shop our latest collection",
                 "tag": "h2"
               }
             },
             "description": {
-              "type": "wdt-description",
+              "type": "testimonial-text",
               "settings": {
-                "description": "<p>Best selling products</p>"
+                "text": "<p>Best selling products</p>"
               }
             }
           },
           "block_order": ["heading", "description"]
         },
-        "wdt_content": {
-          "type": "wdt-content",
+        "testimonial_content": {
+          "type": "testimonial-content",
           "static": true,
           "settings": {
             "layout_type": "grid",
@@ -143,21 +140,22 @@
           },
           "blocks": {
             "card_1": {
-              "type": "wdt-card",
+              "type": "testimonial-card",
               "settings": { "card_type": "overlay", "card_alignment": "start" },
               "blocks": {
-                "image": { "type": "wdt-image-static" },
+                "image": { "type": "testimonial-image" },
                 "description": {
-                  "type": "wdt-card-description",
+                  "type": "testimonial-text",
                   "settings": {
-                    "description": "<p>The fabric quality exceeded my expectations. Will definitely order again.</p>"
+                    "variant": "card",
+                    "text": "<p>The fabric quality exceeded my expectations. Will definitely order again.</p>"
                   }
                 },
                 "client": {
-                  "type": "wdt-client-details",
+                  "type": "testimonial-client",
                   "settings": { "name": "Priya Sharma", "profession": "Chennai", "image_position": "left" }
                 },
-                "rating": { "type": "wdt-custom-rating", "settings": { "rating_count": "5", "rating_color": "#f5c518" } }
+                "rating": { "type": "testimonial-rating", "settings": { "rating_count": "5", "rating_color": "#f5c518" } }
               },
               "block_order": ["image", "description", "client", "rating"]
             }
@@ -167,44 +165,48 @@
       }
     },
     {
-      "name": "Client says carousel",
+      "name": "t:sections.testimonial.presets.client_says_carousel",
       "blocks": {
-        "wdt_header": {
-          "type": "wdt-header",
+        "testimonial_header": {
+          "type": "testimonial-header",
           "static": true,
           "blocks": {
             "description": {
-              "type": "wdt-description",
-              "settings": { "description": "<p><em>About Style</em></p>" }
+              "type": "testimonial-text",
+              "settings": { "text": "<p><em>About Style</em></p>" }
             },
             "heading": {
-              "type": "wdt-heading",
+              "type": "testimonial-heading",
               "settings": { "heading": "Client Says" }
             }
           },
           "block_order": ["description", "heading"]
         },
-        "wdt_content": {
-          "type": "wdt-content",
+        "testimonial_content": {
+          "type": "testimonial-content",
           "static": true,
           "settings": {
             "layout_type": "carousel",
             "nav_style": "navigation",
-            "slides_desktop": "1"
+            "columns_desktop": "1",
+            "columns_mobile": "1"
           },
           "blocks": {
             "card_1": {
-              "type": "wdt-card",
+              "type": "testimonial-card",
               "settings": { "card_type": "grid", "card_image_position": "top", "card_alignment": "center" },
               "blocks": {
-                "image": { "type": "wdt-image-static" },
-                "rating": { "type": "wdt-custom-rating", "settings": { "rating_count": "5" } },
+                "image": { "type": "testimonial-image" },
+                "rating": { "type": "testimonial-rating", "settings": { "rating_count": "5" } },
                 "description": {
-                  "type": "wdt-card-description",
-                  "settings": { "description": "<p>The attention to detail is incredible.</p>" }
+                  "type": "testimonial-text",
+                  "settings": {
+                    "variant": "card",
+                    "text": "<p>The attention to detail is incredible.</p>"
+                  }
                 },
                 "client": {
-                  "type": "wdt-client-details",
+                  "type": "testimonial-client",
                   "settings": { "name": "Sophia Bennett", "profession": "Customer" }
                 }
               },
@@ -216,21 +218,21 @@
       }
     },
     {
-      "name": "Real stories",
+      "name": "t:sections.testimonial.presets.real_stories",
       "blocks": {
-        "wdt_header": {
-          "type": "wdt-header",
+        "testimonial_header": {
+          "type": "testimonial-header",
           "static": true,
           "blocks": {
             "heading": {
-              "type": "wdt-heading",
+              "type": "testimonial-heading",
               "settings": { "heading": "Real Stories", "tag": "h2" }
             }
           },
           "block_order": ["heading"]
         },
-        "wdt_content": {
-          "type": "wdt-content",
+        "testimonial_content": {
+          "type": "testimonial-content",
           "static": true,
           "settings": {
             "layout_type": "grid",
@@ -239,7 +241,7 @@
           },
           "blocks": {
             "card_1": {
-              "type": "wdt-card",
+              "type": "testimonial-card",
               "settings": {
                 "card_type": "grid",
                 "card_image_position": "right",
@@ -248,14 +250,17 @@
                 "card_border_radius": 8
               },
               "blocks": {
-                "rating": { "type": "wdt-custom-rating", "settings": { "rating_count": "5" } },
-                "client": { "type": "wdt-client-details", "settings": { "name": "Aditi R.", "profession": "Los Angeles" } },
-                "heading": { "type": "wdt-card-heading", "settings": { "heading": "Finally Found A Serum" } },
+                "rating": { "type": "testimonial-rating", "settings": { "rating_count": "5" } },
+                "client": { "type": "testimonial-client", "settings": { "name": "Aditi R.", "profession": "Los Angeles" } },
+                "heading": { "type": "testimonial-heading", "settings": { "variant": "card", "heading": "Finally Found A Serum" } },
                 "description": {
-                  "type": "wdt-card-description",
-                  "settings": { "description": "<p>My skin has never looked better.</p>" }
+                  "type": "testimonial-text",
+                  "settings": {
+                    "variant": "card",
+                    "text": "<p>My skin has never looked better.</p>"
+                  }
                 },
-                "image": { "type": "wdt-image-static" }
+                "image": { "type": "testimonial-image" }
               },
               "block_order": ["rating", "client", "heading", "description", "image"]
             }
@@ -265,69 +270,76 @@
       }
     },
     {
-      "name": "Happy customers",
+      "name": "t:sections.testimonial.presets.happy_customers",
       "blocks": {
-        "wdt_header": {
-          "type": "wdt-header",
+        "testimonial_header": {
+          "type": "testimonial-header",
           "static": true,
           "blocks": {
             "description": {
-              "type": "wdt-description",
-              "settings": { "description": "<p>The Latest Actions</p>" }
+              "type": "testimonial-text",
+              "settings": { "text": "<p>The Latest Actions</p>" }
             },
             "heading": {
-              "type": "wdt-heading",
+              "type": "testimonial-heading",
               "settings": { "heading": "Hear From Our Happy Customers" }
             },
             "button": {
-              "type": "wdt-button",
+              "type": "testimonial-button",
               "settings": { "label": "View all reviews", "style": "primary" }
             }
           },
           "block_order": ["description", "heading", "button"]
         },
-        "wdt_content": {
-          "type": "wdt-content",
+        "testimonial_content": {
+          "type": "testimonial-content",
           "static": true,
           "settings": {
             "layout_type": "carousel",
-            "slides_desktop": "2",
+            "columns_desktop": "2",
+            "columns_mobile": "1",
             "nav_style": "both",
-            "border_style": "solid",
-            "border_radius": 12,
-            "inherit_color_scheme": false,
-            "content_color_scheme": "scheme-2"
+            "nav_border_style": "solid",
+            "nav_border_radius": 12,
+            "nav_inherit_color_scheme": false,
+            "nav_color_scheme": "scheme-2"
           },
           "blocks": {
             "card_1": {
-              "type": "wdt-card",
+              "type": "testimonial-card",
               "settings": { "card_type": "grid", "card_image_position": "top", "card_alignment": "center" },
               "blocks": {
-                "image": { "type": "wdt-image-static" },
-                "rating": { "type": "wdt-custom-rating", "settings": { "rating_count": "5" } },
+                "image": { "type": "testimonial-image" },
+                "rating": { "type": "testimonial-rating", "settings": { "rating_count": "5" } },
                 "description": {
-                  "type": "wdt-card-description",
-                  "settings": { "description": "<p>Our family loves these products.</p>" }
+                  "type": "testimonial-text",
+                  "settings": {
+                    "variant": "card",
+                    "text": "<p>Our family loves these products.</p>"
+                  }
                 },
                 "client": {
-                  "type": "wdt-client-details",
+                  "type": "testimonial-client",
                   "settings": { "name": "The Martinez Family", "profession": "Verified buyer" }
                 }
               },
               "block_order": ["image", "rating", "description", "client"]
             },
             "card_2": {
-              "type": "wdt-card",
+              "type": "testimonial-card",
               "settings": { "card_type": "grid", "card_image_position": "top", "card_alignment": "center" },
               "blocks": {
-                "image": { "type": "wdt-image-static" },
-                "rating": { "type": "wdt-custom-rating", "settings": { "rating_count": "5" } },
+                "image": { "type": "testimonial-image" },
+                "rating": { "type": "testimonial-rating", "settings": { "rating_count": "5" } },
                 "description": {
-                  "type": "wdt-card-description",
-                  "settings": { "description": "<p>Exceeded expectations from start to finish.</p>" }
+                  "type": "testimonial-text",
+                  "settings": {
+                    "variant": "card",
+                    "text": "<p>Exceeded expectations from start to finish.</p>"
+                  }
                 },
                 "client": {
-                  "type": "wdt-client-details",
+                  "type": "testimonial-client",
                   "settings": { "name": "Emily Chen", "profession": "Verified buyer" }
                 }
               },

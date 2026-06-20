@@ -195,46 +195,50 @@
         "padding_bottom": 40
       },
       "blocks": {
-        "wdt_header": {
-          "type": "wdt-header",
+        "testimonial_header": {
+          "type": "testimonial-header",
           "static": true,
           "blocks": {
             "description": {
-              "type": "wdt-description",
-              "settings": { "description": "<p><em>About Style</em></p>" }
+              "type": "testimonial-text",
+              "settings": { "text": "<p><em>About Style</em></p>" }
             },
             "heading": {
-              "type": "wdt-heading",
+              "type": "testimonial-heading",
               "settings": { "heading": "Client Says" }
             }
           },
           "block_order": ["description", "heading"]
         },
-        "wdt_content": {
-          "type": "wdt-content",
+        "testimonial_content": {
+          "type": "testimonial-content",
           "static": true,
           "settings": {
             "layout_type": "carousel",
             "nav_style": "navigation",
-            "slides_desktop": "1"
+            "columns_desktop": "1",
+            "columns_mobile": "1"
           },
           "blocks": {
             "card_1": {
-              "type": "wdt-card",
+              "type": "testimonial-card",
               "settings": {
                 "card_type": "grid",
                 "card_image_position": "top",
                 "card_alignment": "center"
               },
               "blocks": {
-                "image": { "type": "wdt-image-static" },
-                "rating": { "type": "wdt-custom-rating", "settings": { "rating_count": "5" } },
+                "image": { "type": "testimonial-image" },
+                "rating": { "type": "testimonial-rating", "settings": { "rating_count": "5" } },
                 "description": {
-                  "type": "wdt-card-description",
-                  "settings": { "description": "<p>The attention to detail is incredible.</p>" }
+                  "type": "testimonial-text",
+                  "settings": {
+                    "variant": "card",
+                    "text": "<p>The attention to detail is incredible.</p>"
+                  }
                 },
                 "client": {
-                  "type": "wdt-client-details",
+                  "type": "testimonial-client",
                   "settings": { "name": "Sophia Bennett", "profession": "Customer" }
                 }
               },

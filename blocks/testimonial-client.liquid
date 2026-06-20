@@ -1,8 +1,7 @@
-{%- comment -%}
-  Block  : wdt-client-details.liquid
-  Type   : wdt-client-details
-  Parent : blocks/wdt-card.liquid
-{%- endcomment -%}
+{% doc %}
+  blocks/testimonial-client.liquid  —  Selena Theme  (OS 3.0)
+  Parent: blocks/testimonial-card.liquid
+{% enddoc %}
 
 {%- liquid
   assign img_pos    = block.settings.image_position
@@ -20,9 +19,7 @@
     padding-left: {{ block.settings.padding_left }}px;
     padding-right: {{ block.settings.padding_right }}px;
   "
-> 
-  
-  {%- comment -%}── Avatar ──{%- endcomment -%}
+>
   {%- if block.settings.image != blank -%}
     <div class="wdt-card__avatar wdt-card__avatar--{{ aspect }}">
       {{- block.settings.image
@@ -44,7 +41,6 @@
     </div>
   {%- endif -%}
 
-  {%- comment -%}── Meta ──{%- endcomment -%}
   <div class="wdt-card__client-meta">
     {%- if block.settings.name != blank -%}
       <p class="wdt-card__client-name">{{ block.settings.name | escape }}</p>
@@ -53,12 +49,9 @@
       <p class="wdt-card__client-prof">{{ block.settings.profession | escape }}</p>
     {%- endif -%}
   </div>
-
 </div>
 
 {% stylesheet %}
-
-/* ── Client wrapper ── */
 .wdt-card__client {
   display: flex;
   align-items: center;
@@ -67,11 +60,8 @@
 }
 .wdt-card__client--top  { flex-direction: column; align-items: inherit; }
 .wdt-card__client--left { flex-direction: row; align-items: center; }
-
 .wdt-card.text-center .wdt-card__client--top { align-items: center; }
 .wdt-card.text-end    .wdt-card__client--top { align-items: flex-end; }
-
-/* ── Avatar ── */
 .wdt-card__avatar {
   flex-shrink: 0;
   width: 56px;
@@ -86,7 +76,6 @@
 .wdt-card__avatar--portrait { border-radius: 0; width: 48px; height: 64px; }
 .wdt-card__avatar--adapt    { border-radius: 0; width: auto; height: auto; max-width: 80px; }
 .wdt-card__avatar--circle   { border-radius: 50%; }
-
 .wdt-card__avatar-img {
   width: 100%; height: 100%;
   object-fit: cover; display: block;
@@ -94,10 +83,7 @@
 .wdt-card__avatar--placeholder svg {
   width: 60%; height: 60%; opacity: 0.4;
 }
-
-/* ── Meta text ── */
 .wdt-card__client-meta { display: flex; flex-direction: column; gap: 2px; }
-
 .wdt-card__client-name {
   font-size: 0.875rem;
   font-weight: 700;
@@ -113,99 +99,101 @@
   letter-spacing: 0.08em;
   line-height: 1.3;
 }
-
-/* ── Responsive ── */
 @media (max-width: 575.98px) {
   .wdt-card__client--left { flex-direction: column; }
 }
-
 {% endstylesheet %}
 
 {% schema %}
 {
-  "name": "Client Details",
+  "name": "t:blocks.testimonial_client.name",
   "settings": [
     {
       "type": "image_picker",
       "id": "image",
-      "label": "Client Image"
+      "label": "t:blocks.testimonial_client.client_image"
     },
     {
       "type": "text",
       "id": "name",
-      "label": "Name",
+      "label": "t:blocks.testimonial_client.name_label",
       "default": "John"
     },
     {
       "type": "text",
       "id": "profession",
-      "label": "Profession",
+      "label": "t:blocks.testimonial_client.profession",
       "default": "Director"
     },
     {
       "type": "header",
-      "content": "Image Options"
+      "content": "t:blocks.testimonial_client.headers.image_options"
     },
     {
       "type": "select",
       "id": "image_position",
-      "label": "Image Position",
+      "label": "t:labels.image_position",
       "options": [
-        { "value": "top",  "label": "Top" },
-        { "value": "left", "label": "Left" }
+        { "value": "top",  "label": "t:options.client_image_position.top" },
+        { "value": "left", "label": "t:options.client_image_position.left" }
       ],
       "default": "top"
     },
     {
       "type": "select",
       "id": "aspect_ratio",
-      "label": "Aspect Ratio",
+      "label": "t:labels.image_ratio",
       "options": [
-        { "value": "square",   "label": "Square" },
-        { "value": "portrait", "label": "Portrait" },
-        { "value": "adapt",    "label": "Adapt" },
-        { "value": "circle",   "label": "Circle" }
+        { "value": "square",   "label": "t:options.image_ratio.square" },
+        { "value": "portrait", "label": "t:options.image_ratio.portrait" },
+        { "value": "adapt",    "label": "t:options.image_ratio.adapt" },
+        { "value": "circle",   "label": "t:options.image_shape.circle" }
       ],
       "default": "circle"
     },
     {
       "type": "range",
       "id": "client_gap",
-      "label": "Gap (image to name)",
+      "label": "t:blocks.testimonial_client.client_gap",
       "min": 0, "max": 30, "step": 2, "unit": "px",
       "default": 10
     },
     {
       "type": "header",
-      "content": "Padding"
+      "content": "t:labels.padding"
     },
     {
       "type": "range",
       "id": "padding_top",
-      "label": "Padding Top",
+      "label": "t:labels.top_padding",
       "min": 0, "max": 50, "step": 2, "unit": "px",
       "default": 10
     },
     {
       "type": "range",
       "id": "padding_bottom",
-      "label": "Padding Bottom",
+      "label": "t:labels.bottom_padding",
       "min": 0, "max": 50, "step": 2, "unit": "px",
       "default": 0
     },
     {
       "type": "range",
       "id": "padding_left",
-      "label": "Padding Left",
+      "label": "t:labels.left_padding",
       "min": 0, "max": 50, "step": 2, "unit": "px",
       "default": 0
     },
     {
       "type": "range",
       "id": "padding_right",
-      "label": "Padding Right",
+      "label": "t:labels.right_padding",
       "min": 0, "max": 50, "step": 2, "unit": "px",
       "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.testimonial_client.preset_name"
     }
   ]
 }

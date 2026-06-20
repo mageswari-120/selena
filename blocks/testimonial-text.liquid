@@ -1,0 +1,114 @@
+{% doc %}
+  blocks/testimonial-text.liquid  —  Selena Theme  (OS 3.0)
+  Parent: testimonial-header or testimonial-card
+  Variant section: header description
+  Variant card: card body text
+{% enddoc %}
+
+{%- liquid
+  assign variant = block.settings.variant | default: 'section'
+-%}
+
+{%- if block.settings.text != blank -%}
+  {%- if variant == 'card' -%}
+    <div
+      class="wdt-card__desc rte"
+      {{ block.shopify_attributes }}
+      style="
+        padding-top: {{ block.settings.padding_top }}px;
+        padding-bottom: {{ block.settings.padding_bottom }}px;
+        padding-left: {{ block.settings.padding_left }}px;
+        padding-right: {{ block.settings.padding_right }}px;
+      "
+    >
+      {{- block.settings.text -}}
+    </div>
+  {%- else -%}
+    <div
+      class="wdt-hdr__desc rte"
+      {{ block.shopify_attributes }}
+      style="
+        padding-top: {{ block.settings.padding_top }}px;
+        padding-bottom: {{ block.settings.padding_bottom }}px;
+      "
+    >
+      {{- block.settings.text -}}
+    </div>
+  {%- endif -%}
+{%- endif -%}
+
+{% stylesheet %}
+.wdt-hdr__desc {
+  font-size: 1rem;
+  line-height: 1.7;
+  opacity: 0.75;
+  max-width: 620px;
+  margin-inline: auto;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.wdt-card__desc {
+  font-size: 0.875rem;
+  line-height: 1.75;
+  opacity: 0.75;
+}
+.wdt-card__desc p { margin-bottom: 0; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:blocks.testimonial_text.name",
+  "settings": [
+    {
+      "type": "select",
+      "id": "variant",
+      "label": "t:blocks.testimonial_text.variant",
+      "options": [
+        { "value": "section", "label": "t:options.text_variant.section" },
+        { "value": "card",    "label": "t:options.text_variant.card" }
+      ],
+      "default": "section"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "t:labels.text"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:labels.top_padding",
+      "min": 0, "max": 50, "step": 2, "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:labels.bottom_padding",
+      "min": 0, "max": 50, "step": 2, "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "label": "t:labels.left_padding",
+      "min": 0, "max": 50, "step": 2, "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.variant == 'card' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "label": "t:labels.right_padding",
+      "min": 0, "max": 50, "step": 2, "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.variant == 'card' }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.testimonial_text.preset_name"
+    }
+  ]
+}
+{% endschema %}

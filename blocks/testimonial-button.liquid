@@ -1,8 +1,7 @@
-{%- comment -%}
-  Block  : wdt-button.liquid
-  Type   : wdt-button
-  Parent : blocks/wdt-header.liquid
-{%- endcomment -%}
+{% doc %}
+  blocks/testimonial-button.liquid  —  Selena Theme  (OS 3.0)
+  Parent: blocks/testimonial-header.liquid
+{% enddoc %}
 
 {%- if block.settings.label != blank -%}
   <div
@@ -27,64 +26,66 @@
 {%- endif -%}
 
 {% stylesheet %}
-
 .wdt-hdr__btn-wrap {
   display: flex;
   justify-content: inherit;
 }
-
 .wdt-hdr__btn.btn-link {
   padding-left: 0;
   padding-right: 0;
 }
-
 {% endstylesheet %}
 
 {% schema %}
 {
-  "name": "Button",
+  "name": "t:blocks.testimonial_button.name",
   "settings": [
     {
       "type": "text",
       "id": "label",
-      "label": "Button Label",
+      "label": "t:labels.button_label",
       "default": "Shop now"
     },
     {
       "type": "url",
       "id": "url",
-      "label": "Button URL"
+      "label": "t:labels.button_link"
     },
     {
       "type": "select",
       "id": "style",
-      "label": "Style",
+      "label": "t:labels.button_style",
       "options": [
-        { "value": "primary", "label": "Primary" },
-        { "value": "outline-secondary", "label": "Secondary" },
-        { "value": "link", "label": "Link" }
+        { "value": "primary", "label": "t:options.button_style.primary" },
+        { "value": "outline-secondary", "label": "t:options.button_style.secondary" },
+        { "value": "link", "label": "t:options.button_style.link" }
       ],
       "default": "primary"
     },
     {
       "type": "checkbox",
       "id": "open_new_tab",
-      "label": "Open in new tab",
+      "label": "t:blocks.testimonial_button.open_new_tab",
       "default": false
     },
     {
       "type": "range",
       "id": "padding_top",
-      "label": "Padding Top",
+      "label": "t:labels.top_padding",
       "min": 0, "max": 50, "step": 2, "unit": "px",
       "default": 8
     },
     {
       "type": "range",
       "id": "padding_bottom",
-      "label": "Padding Bottom",
+      "label": "t:labels.bottom_padding",
       "min": 0, "max": 50, "step": 2, "unit": "px",
       "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.testimonial_button.preset_name"
     }
   ]
 }

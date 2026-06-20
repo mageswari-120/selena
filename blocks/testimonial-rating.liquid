@@ -1,8 +1,7 @@
-{%- comment -%}
-  Block  : wdt-custom-rating.liquid
-  Type   : wdt-custom-rating
-  Parent : blocks/wdt-card.liquid
-{%- endcomment -%}
+{% doc %}
+  blocks/testimonial-rating.liquid  —  Selena Theme  (OS 3.0)
+  Parent: blocks/testimonial-card.liquid
+{% enddoc %}
 
 {%- liquid
   assign rating_num = block.settings.rating_count | times: 1.0
@@ -21,8 +20,8 @@
     padding-bottom: {{ block.settings.padding_bottom }}px;
     padding-left: {{ block.settings.padding_left }}px;
     padding-right: {{ block.settings.padding_right }}px;
-  " 
-> 
+  "
+>
   <span class="wdt-card__stars" aria-hidden="true">
     <span class="wdt-card__stars-empty">★★★★★</span>
     <span class="wdt-card__stars-fill">★★★★★</span>
@@ -30,14 +29,12 @@
 </div>
 
 {% stylesheet %}
-
 .wdt-card__rating {
   display: flex;
   justify-content: inherit;
 }
 .wdt-card.text-center .wdt-card__rating { justify-content: center; }
 .wdt-card.text-end    .wdt-card__rating { justify-content: flex-end; }
-
 .wdt-card__stars {
   position: relative;
   display: inline-block;
@@ -58,17 +55,16 @@
   white-space: nowrap;
   display: block;
 }
-
 {% endstylesheet %}
 
 {% schema %}
 {
-  "name": "Custom Rating",
+  "name": "t:blocks.testimonial_rating.name",
   "settings": [
     {
       "type": "select",
       "id": "rating_count",
-      "label": "Rating",
+      "label": "t:blocks.testimonial_rating.rating",
       "options": [
         { "value": "1",   "label": "1"   },
         { "value": "1.5", "label": "1.5" },
@@ -85,47 +81,52 @@
     {
       "type": "color",
       "id": "rating_color",
-      "label": "Star Color",
+      "label": "t:blocks.testimonial_rating.star_color",
       "default": "#F59E0B"
     },
     {
       "type": "range",
       "id": "star_gap",
-      "label": "Gap Between Stars",
+      "label": "t:blocks.testimonial_rating.star_gap",
       "min": 0, "max": 30, "step": 2, "unit": "px",
       "default": 4
     },
     {
       "type": "header",
-      "content": "Padding"
+      "content": "t:labels.padding"
     },
     {
       "type": "range",
       "id": "padding_top",
-      "label": "Padding Top",
+      "label": "t:labels.top_padding",
       "min": 0, "max": 50, "step": 2, "unit": "px",
       "default": 0
     },
     {
       "type": "range",
       "id": "padding_bottom",
-      "label": "Padding Bottom",
+      "label": "t:labels.bottom_padding",
       "min": 0, "max": 50, "step": 2, "unit": "px",
       "default": 10
     },
     {
       "type": "range",
       "id": "padding_left",
-      "label": "Padding Left",
+      "label": "t:labels.left_padding",
       "min": 0, "max": 50, "step": 2, "unit": "px",
       "default": 0
     },
     {
       "type": "range",
       "id": "padding_right",
-      "label": "Padding Right",
+      "label": "t:labels.right_padding",
       "min": 0, "max": 50, "step": 2, "unit": "px",
       "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.testimonial_rating.preset_name"
     }
   ]
 }

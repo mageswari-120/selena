@@ -1,0 +1,133 @@
+{% doc %}
+  blocks/testimonial-heading.liquid  —  Selena Theme  (OS 3.0)
+  Parent: testimonial-header or testimonial-card
+  Variant section: section title (h1–h4)
+  Variant card: card quote title (blockquote)
+{% enddoc %}
+
+{%- liquid
+  assign variant = block.settings.variant | default: 'section'
+-%}
+
+{%- if block.settings.heading != blank -%}
+  {%- if variant == 'card' -%}
+    <blockquote
+      class="wdt-card__heading"
+      {{ block.shopify_attributes }}
+      style="
+        padding-top: {{ block.settings.padding_top }}px;
+        padding-bottom: {{ block.settings.padding_bottom }}px;
+        padding-left: {{ block.settings.padding_left }}px;
+        padding-right: {{ block.settings.padding_right }}px;
+      "
+    >
+      {{- block.settings.heading | escape -}}
+    </blockquote>
+  {%- else -%}
+    <{{ block.settings.tag }}
+      class="wdt-hdr__heading"
+      {{ block.shopify_attributes }}
+      style="
+        padding-top: {{ block.settings.padding_top }}px;
+        padding-bottom: {{ block.settings.padding_bottom }}px;
+      "
+    >
+      {{- block.settings.heading | escape -}}
+    </{{ block.settings.tag }}>
+  {%- endif -%}
+{%- endif -%}
+
+{% stylesheet %}
+.wdt-hdr__heading {
+  font-family: var(--font-heading--family, inherit);
+  font-weight: var(--font-heading--weight, 700);
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  line-height: 1.15;
+  margin: 0;
+  color: var(--color-foreground, #1a1a1a);
+}
+.wdt-card__heading {
+  font-family: var(--font-heading--family, inherit);
+  font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+  font-weight: 500;
+  font-style: italic;
+  line-height: 1.6;
+  margin: 0;
+  border: none;
+  padding: 0;
+  color: var(--color-foreground, #1a1a1a);
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:blocks.testimonial_heading.name",
+  "settings": [
+    {
+      "type": "select",
+      "id": "variant",
+      "label": "t:blocks.testimonial_heading.variant",
+      "options": [
+        { "value": "section", "label": "t:options.heading_variant.section" },
+        { "value": "card",    "label": "t:options.heading_variant.card" }
+      ],
+      "default": "section"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:blocks.testimonial_heading.heading",
+      "default": "What Our Customers Say"
+    },
+    {
+      "type": "select",
+      "id": "tag",
+      "label": "t:blocks.testimonial_heading.html_tag",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" },
+        { "value": "h4", "label": "H4" },
+        { "value": "p",  "label": "t:blocks.testimonial_heading.tag_paragraph" }
+      ],
+      "default": "h2",
+      "visible_if": "{{ block.settings.variant == 'section' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "t:labels.top_padding",
+      "min": 0, "max": 50, "step": 2, "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "t:labels.bottom_padding",
+      "min": 0, "max": 50, "step": 2, "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "label": "t:labels.left_padding",
+      "min": 0, "max": 50, "step": 2, "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.variant == 'card' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "label": "t:labels.right_padding",
+      "min": 0, "max": 50, "step": 2, "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.variant == 'card' }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.testimonial_heading.preset_name"
+    }
+  ]
+}
+{% endschema %}

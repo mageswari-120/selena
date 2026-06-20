@@ -1,14 +1,10 @@
-{%- comment -%}
-  Block    : wdt-card.liquid
-  Type     : wdt-card
-  Parent   : blocks/wdt-content.liquid
-  Children : wdt-image-static · wdt-card-heading · wdt-card-description
-             wdt-custom-rating · wdt-client-details
-
-  KEY RULE — this block renders ONLY <article>.
-  The parent wdt-content.liquid owns carousel-item / grid-col wrapping
-  via JavaScript at runtime. No parent-detection logic here.
-{%- endcomment -%}
+{% doc %}
+  blocks/testimonial-card.liquid  —  Selena Theme  (OS 3.0)
+  Parent: blocks/testimonial-content.liquid via content_for 'blocks'
+  Children: testimonial-image · testimonial-heading · testimonial-text
+            testimonial-rating · testimonial-client
+  Carousel slides use slideClass: wdt-card in collection-list-carousel.js
+{% enddoc %}
 
 {%- liquid
   assign card_type      = block.settings.card_type      | default: 'grid'
@@ -23,16 +19,12 @@
   assign inherit_scheme = block.settings.inherit_color_scheme | default: true
   assign card_scheme    = block.settings.card_color_scheme
 
-  comment ── Border CSS ──
-  endcomment
   if border_style == 'solid'
     assign border_css = border_width | append: 'px solid rgba(0,0,0,' | append: border_opacity | append: ')'
   else
     assign border_css = 'none'
   endif
 
-  comment ── Overlay CSS ──
-  endcomment
   if enable_overlay
     assign ov_color = block.settings.overlay_color | default: '#000000'
     if block.settings.overlay_style == 'gradient'
@@ -45,17 +37,18 @@
     assign overlay_css = 'transparent'
   endif
 
-  comment ── Scheme class ──
-  endcomment
   unless inherit_scheme
     assign scheme_class = 'color-' | append: card_scheme
   else
     assign scheme_class = ''
   endunless
+
+  assign card_classes = 'wdt-card wdt-card--' | append: card_type | append: ' wdt-card--img-' | append: img_pos | append: ' ' | append: scheme_class | append: ' text-' | append: alignment
 -%}
 
 <article
-  class="wdt-card wdt-card--{{ card_type }} wdt-card--img-{{ img_pos }} {{ scheme_class }} text-{{ alignment }}"
+  class="{{ card_classes }}"
+  role="listitem"
   {{ block.shopify_attributes }}
   style="
     --wdt-card-gap: {{ card_gap }}px;
@@ -68,7 +61,6 @@
     --wdt-card-overlay: {{ overlay_css }};
   "
 >
-
   {%- if enable_overlay -%}
     <div class="wdt-card__overlay" aria-hidden="true"></div>
   {%- endif -%}
@@ -76,12 +68,9 @@
   <div class="wdt-card__inner">
     {% content_for 'blocks' %}
   </div>
-
 </article>
 
 {% stylesheet %}
-
-/* ── Card base ── */
 .wdt-card {
   position: relative;
   display: flex;
@@ -102,8 +91,6 @@
   transform: translateY(-3px);
   box-shadow: 0 8px 30px rgba(0,0,0,.08);
 }
-
-/* ── Overlay ── */
 .wdt-card__overlay {
   position: absolute; inset: 0;
   background: var(--wdt-card-overlay, transparent);
@@ -115,8 +102,6 @@
   flex: 1;
   gap: var(--wdt-card-gap, 10px);
 }
-
-/* ── Layout: grid image positions ── */
 .wdt-card--grid.wdt-card--img-top    { flex-direction: column; }
 .wdt-card--grid.wdt-card--img-bottom { flex-direction: column-reverse; }
 .wdt-card--grid.wdt-card--img-left  {
@@ -127,56 +112,51 @@
 }
 .wdt-card--grid.wdt-card--img-left .wdt-card__inner,
 .wdt-card--grid.wdt-card--img-right .wdt-card__inner { flex: 1; }
-
-/* ── Layout: overlay ── */
 .wdt-card--overlay { position: relative; min-height: 280px; }
 .wdt-card--overlay .wdt-card__inner { margin-top: auto; }
-
-/* ── Responsive ── */
 @media (max-width: 575.98px) {
   .wdt-card--grid.wdt-card--img-left,
   .wdt-card--grid.wdt-card--img-right {
     flex-direction: column;
   }
 }
-
 {% endstylesheet %}
 
 {% schema %}
 {
-  "name": "Testimonial Card",
+  "name": "t:blocks.testimonial_card.name",
   "blocks": [
-    { "type": "wdt-image-static" },
-    { "type": "wdt-card-heading" },
-    { "type": "wdt-card-description" },
-    { "type": "wdt-custom-rating" },
-    { "type": "wdt-client-details" }
+    { "type": "testimonial-image" },
+    { "type": "testimonial-heading" },
+    { "type": "testimonial-text" },
+    { "type": "testimonial-rating" },
+    { "type": "testimonial-client" }
   ],
   "settings": [
     {
       "type": "header",
-      "content": "Card Layout"
+      "content": "t:blocks.testimonial_card.headers.card_layout"
     },
     {
       "type": "select",
       "id": "card_type",
-      "label": "Type",
+      "label": "t:blocks.testimonial_card.card_type",
       "options": [
-        { "value": "grid",    "label": "Grid" },
-        { "value": "overlay", "label": "Overlay" }
+        { "value": "grid",    "label": "t:options.card_layout.grid" },
+        { "value": "overlay", "label": "t:options.card_layout.overlay" }
       ],
       "default": "grid"
     },
     {
       "type": "select",
       "id": "card_image_position",
-      "label": "Image Position",
-      "info": "Applies when Type = Grid",
+      "label": "t:blocks.testimonial_card.card_image_position",
+      "info": "t:blocks.testimonial_card.card_image_position_info",
       "options": [
-        { "value": "top",    "label": "Top" },
-        { "value": "bottom", "label": "Bottom" },
-        { "value": "left",   "label": "Left" },
-        { "value": "right",  "label": "Right" }
+        { "value": "top",    "label": "t:options.image_position_card.top" },
+        { "value": "bottom", "label": "t:options.image_position_card.bottom" },
+        { "value": "left",   "label": "t:options.image_position_card.left" },
+        { "value": "right",  "label": "t:options.image_position_card.right" }
       ],
       "default": "top",
       "visible_if": "{{ block.settings.card_type == 'grid' }}"
@@ -184,45 +164,45 @@
     {
       "type": "select",
       "id": "card_alignment",
-      "label": "Alignment",
+      "label": "t:labels.alignment",
       "options": [
-        { "value": "start",  "label": "Left" },
-        { "value": "center", "label": "Center" },
-        { "value": "end",    "label": "Right" }
+        { "value": "start",  "label": "t:options.alignment.left" },
+        { "value": "center", "label": "t:options.alignment.center" },
+        { "value": "end",    "label": "t:options.alignment.right" }
       ],
       "default": "center"
     },
     {
       "type": "range",
       "id": "card_gap",
-      "label": "Gap between elements",
+      "label": "t:blocks.testimonial_card.card_gap",
       "min": 0, "max": 50, "step": 2, "unit": "px",
       "default": 10
     },
     {
       "type": "header",
-      "content": "Appearance"
+      "content": "t:blocks.testimonial_card.headers.appearance"
     },
     {
       "type": "checkbox",
       "id": "enable_overlay",
-      "label": "Enable Overlay",
+      "label": "t:blocks.testimonial_card.enable_overlay",
       "default": false
     },
     {
       "type": "color",
       "id": "overlay_color",
-      "label": "Overlay Color",
+      "label": "t:blocks.testimonial_card.overlay_color",
       "default": "#000000",
       "visible_if": "{{ block.settings.enable_overlay == true }}"
     },
     {
       "type": "select",
       "id": "overlay_style",
-      "label": "Overlay Style",
+      "label": "t:blocks.testimonial_card.overlay_style",
       "options": [
-        { "value": "solid",    "label": "Solid" },
-        { "value": "gradient", "label": "Gradient" }
+        { "value": "solid",    "label": "t:options.overlay_style.solid" },
+        { "value": "gradient", "label": "t:options.overlay_style.gradient" }
       ],
       "default": "solid",
       "visible_if": "{{ block.settings.enable_overlay == true }}"
@@ -230,10 +210,10 @@
     {
       "type": "select",
       "id": "overlay_direction",
-      "label": "Overlay Direction",
+      "label": "t:blocks.testimonial_card.overlay_direction",
       "options": [
-        { "value": "to bottom", "label": "Top → Bottom" },
-        { "value": "to top",    "label": "Bottom → Top" }
+        { "value": "to bottom", "label": "t:options.overlay_direction.top_bottom" },
+        { "value": "to top",    "label": "t:options.overlay_direction.bottom_top" }
       ],
       "default": "to bottom",
       "visible_if": "{{ block.settings.enable_overlay == true and block.settings.overlay_style == 'gradient' }}"
@@ -241,34 +221,34 @@
     {
       "type": "checkbox",
       "id": "inherit_color_scheme",
-      "label": "Inherit Color Scheme",
+      "label": "t:blocks.testimonial_card.inherit_color_scheme",
       "default": true
     },
     {
       "type": "color_scheme",
       "id": "card_color_scheme",
-      "label": "Color Scheme",
+      "label": "t:labels.color_scheme",
       "default": "scheme-1",
       "visible_if": "{{ block.settings.inherit_color_scheme == false }}"
     },
     {
       "type": "header",
-      "content": "Border"
+      "content": "t:blocks.testimonial_card.headers.border"
     },
     {
       "type": "select",
       "id": "card_border_style",
-      "label": "Border Style",
+      "label": "t:labels.border_style",
       "options": [
-        { "value": "none",  "label": "None" },
-        { "value": "solid", "label": "Solid" }
+        { "value": "none",  "label": "t:options.border.none" },
+        { "value": "solid", "label": "t:options.border.solid" }
       ],
       "default": "none"
     },
     {
       "type": "range",
       "id": "card_border_width",
-      "label": "Border Width",
+      "label": "t:labels.border_width",
       "min": 1, "max": 5, "step": 1, "unit": "px",
       "default": 1,
       "visible_if": "{{ block.settings.card_border_style == 'solid' }}"
@@ -276,7 +256,7 @@
     {
       "type": "range",
       "id": "card_border_opacity",
-      "label": "Border Opacity",
+      "label": "t:labels.border_opacity",
       "min": 0, "max": 100, "step": 5, "unit": "%",
       "default": 100,
       "visible_if": "{{ block.settings.card_border_style == 'solid' }}"
@@ -284,42 +264,47 @@
     {
       "type": "range",
       "id": "card_border_radius",
-      "label": "Border Radius",
+      "label": "t:labels.border_radius",
       "min": 0, "max": 30, "step": 1, "unit": "px",
       "default": 0,
       "visible_if": "{{ block.settings.card_border_style == 'solid' }}"
     },
     {
       "type": "header",
-      "content": "Padding"
+      "content": "t:blocks.testimonial_card.headers.padding"
     },
     {
       "type": "range",
       "id": "card_pt",
-      "label": "Padding Top",
+      "label": "t:labels.top_padding",
       "min": 0, "max": 50, "step": 2, "unit": "px",
       "default": 20
     },
     {
       "type": "range",
       "id": "card_pb",
-      "label": "Padding Bottom",
+      "label": "t:labels.bottom_padding",
       "min": 0, "max": 50, "step": 2, "unit": "px",
       "default": 20
     },
     {
       "type": "range",
       "id": "card_pl",
-      "label": "Padding Left",
+      "label": "t:labels.left_padding",
       "min": 0, "max": 50, "step": 2, "unit": "px",
       "default": 20
     },
     {
       "type": "range",
       "id": "card_pr",
-      "label": "Padding Right",
+      "label": "t:labels.right_padding",
       "min": 0, "max": 50, "step": 2, "unit": "px",
       "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:blocks.testimonial_card.preset_name"
     }
   ]
 }
