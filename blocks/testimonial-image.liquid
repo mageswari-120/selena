@@ -1,6 +1,8 @@
 {% doc %}
-  blocks/testimonial-image.liquid  —  Selena Theme  (OS 3.0)
-  Parent: blocks/testimonial-card.liquid
+  Renders the featured image inside a testimonial card.
+
+  @example
+  {% content_for 'block', type: 'testimonial-image', id: 'image' %}
 {% enddoc %}
 
 {%- if block.settings.image != blank -%}

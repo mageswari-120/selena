@@ -1,9 +1,8 @@
 {% doc %}
-  blocks/testimonial-card.liquid  —  Selena Theme  (OS 3.0)
-  Parent: blocks/testimonial-content.liquid via content_for 'blocks'
-  Children: testimonial-image · testimonial-heading · testimonial-text
-            testimonial-rating · testimonial-client
-  Carousel slides: OS 3.0 wraps cards in .shopify-block; swiper-slide added in collection-list-carousel.js
+  Renders one testimonial card with grid or overlay layout and nested content blocks.
+
+  @example
+  {% content_for 'block', type: 'testimonial-card', id: 'card_1' %}
 {% enddoc %}
 
 {%- liquid

@@ -1,8 +1,8 @@
 {% doc %}
-  blocks/testimonial-content.liquid  —  Selena Theme  (OS 3.0)
-  Parent: sections/testimonial.liquid via content_for 'block', id: 'testimonial_content'
-  Children: testimonial-card × N
-  Swiper init: assets/collection-list-carousel.js ([data-wdt-swiper])
+  Renders the testimonial card grid or Swiper carousel and its child card blocks.
+
+  @example
+  {% content_for 'block', type: 'testimonial-content', id: 'testimonial_content' %}
 {% enddoc %}
 
 {%- liquid 
@@ -205,7 +205,8 @@
         { "value": "3", "label": "3" },
         { "value": "4", "label": "4" }
       ],
-      "default": "3"
+      "default": "3",
+      "info": "t:blocks.testimonial_content.columns_desktop_info"
     },
     {
       "type": "select",
@@ -215,7 +216,8 @@
         { "value": "1", "label": "1" },
         { "value": "2", "label": "2" }
       ],
-      "default": "1"
+      "default": "1",
+      "info": "t:blocks.testimonial_content.columns_mobile_info"
     },
     {
       "type": "header",

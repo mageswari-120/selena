@@ -91,9 +91,6 @@
   {%- endunless -%}
 </style>
 
-{{ 'bootstrap.min.css' | asset_url | stylesheet_tag }}
-<script src="{{ 'bootstrap.bundle.min.js' | asset_url }}" defer></script>
-
 <div class="collection-list color-{{ s.color_scheme }}" data-section-id="{{ section.id }}">
   <div class="{{ wrap_class }}">
 

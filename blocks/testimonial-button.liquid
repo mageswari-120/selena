@@ -1,9 +1,14 @@
 {% doc %}
-  blocks/testimonial-button.liquid  —  Selena Theme  (OS 3.0)
-  Parent: blocks/testimonial-header.liquid
+  Renders an optional header CTA button for the testimonial section.
+
+  @example
+  {% content_for 'block', type: 'testimonial-button', id: 'button' %}
 {% enddoc %}
 
 {%- if block.settings.label != blank -%}
+  {%- liquid
+    assign btn_class = 'wdt-hdr__btn btn btn-' | append: block.settings.style
+  -%}
   <div
     class="wdt-hdr__btn-wrap"
     {{ block.shopify_attributes }}
@@ -12,16 +17,22 @@
       padding-bottom: {{ block.settings.padding_bottom }}px;
     "
   >
-    <a
-      href="{{ block.settings.url | default: '#' }}"
-      class="wdt-hdr__btn btn btn-{{ block.settings.style }}"
-      {% if block.settings.open_new_tab %}
-        target="_blank"
-        rel="noopener noreferrer"
-      {% endif %}
-    >
-      {{- block.settings.label | escape -}}
-    </a>
+    {%- if block.settings.url != blank -%}
+      <a
+        href="{{ block.settings.url }}"
+        class="{{ btn_class }}"
+        {% if block.settings.open_new_tab %}
+          target="_blank"
+          rel="noopener noreferrer"
+        {% endif %}
+      >
+        {{- block.settings.label | escape -}}
+      </a>
+    {%- else -%}
+      <span class="{{ btn_class }}">
+        {{- block.settings.label | escape -}}
+      </span>
+    {%- endif -%}
   </div>
 {%- endif -%}
 
