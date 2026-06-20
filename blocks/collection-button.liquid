@@ -28,16 +28,18 @@
 
   assign label = s.button_label | default: 'Shop Now'
 
-  assign wrap_class = 'd-inline-flex'
+  assign wrap_class = 'cl-collection-button d-inline-flex'
   if s.pin_bottom
     assign wrap_class = wrap_class | append: ' mt-auto'
   endif
-  if s.align == 'left'
-    assign wrap_class = wrap_class | append: ' align-self-start'
-  elsif s.align == 'center'
-    assign wrap_class = wrap_class | append: ' align-self-center'
-  elsif s.align == 'right'
-    assign wrap_class = wrap_class | append: ' align-self-end'
+  if s.align != 'auto'
+    assign btn_align = 'center'
+    if s.align == 'left'
+      assign btn_align = 'start'
+    elsif s.align == 'right'
+      assign btn_align = 'end'
+    endif
+    assign wrap_class = wrap_class | append: ' align-self-' | append: btn_align
   endif
 
   assign btn_class = 'btn btn-primary'
@@ -48,7 +50,7 @@
   endif
 -%}
 
-<div class="cl-collection-button {{ wrap_class }}" {{ block.shopify_attributes }}>
+<div class="{{ wrap_class }}" {{ block.shopify_attributes }}>
   {%- if s.button_style == 'arrow' -%}
     <a
       class="cl-arrow-btn cl-arrow-btn--{{ s.arrow_style }}{% unless s.show_label and label != blank %} cl-arrow-btn--icon-only{% endunless %}"
@@ -126,6 +128,7 @@
 {% schema %}
 {
   "name": "Collection button",
+  "tag": null,
   "settings": [
     {
       "type": "text",

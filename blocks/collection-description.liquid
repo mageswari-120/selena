@@ -14,10 +14,7 @@
 
 <div
   class="cl-collection-description cl-desc--{{ s.text_case }}"
-  style="
-    --cl-desc-pt: {{ s.padding_top }}px;
-    --cl-desc-pb: {{ s.padding_bottom }}px;
-  "
+  style="{% render 'spacing-style', settings: s, prefix: '--cl-desc' %}"
   {{ block.shopify_attributes }}
 >
   {%- if collection.description != blank -%}

@@ -1,0 +1,16 @@
+{% doc %}
+  snippets/cl-card-style.liquid — Selena Theme
+
+  Collection card CSS custom properties from block.settings.
+  Used on the card root inline style attribute.
+
+  Usage:
+    style="{% render 'cl-card-style', settings: block.settings %}"
+
+  @param settings {object} collection-card block.settings
+{% enddoc %}
+
+{%- liquid
+  assign border_alpha = settings.card_border_opacity | divided_by: 100.0
+-%}
+--cl-card-radius: {{ settings.card_border_radius }}px; --cl-arch-h: {{ settings.card_arch_height }}px; --cl-arch-w: {{ settings.card_arch_width }}px; --cl-custom-radius: {{ settings.card_custom_radius }}px; --cl-img-pos: {{ settings.card_image_position }}; {% render 'spacing-style', settings: settings, prefix: '--cl-pad', key_prefix: 'card_' %}{% if settings.card_border_style != 'none' %} border: {{ settings.card_border_width }}px solid rgba(0,0,0,{{ border_alpha }});{% endif %}

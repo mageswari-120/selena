@@ -16,10 +16,7 @@
 
 <{{ tag }} 
   class="cl-collection-title cl-title--{{ s.text_case }}"
-  style="
-    --cl-title-pt: {{ s.padding_top }}px;
-    --cl-title-pb: {{ s.padding_bottom }}px;
-  "
+  style="{% render 'spacing-style', settings: s, prefix: '--cl-title' %}"
   {{ block.shopify_attributes }}
 >
   <a class="cl-collection-title__link" href="{{ collection.url | default: '#' }}">

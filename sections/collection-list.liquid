@@ -3,13 +3,13 @@
   Section : Collection List  —  Selena Theme  (OS 3.0)
   ============================================================
   Architecture (static wrapper + dynamic children):
-  • Section owns the collection_list picker + loop, the grid /
-    carousel layout, and the shared card appearance (card_class /
-    card_style).
+  • Section owns the collection_list picker, layout (grid/carousel),
+    and container/spacing settings.
   • For each collection it renders ONE static wrapper block:
       content_for 'block', type:'collection-card', id:'cl-card',
-        closest.collection: col, card_class:…, card_style:…
-  • blocks/collection-card.liquid then renders:
+        closest.collection: col, is_carousel:…
+  • blocks/collection-card.liquid owns card appearance settings and
+    renders:
       – collection-image  (static, fixed)
       – collection-title  (static, fixed)
       – content_for 'blocks'  → DYNAMIC children the merchant can
@@ -63,33 +63,8 @@
     assign grid_row_class = grid_row_class | append: ' cl-grid-row--dt-' | append: s.columns_desktop
   endif
 
-  assign collections  = s.collections
-  assign border_alpha = s.card_border_opacity | divided_by: 100.0
-
-  assign card_classes = 'cl-collection-card card h-100 d-flex flex-column border-0 bg-transparent'
-  assign card_classes = card_classes | append: ' cl-shape-'   | append: s.card_image_shape
-  assign card_classes = card_classes | append: ' cl-overlay-' | append: s.card_overlay_style
-  assign card_classes = card_classes | append: ' cl-align-'   | append: s.card_content_alignment
-  assign card_classes = card_classes | append: ' cl-pos-'     | append: s.card_content_position
-  if is_carousel
-    assign card_classes = card_classes | append: ' swiper-slide'
-  endif
+  assign collections = s.collections
 -%}
-
-{%- capture card_style -%}
-  --cl-card-radius:    {{ s.card_border_radius }}px;
-  --cl-arch-h:         {{ s.card_arch_height }}px;
-  --cl-arch-w:         {{ s.card_arch_width }}px;
-  --cl-custom-radius:  {{ s.card_custom_radius }}px;
-  --cl-img-pos:        {{ s.card_image_position }};
-  --cl-pad-t:       {{ s.card_padding_top }}px;
-  --cl-pad-b:       {{ s.card_padding_bottom }}px;
-  --cl-pad-l:       {{ s.card_padding_left }}px;
-  --cl-pad-r:       {{ s.card_padding_right }}px;
-  {%- if s.card_border_style != 'none' -%}
-    border: {{ s.card_border_width }}px solid rgba(0,0,0,{{ border_alpha }});
-  {%- endif -%}
-{%- endcapture -%}
 
 <style>
   #shopify-section-{{ section.id }} {
@@ -135,17 +110,6 @@
 {{ 'bootstrap.min.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'bootstrap.bundle.min.js' | asset_url }}" defer></script>
 
-{%- comment -%}
-  Swiper 11 (swiperjs.com) — self-hosted in /assets so it's same-origin
-  (no CSP issues). Liquid tags load the library on full page loads; JS also
-  dynamically loads Swiper when the theme editor switches Grid → Carousel
-  (AJAX-injected script tags do not re-execute).
-{%- endcomment -%}
-{%- if is_carousel -%}
-  {{ 'swiper-bundle.min.css' | asset_url | stylesheet_tag }}
-  <script src="{{ 'swiper-bundle.min.js' | asset_url }}" defer></script>
-{%- endif -%}
-
 <div class="collection-list color-{{ s.color_scheme }}" data-section-id="{{ section.id }}">
   <div class="{{ wrap_class }}">
 
@@ -153,7 +117,6 @@
       <div
         class="collection-list-carousel swiper {{ nav_scheme_class }}{% if show_dots %} collection-list-carousel--dots{% endif %}"
         data-cl-swiper
-        data-swiper-js="{{ 'swiper-bundle.min.js' | asset_url }}"
         data-cols-desktop="{{ s.columns_desktop }}"
         data-cols-mobile="{{ s.columns_mobile }}"
         data-gap="{{ s.column_gap }}"
@@ -178,14 +141,12 @@
                 renders its own static image + title and exposes the
                 description / button / text as dynamic child blocks
                 (content_for 'blocks'). closest.collection: col gives
-                each card its per-iteration collection. card_class /
-                card_style carry the shared appearance owned by the
-                section.
+                each card its per-iteration collection.
               {%- endcomment -%}
-              {% content_for 'block', type: 'collection-card', id: 'cl-card', closest.collection: col, card_class: card_classes, card_style: card_style %}
+              {% content_for 'block', type: 'collection-card', id: 'cl-card', closest.collection: col, is_carousel: is_carousel %}
             {%- endfor -%}
           {%- else -%}
-            {%- render 'cl-placeholders', card_class: card_classes -%}
+            {%- render 'cl-placeholders', is_carousel: is_carousel -%}
           {%- endif -%}
 
     {%- if is_carousel -%}
@@ -443,167 +404,6 @@
       "label": "Arrow color scheme",
       "default": "scheme-1",
       "visible_if": "{{ section.settings.layout_type == 'carousel' and section.settings.carousel_inherit_scheme == false }}"
-    },
-    {
-      "type": "header",
-      "content": "Card — Image shape"
-    },
-    {
-      "type": "select",
-      "id": "card_image_shape",
-      "label": "Image shape",
-      "options": [
-        { "value": "default",           "label": "Default" },
-        { "value": "arch",              "label": "Arch" },
-        { "value": "rounded-arch",      "label": "Rounded arch" },
-        { "value": "oval",              "label": "Oval" },
-        { "value": "circle",            "label": "Circle" },
-        { "value": "pill",              "label": "Pill" },
-        { "value": "rounded-rectangle", "label": "Rounded rectangle" },
-        { "value": "custom-radius",     "label": "Custom radius" }
-      ],
-      "default": "default"
-    },
-    {
-      "type": "range",
-      "id": "card_custom_radius",
-      "label": "Custom radius",
-      "min": 0, "max": 50, "step": 1, "unit": "px",
-      "default": 16,
-      "visible_if": "{{ section.settings.card_image_shape == 'custom-radius' }}"
-    },
-    {
-      "type": "range",
-      "id": "card_arch_height",
-      "label": "Arch height",
-      "min": 100, "max": 500, "step": 10, "unit": "px",
-      "default": 300,
-      "visible_if": "{{ section.settings.card_image_shape == 'arch' or section.settings.card_image_shape == 'rounded-arch' }}"
-    },
-    {
-      "type": "range",
-      "id": "card_arch_width",
-      "label": "Arch width",
-      "min": 100, "max": 500, "step": 10, "unit": "px",
-      "default": 250,
-      "visible_if": "{{ section.settings.card_image_shape == 'rounded-arch' }}"
-    },
-    {
-      "type": "select",
-      "id": "card_image_position",
-      "label": "Image position",
-      "options": [
-        { "value": "top",    "label": "Top" },
-        { "value": "center", "label": "Center" },
-        { "value": "bottom", "label": "Bottom" }
-      ],
-      "default": "center"
-    },
-    {
-      "type": "header",
-      "content": "Card — Content"
-    },
-    {
-      "type": "select",
-      "id": "card_overlay_style",
-      "label": "Overlay style",
-      "options": [
-        { "value": "on-image",    "label": "On image" },
-        { "value": "below-image", "label": "Below image" }
-      ],
-      "default": "below-image"
-    },
-    {
-      "type": "select",
-      "id": "card_content_alignment",
-      "label": "Content alignment",
-      "options": [
-        { "value": "left",   "label": "Left" },
-        { "value": "center", "label": "Center" },
-        { "value": "right",  "label": "Right" }
-      ],
-      "default": "center"
-    },
-    {
-      "type": "select",
-      "id": "card_content_position",
-      "label": "Content position",
-      "options": [
-        { "value": "top",    "label": "Top" },
-        { "value": "center", "label": "Center" },
-        { "value": "bottom", "label": "Bottom" }
-      ],
-      "default": "bottom",
-      "visible_if": "{{ section.settings.card_overlay_style == 'on-image' }}"
-    },
-    {
-      "type": "header",
-      "content": "Card — Border"
-    },
-    {
-      "type": "select",
-      "id": "card_border_style",
-      "label": "Border style",
-      "options": [
-        { "value": "none",  "label": "None" },
-        { "value": "solid", "label": "Solid" }
-      ],
-      "default": "none"
-    },
-    {
-      "type": "range",
-      "id": "card_border_width",
-      "label": "Border width",
-      "min": 1, "max": 5, "step": 1, "unit": "px",
-      "default": 1,
-      "visible_if": "{{ section.settings.card_border_style != 'none' }}"
-    },
-    {
-      "type": "range",
-      "id": "card_border_opacity",
-      "label": "Border opacity",
-      "min": 0, "max": 100, "step": 1, "unit": "%",
-      "default": 100,
-      "visible_if": "{{ section.settings.card_border_style != 'none' }}"
-    },
-    {
-      "type": "range",
-      "id": "card_border_radius",
-      "label": "Border radius",
-      "min": 0, "max": 30, "step": 1, "unit": "px",
-      "default": 0
-    },
-    {
-      "type": "header",
-      "content": "Card — Padding"
-    },
-    {
-      "type": "range",
-      "id": "card_padding_top",
-      "label": "Padding top",
-      "min": 0, "max": 50, "step": 1, "unit": "px",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "card_padding_bottom",
-      "label": "Padding bottom",
-      "min": 0, "max": 50, "step": 1, "unit": "px",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "card_padding_left",
-      "label": "Padding left",
-      "min": 0, "max": 50, "step": 1, "unit": "px",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "card_padding_right",
-      "label": "Padding right",
-      "min": 0, "max": 50, "step": 1, "unit": "px",
-      "default": 0
     }
   ],
   "presets": [
@@ -614,6 +414,24 @@
           "type": "collection-card",
           "static": true,
           "id": "cl-card",
+          "settings": {
+            "card_image_shape": "default",
+            "card_custom_radius": 16,
+            "card_arch_height": 300,
+            "card_arch_width": 250,
+            "card_image_position": "center",
+            "card_overlay_style": "below-image",
+            "card_content_alignment": "center",
+            "card_content_position": "bottom",
+            "card_border_style": "none",
+            "card_border_width": 1,
+            "card_border_opacity": 100,
+            "card_border_radius": 0,
+            "card_padding_top": 0,
+            "card_padding_bottom": 0,
+            "card_padding_left": 0,
+            "card_padding_right": 0
+          },
           "blocks": [
             { "type": "collection-description" },
             { "type": "collection-text" },

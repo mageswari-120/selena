@@ -1,0 +1,41 @@
+{% doc %}
+  snippets/spacing-style.liquid — Selena Theme
+
+  Outputs reusable padding CSS custom properties (or a padding shorthand)
+  for inline style="" attributes. Settings → Liquid → CSS vars → stylesheet.
+
+  Vars mode (default):
+    style="{% render 'spacing-style', settings: block.settings, prefix: '--cl-title' %}"
+
+  Padding shorthand (consume vars set on a parent):
+    style="{% render 'spacing-style', prefix: '--cl-pad', mode: 'padding' %}"
+
+  @param settings {object}  block/section settings (vars mode)
+  @param prefix   {string}  CSS var prefix, e.g. '--cl-title' → --cl-title-pt
+  @param key_prefix {string} settings key prefix before padding_top (e.g. 'card_')
+  @param mode     {string}  'vars' | 'padding'
+{% enddoc %}
+
+{%- liquid
+  assign var_prefix = prefix | default: '--pad'
+  assign kp = key_prefix | default: ''
+  assign output_mode = mode | default: 'vars'
+
+  if kp == 'card_'
+    assign padding_top = settings.card_padding_top
+    assign padding_bottom = settings.card_padding_bottom
+    assign padding_left = settings.card_padding_left
+    assign padding_right = settings.card_padding_right
+  else
+    assign padding_top = settings.padding_top
+    assign padding_bottom = settings.padding_bottom
+    assign padding_left = settings.padding_left
+    assign padding_right = settings.padding_right
+  endif
+-%}
+
+{%- if output_mode == 'padding' -%}
+  padding: var({{ var_prefix }}-pt, 0) var({{ var_prefix }}-pr, 0) var({{ var_prefix }}-pb, 0) var({{ var_prefix }}-pl, 0);
+{%- else -%}
+  {{ var_prefix }}-pt: {{ padding_top | default: 0 }}px; {{ var_prefix }}-pb: {{ padding_bottom | default: 0 }}px;{% if kp == 'card_' or padding_left != blank or padding_right != blank %} {{ var_prefix }}-pl: {{ padding_left | default: 0 }}px; {{ var_prefix }}-pr: {{ padding_right | default: 0 }}px;{% endif %}
+{%- endif -%}

@@ -1,9 +1,6 @@
 (function () {
   'use strict';
 
-  var loadState = 0;
-  var pending = [];
-
   function destroyAll(root) {
     (root || document).querySelectorAll('.collection-list [data-cl-swiper]').forEach(function (el) {
       if (el.swiperInstance) {
@@ -64,59 +61,9 @@
     (root || document).querySelectorAll('.collection-list [data-cl-swiper]').forEach(build);
   }
 
-  function ensureSwiper(src, cb) {
-    if (window.Swiper) {
-      loadState = 2;
-      cb();
-      return;
-    }
-
-    pending.push(cb);
-    if (loadState === 1) return;
-
-    loadState = 1;
-    var sc = document.createElement('script');
-    sc.src = src;
-    sc.onload = function () {
-      loadState = 2;
-      pending.forEach(function (fn) { fn(); });
-      pending = [];
-    };
-    sc.onerror = function () {
-      loadState = 0;
-      pending = [];
-      console.error('[collection-list] Failed to load Swiper from', src);
-    };
-    document.head.appendChild(sc);
-  }
-
-  function waitForSwiper(src, cb) {
-    if (window.Swiper) {
-      cb();
-      return;
-    }
-
-    var tries = 0;
-    var timer = setInterval(function () {
-      if (window.Swiper) {
-        clearInterval(timer);
-        cb();
-        return;
-      }
-      if (++tries >= 40) {
-        clearInterval(timer);
-        ensureSwiper(src, cb);
-      }
-    }, 50);
-  }
-
   function boot(root) {
-    var first = (root || document).querySelector('.collection-list [data-cl-swiper]');
-    if (!first) return;
-
-    waitForSwiper(first.dataset.swiperJs, function () {
-      initAll(root);
-    });
+    if (!window.Swiper) return;
+    initAll(root);
   }
 
   function onReady() {

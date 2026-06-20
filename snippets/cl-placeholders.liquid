@@ -9,8 +9,8 @@
 
 {%- liquid
   assign placeholder_class = 'cl-card--placeholder card border-0'
-  if card_class != blank
-    assign placeholder_class = card_class | append: ' cl-card--placeholder'
+  if is_carousel
+    assign placeholder_class = placeholder_class | append: ' swiper-slide'
   endif
 -%}
 

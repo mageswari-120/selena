@@ -5,7 +5,7 @@
 
   Rendered once per collection by the Collection List section:
       {% content_for 'block', type: 'collection-card', id: 'cl-card',
-         closest.collection: col, card_class: …, card_style: … %}
+         closest.collection: col, is_carousel: is_carousel %}
 
   Architecture (static + dynamic per Shopify guidelines):
     • collection-image  → static, fixed (always first)
@@ -15,34 +15,63 @@
         collection-text.
 
   Reads:  closest.collection  (passed by the section)
-  Params: card_class, card_style  (computed appearance, owned by the
-          section so all cards share one look)
+  Params: is_carousel  (optional — adds swiper-slide when true)
+
+  CSS variables: settings → {% render 'cl-card-style' %} / {% render 'spacing-style' %}
+  on inline style attributes; {% stylesheet %} consumes var(--cl-*).
 {% enddoc %}
 
 {%- liquid
   assign collection = closest.collection
+  assign bs = block.settings
 
-  assign content_align = 'text-center align-items-center'
-  if card_class contains 'cl-align-left'
-    assign content_align = 'text-start align-items-start'
-  elsif card_class contains 'cl-align-right'
-    assign content_align = 'text-end align-items-end'
+  assign card_classes = 'cl-collection-card card h-100 d-flex flex-column border-0 bg-transparent'
+  assign card_classes = card_classes | append: ' cl-shape-' | append: bs.card_image_shape
+  if is_carousel
+    assign card_classes = card_classes | append: ' swiper-slide'
+  endif
+
+  assign bs_align = 'center'
+  if bs.card_content_alignment == 'left'
+    assign bs_align = 'start'
+  elsif bs.card_content_alignment == 'right'
+    assign bs_align = 'end'
+  endif
+
+  assign text_align = 'text-' | append: bs_align
+  assign horizontal_alignment = 'align-items-' | append: bs_align
+
+  assign inner_classes = 'cl-card__inner position-relative'
+  assign content_classes = 'cl-card__content d-flex flex-column gap-2 p-3 w-100'
+  assign content_classes = content_classes | append: ' ' | append: text_align | append: ' ' | append: horizontal_alignment
+
+  if bs.card_overlay_style == 'on-image'
+    assign bs_justify = 'center'
+    if bs.card_content_position == 'top'
+      assign bs_justify = 'start'
+    elsif bs.card_content_position == 'bottom'
+      assign bs_justify = 'end'
+    endif
+    assign vertical_position = 'justify-content-' | append: bs_justify
+    assign content_classes = content_classes | append: ' position-absolute top-0 start-0 h-100 z-1 pe-none ' | append: vertical_position
+  else
+    assign inner_classes = inner_classes | append: ' d-flex flex-column gap-2 flex-fill'
   endif
 -%}
 
 <div
-  class="{{ card_class | default: 'cl-collection-card card h-100 d-flex flex-column border-0 bg-transparent' }}"
+  class="{{ card_classes }}"
   role="listitem"
-  style="{{ card_style }}"
+  style="{% render 'cl-card-style', settings: bs %}"
   {{ block.shopify_attributes }}
 >
   <div
-    class="cl-card__inner d-flex flex-column gap-2 flex-fill"
-    style="padding: var(--cl-pad-t,0) var(--cl-pad-r,0) var(--cl-pad-b,0) var(--cl-pad-l,0);"
+    class="{{ inner_classes }}"
+    style="{% render 'spacing-style', prefix: '--cl-pad', mode: 'padding' %}"
   >
     {% content_for 'block', type: 'collection-image', id: 'cl-img', closest.collection: collection %}
 
-    <div class="cl-card__content d-flex flex-column gap-2 {{ content_align }}">
+    <div class="{{ content_classes }}">
       {% content_for 'block', type: 'collection-title', id: 'cl-title', closest.collection: collection %}
       {% content_for 'blocks', closest.collection: collection %}
     </div>
@@ -59,26 +88,7 @@
 }
 .cl-collection-card:hover { box-shadow: 0 12px 32px rgba(0,0,0,0.10); }
 
-.cl-overlay-on-image .cl-card__inner {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-}
-.cl-overlay-on-image .cl-collection-image,
-.cl-overlay-on-image .cl-card__content {
-  grid-area: 1 / 1 / 2 / 2;
-}
-.cl-overlay-on-image .cl-collection-image { z-index: 0; align-self: stretch; }
-.cl-overlay-on-image .cl-collection-image__media,
-.cl-overlay-on-image .cl-collection-image__img { border-radius: 0; }
-.cl-overlay-on-image .cl-card__content {
-  z-index: 1;
-  padding: 1rem;
-}
-.cl-overlay-on-image.cl-pos-top    .cl-card__content { justify-content: flex-start; }
-.cl-overlay-on-image.cl-pos-center .cl-card__content { justify-content: center; }
-.cl-overlay-on-image.cl-pos-bottom .cl-card__content { justify-content: flex-end; }
-
-.cl-overlay-below-image .cl-card__inner { justify-content: flex-start; }
+.cl-card__content.pe-none > * { pointer-events: auto; }
 
 .cl-shape-circle .cl-collection-image__media { border-radius: 50%; aspect-ratio: 1/1; }
 .cl-shape-oval   .cl-collection-image__media { border-radius: 50%/42%; aspect-ratio: 4/5; }
@@ -108,6 +118,169 @@
     { "type": "collection-description" },
     { "type": "collection-button" },
     { "type": "collection-text" }
+  ],
+  "settings": [
+    {
+      "type": "header",
+      "content": "Card — Image shape"
+    },
+    {
+      "type": "select",
+      "id": "card_image_shape",
+      "label": "Image shape",
+      "options": [
+        { "value": "default",           "label": "Default" },
+        { "value": "arch",              "label": "Arch" },
+        { "value": "rounded-arch",      "label": "Rounded arch" },
+        { "value": "oval",              "label": "Oval" },
+        { "value": "circle",            "label": "Circle" },
+        { "value": "pill",              "label": "Pill" },
+        { "value": "rounded-rectangle", "label": "Rounded rectangle" },
+        { "value": "custom-radius",     "label": "Custom radius" }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "range",
+      "id": "card_custom_radius",
+      "label": "Custom radius",
+      "min": 0, "max": 50, "step": 1, "unit": "px",
+      "default": 16,
+      "visible_if": "{{ block.settings.card_image_shape == 'custom-radius' }}"
+    },
+    {
+      "type": "range",
+      "id": "card_arch_height",
+      "label": "Arch height",
+      "min": 100, "max": 500, "step": 10, "unit": "px",
+      "default": 300,
+      "visible_if": "{{ block.settings.card_image_shape == 'arch' or block.settings.card_image_shape == 'rounded-arch' }}"
+    },
+    {
+      "type": "range",
+      "id": "card_arch_width",
+      "label": "Arch width",
+      "min": 100, "max": 500, "step": 10, "unit": "px",
+      "default": 250,
+      "visible_if": "{{ block.settings.card_image_shape == 'rounded-arch' }}"
+    },
+    {
+      "type": "select",
+      "id": "card_image_position",
+      "label": "Image position",
+      "options": [
+        { "value": "top",    "label": "Top" },
+        { "value": "center", "label": "Center" },
+        { "value": "bottom", "label": "Bottom" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Card — Content"
+    },
+    {
+      "type": "select",
+      "id": "card_overlay_style",
+      "label": "Overlay style",
+      "options": [
+        { "value": "on-image",    "label": "On image" },
+        { "value": "below-image", "label": "Below image" }
+      ],
+      "default": "below-image"
+    },
+    {
+      "type": "select",
+      "id": "card_content_alignment",
+      "label": "Content alignment",
+      "options": [
+        { "value": "left",   "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right",  "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "card_content_position",
+      "label": "Content position",
+      "options": [
+        { "value": "top",    "label": "Top" },
+        { "value": "center", "label": "Center" },
+        { "value": "bottom", "label": "Bottom" }
+      ],
+      "default": "bottom",
+      "visible_if": "{{ block.settings.card_overlay_style == 'on-image' }}"
+    },
+    {
+      "type": "header",
+      "content": "Card — Border"
+    },
+    {
+      "type": "select",
+      "id": "card_border_style",
+      "label": "Border style",
+      "options": [
+        { "value": "none",  "label": "None" },
+        { "value": "solid", "label": "Solid" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range",
+      "id": "card_border_width",
+      "label": "Border width",
+      "min": 1, "max": 5, "step": 1, "unit": "px",
+      "default": 1,
+      "visible_if": "{{ block.settings.card_border_style != 'none' }}"
+    },
+    {
+      "type": "range",
+      "id": "card_border_opacity",
+      "label": "Border opacity",
+      "min": 0, "max": 100, "step": 1, "unit": "%",
+      "default": 100,
+      "visible_if": "{{ block.settings.card_border_style != 'none' }}"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Border radius",
+      "min": 0, "max": 30, "step": 1, "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Card — Padding"
+    },
+    {
+      "type": "range",
+      "id": "card_padding_top",
+      "label": "Padding top",
+      "min": 0, "max": 50, "step": 1, "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "card_padding_bottom",
+      "label": "Padding bottom",
+      "min": 0, "max": 50, "step": 1, "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "card_padding_left",
+      "label": "Padding left",
+      "min": 0, "max": 50, "step": 1, "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "card_padding_right",
+      "label": "Padding right",
+      "min": 0, "max": 50, "step": 1, "unit": "px",
+      "default": 0
+    }
   ]
 }
 {% endschema %}

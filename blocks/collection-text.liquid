@@ -16,15 +16,7 @@
 
 <{{ tag }} 
   class="cl-text cl-text--{{ s.text_case }}{% if s.display_style == 'badge' %} cl-text--badge{% endif %}"
-  style="
-    --cl-text-pt: {{ s.padding_top }}px;
-    --cl-text-pb: {{ s.padding_bottom }}px;
-    {%- if s.border_radius > 0 -%}--cl-text-radius: {{ s.border_radius }}px;{%- endif -%}
-    {%- if s.badge_background != blank -%}--cl-text-bg: {{ s.badge_background }};{%- endif -%}
-    {%- if s.border_style != 'none' -%}
-      --cl-text-border: {{ s.border_width }}px solid rgba(0,0,0,{{ border_alpha }});
-    {%- endif -%}
-  "
+  style="{% render 'spacing-style', settings: s, prefix: '--cl-text' %}{% if s.border_radius > 0 %} --cl-text-radius: {{ s.border_radius }}px;{% endif %}{% if s.badge_background != blank %} --cl-text-bg: {{ s.badge_background }};{% endif %}{% if s.border_style != 'none' %} --cl-text-border: {{ s.border_width }}px solid rgba(0,0,0,{{ border_alpha }});{% endif %}"
   {{ block.shopify_attributes }}
 >
   {{- s.text -}}
