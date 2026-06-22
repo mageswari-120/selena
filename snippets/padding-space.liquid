@@ -1,0 +1,30 @@
+--block-pt:
+{%- if settings['padding-top'] > 10 -%}
+  max(10px, calc({{ settings['padding-top'] }}px * var(--block-padding-scale)));
+{%- else -%}
+  {{ settings['padding-top'] }}px;
+{%- endif -%}
+
+
+--block-pb:
+{%- if settings['padding-bottom'] > 10 -%}
+  max(10px, calc({{ settings['padding-bottom'] }}px * var(--block-padding-scale)));
+{%- else -%}
+  {{ settings['padding-bottom'] }}px;
+{%- endif -%}
+
+
+--block-pl:
+{%- if settings['padding-left'] > 10 -%}
+  max(10px, calc({{ settings['padding-left'] }}px * var(--block-padding-scale)));
+{%- else -%}
+  {{ settings['padding-left'] }}px;
+{%- endif -%}
+
+
+--block-pr:
+{%- if settings['padding-right'] > 10 -%}
+  max(10px, calc({{ settings['padding-right'] }}px * var(--block-padding-scale)));
+{%- else -%}
+  {{ settings['padding-right'] }}px;
+{%- endif -%}

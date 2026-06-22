@@ -1,0 +1,402 @@
+{% liquid
+    assign bg_color = scheme.settings.background
+    assign bg_brightness = bg_color | color_brightness
+  
+    if bg_brightness <= 26
+      assign bg_contrast = bg_color | color_lighten: 50
+    elsif bg_brightness <= 65
+      assign bg_contrast = bg_color | color_lighten: 5
+    else
+      assign bg_contrast = bg_color | color_darken: 25
+    endif
+  
+    assign body_font_bold = settings.body_font | font_modify: 'weight', 'bold'
+    assign body_font_italic = settings.body_font | font_modify: 'style', 'italic'
+    assign body_font_bold_italic = body_font_bold | font_modify: 'style', 'italic'
+  %}
+  
+  {% style %}
+        {{ settings.body_font | font_face: font_display: 'swap' }}
+        {{ body_font_bold | font_face: font_display: 'swap' }}
+        {{ body_font_italic | font_face: font_display: 'swap' }}
+        {{ body_font_bold_italic | font_face: font_display: 'swap' }}
+  
+        {{ settings.heading_font | font_face: font_display: 'swap' }}
+  
+  
+  
+        {% for scheme in settings.color_schemes -%}
+          {% assign scheme_classes = scheme_classes | append: ', .color-' | append: scheme.id %}
+          {% if forloop.index == 1 -%}
+          :root,
+          {%- endif %}
+  
+  
+          .color-{{ scheme.id }}{
+  
+          --background-contrast-color: {{ bg_contrast.rgb | replace:" ","," }};
+          --background-color: {{ scheme.settings.background.rgb | replace:" ","," }};
+          --foreground-color: {{ scheme.settings.text.rgb | replace:" ","," }};
+          --heading-color: {{ scheme.settings.headingss.rgb | replace:" ","," }};
+  
+  
+          --link-color: {{ scheme.settings.link_color.rgb | replace:" ","," }};
+          --link-hover-color: {{ scheme.settings.link_hover.rgb | replace:" ","," }};
+          --border-color: {{ scheme.settings.border_color.rgb | replace:" ","," }};
+  
+          --primary-button-bg: {{ scheme.settings.primary_button.rgb | replace:" ","," }};
+          --primary-button-text: {{ scheme.settings.primary_button_label.rgb | replace:" ","," }};
+          --primary-button-border:{{ scheme.settings.primary_button_border.rgb | replace:" ","," }};
+  
+          --primary-button-hover-bg: {{ scheme.settings.primary_hover_button.rgb | replace:" ","," }};
+          --primary-button-hover-text:  {{ scheme.settings.primary_hover_button_label.rgb | replace:" ","," }};
+          --primary-button-hover-border: {{ scheme.settings.primary_hover_button_border.rgb | replace:" ","," }};
+  
+          --secondary-button-bg: {{ scheme.settings.secondary_button.rgb | replace:" ","," }};
+          --secondary-button-text: {{ scheme.settings.secondary_button_label.rgb | replace:" ","," }};
+          --secondary-button-border:{{ scheme.settings.secondary_border.rgb | replace:" ","," }};
+  
+          --secondary-button-hover-bg: {{ scheme.settings.secondary_hover_button.rgb | replace:" ","," }};
+          --secondary-button-hover-text:  {{ scheme.settings.secondary_hover_button_label.rgb | replace:" ","," }};
+          --secondary-button-hover-border: {{ scheme.settings.secondary_hover_button_border.rgb | replace:" ","," }};
+  
+  
+          --input-border-color: {{ scheme.settings.input_border_color.rgb | replace:" ","," }};
+          --input-bg-color: {{ scheme.settings.input_bg.rgb | replace:" ","," }};
+          --input-text-color: {{ scheme.settings.input_text_color.rgb | replace:" ","," }};
+  
+  
+          --sale-badge-bg:{{ settings.badge_sale_background.rgb | replace:" ","," }};
+          --sale-badge-foreground:{{ settings.badge_sale_text.rgb | replace:" ","," }};
+  
+          --sold-out-badge-bg:{{ settings.badge_soldout_background.rgb | replace:" ","," }};
+          --sold-out-badge-foreground:{{ settings.badge_soldout_text.rgb | replace:" ","," }};
+  
+          --new-badge-bg:{{ settings.badge_new_background.rgb | replace:" ","," }};
+          --new-badge-foreground:{{ settings.badge_new_text.rgb | replace:" ","," }};
+  
+          --payment-terms-background-color: rgb({{ scheme.settings.background.rgb }});
+          --offcanvas-border-color:rgba( var(--color-border),{{ settings.offcanvas_border_opacity | divided_by: 100.0 }});
+  
+          --box-shadow: var(--horizontal-width) var(--vertical-width) 0px 0px  rgb(var(--color-border));
+  
+          }
+  
+          {% endfor %}
+  
+          {{ scheme_classes | prepend: 'body' }} {
+          color: rgba(var(--foreground-color), 1);
+          background-color: rgb(var(--background-color));
+          }
+  
+          :root {
+  
+            /* Layout start */
+  
+          --page-width: {{ settings.page_width | divided_by: 1 }}rem;
+          --page-edge-space: {{ settings.page_edge_spacing }}rem;
+  
+             /* Layout end */
+  
+  
+          /* Typography start */
+  
+          --body-font-family: {{ settings.body_font.family }}, {{ settings.body_font.fallback_families }};
+          --body-font-style: {{ settings.body_font.style }};
+          --body-font-weight: {{ settings.body_font.weight }};
+          --body-line-height: {{ settings.body_line_height }};
+          --body-font-weight-bold: {{ settings.body_font.weight | plus: 300 | at_most: 1000 }};
+          --body-font-scale: {{ settings.body_scale | divided_by: 100.0 }};
+  
+          --heading-font-family: {{ settings.heading_font.family }};
+          --heading-font-style: {{ settings.heading_font.style }};
+          --heading-font-weight: {{ settings.heading_font.weight }};
+          --heading-line-height: {{ settings.heading_line_height }};
+          --heading-font-transform: {{ settings.heading_transform }};
+          --heading-font-scale:{{ settings.heading_scale | divided_by: 100.0 }};
+  
+  
+          --h1-size:calc(clamp(2.25rem, 2.2rem + 0.25vw, 2.5rem) * var(--heading-font-scale)); /*36 to 40*/
+          --h2-size:calc(clamp(1.875rem, 1.8rem + 0.375vw, 2.25rem) * var(--heading-font-scale));  /*30 to 36*/
+          --h3-size:calc(clamp(1.75rem, 1.725rem + 0.125vw, 1.875rem) * var(--heading-font-scale));  /*28 to 30*/
+          --h4-size:calc(clamp(1.5rem, 1.5rem + 0vw, 1.5rem) * var(--heading-font-scale)); /* 24 */
+          --h5-size:calc(clamp(1.125rem, 1.125rem + 0vw, 1.125rem) * var(--heading-font-scale));  /* 18 */
+          --h6-size:calc(clamp(1rem, 1rem + 0vw, 1rem) * var(--heading-font-scale));  /* 16 */
+  
+          /* Typography end */
+  
+  
+  
+          /* custom variable start */
+  
+          --font-xs:12px;  /* custom font */
+          --font-sm:14px;
+          --font-md:16px;
+          --transition-1:all 0.1s linear;
+          --transition-2:all 0.2s linear;
+          --transition-3:all 0.3s linear;
+          --shadow:5px 0px 30px 0px rgba(0, 0, 0, 0.08);
+          --border-1:1px;  /* custom border */
+          --border-2:2px;
+          --border-3:3px;
+          --border-4:4px;
+          --border-5:5px;
+          --border-radius-1:1px; /* custom border-raius */
+          --border-radius-2:2px;
+          --border-radius-3:3px;
+          --border-radius-4:4px;
+          --border-radius-5:5px;
+          --border-style:solid;
+          --border-width:var(--border-1); /* Static value*/
+  
+          --variant-swatch-size: 30px; /* custom swatch size */
+  
+          /* custom variable end */
+  
+  
+          /*Button font family*/
+  
+            {% assign primary_font_family ='--body-font-family' %}
+            {% case settings.primary_font_family %}
+            {% when 'body' %}{% assign primary_font_family ='--body-font-family' %}
+            {% when 'heading' %}{% assign primary_font_family ='--heading-font-family' %}
+            {% endcase %}
+  
+            {% assign secondary_font_family ='--body-font-family' %}
+            {% case settings.secondary_font_family %}
+            {% when 'body' %}{% assign secondary_font_family ='--body-font-family' %}
+            {% when 'heading' %}{% assign secondary_font_family ='--heading-font-family' %}
+            {% endcase %}
+  
+            {% assign link_font_family ='--body-font-family' %}
+            {% case settings.link_font_family %}
+            {% when 'body' %}{% assign link_font_family ='--body-font-family' %}
+            {% when 'heading' %}{% assign link_font_family ='--heading-font-family' %}
+            {% endcase %}
+  
+  
+          /* primary button start */
+  
+          --primary-font-family: var({{primary_font_family}});
+          --primary-text-transform: {{ settings.primary_text_transform }};
+          --primary-hover-effect: {{ settings.primary_hover_effect }};
+          --primary-border-width: {{ settings.primary_border_width }}px;
+          --primary-border-opacity: {{ settings.primary_border_opacity | divided_by: 100.0 }};
+          --primary-corner-radius: {{ settings.primary_corner_radius }}px;
+          --primary-shadow-x: {{ settings.primary_shadow_x }}px;
+          --primary-shadow-y: {{ settings.primary_shadow_y }}px;
+  
+           /* primary button end */
+  
+  
+  
+          /* secondary button start */
+  
+           --secondary-font-family: var({{secondary_font_family}});
+           --secondary-text-transform: {{ settings.secondary_text_transform }};
+           --secondary-hover-effect: {{ settings.secondary_hover_effect }};
+           --secondary-border-width: {{ settings.secondary_border_width }}px;
+           --secondary-border-opacity: {{ settings.secondary_border_opacity | divided_by: 100.0 }};
+           --secondary-corner-radius: {{ settings.secondary_corner_radius }}px;
+           --secondary-shadow-x: {{ settings.secondary_shadow_x }}px;
+           --secondary-shadow-y: {{ settings.secondary_shadow_y }}px;
+  
+          /* secondary button end */
+  
+  
+          /* link button start */
+  
+           --link-font-family: var({{link_font_family}});
+           --link-text-transform: {{ settings.link_text_transform }};
+  
+          /* link button end */
+  
+  
+          /* input_field start */
+  
+           --input-field-border-width: {{ settings.field_border_width }}px;
+           --input-field-corner-radius: {{ settings.field_corner_radius }}px;
+  
+          /* input_field end */
+  
+  
+          /* badges start */
+  
+           --badge-text-case:{{ settings.badge_text_case }};
+           --badge-border-radius: {{ settings.badge_border_radius }}px;
+           --badge-position: {{ settings.badge_position }};
+           --badge-sale-show: {{ settings.badge_sale_show }};
+           --badge-sale-background: {{ settings.badge_sale_background }};
+           --badge-sale-text: {{ settings.badge_sale_text }};
+           --badge-new-show: {{ settings.badge_new_show }};
+           --badge-new-background: {{ settings.badge_new_background }};
+           --badge-new-text: {{ settings.badge_new_text }};
+           --badge-soldout-show: {{ settings.badge_soldout_show }};
+           --badge-soldout-background: {{ settings.badge_soldout_background }};
+           --badge-soldout-text: {{ settings.badge_soldout_text }};
+  
+          /* badges end */
+  
+          /* drawer start */
+  
+          --drawer-color-scheme: {{ settings.drawer_color_scheme }};
+          --drawer-border-style: {{ settings.drawer_border_style }};
+          --drawer-border-width: {{ settings.drawer_border_width }}px;
+          --drawer-border-radius: {{ settings.drawer_border_radius }}px;
+          --drawer-border-opacity: {{ settings.drawer_border_opacity | divided_by: 100.0 }};
+  
+  
+          /* drawer end */
+  
+  
+          --defalut_border:var( --border-1);
+          --shopify-accelerated-checkout-inline-alignment: center;
+          --shopify-accelerated-checkout-skeleton-animation-duration: 0.3s;
+          --shopify-accelerated-checkout-button-border-radius: {{ button_radius }};
+          --shopify-accelerated-checkout-button-block-size:60px;
+  
+  
+          }
+  
+      /* SECTION & BLOCKS PADDING SCALE RESPONSIVE */
+  
+        :root{
+          --section-padding-scale: 1;
+          --block-padding-scale: 1;
+          }
+  
+  
+        /* 1399.98px to 1200px */
+        @media (max-width: 1399.98px) {
+          :root {
+            --section-padding-scale: 0.87;
+            --block-padding-scale: 0.92;
+          }
+        }
+  
+        /* 1199.98px to 992px */
+        @media (max-width: 1199.98px) {
+          :root {
+            --section-padding-scale: 0.73;
+            --block-padding-scale: 0.85;
+          }
+        }
+  
+        /* 991.98px to 768px */
+        @media (max-width: 991.98px) {
+          :root {
+            --section-padding-scale: 0.60;
+            --block-padding-scale:  0.78;
+          }
+        }
+  
+        /* 767.98px to 576px */
+        @media (max-width: 767.98px) {
+          :root {
+            --section-padding-scale: 0.47;
+            --block-padding-scale: 0.70;
+          }
+        }
+  
+        /* 575.98px to 320px */
+        @media (max-width: 575.98px) {
+          :root {
+            --section-padding-scale: 0.40;
+            --block-padding-scale: 0.60;
+          }
+        }
+  
+  
+  
+  
+  
+  
+  
+  
+      /*content-width*/
+        .size-style-width{
+          width:var(--desktop-style-width);
+          flex-direction: column;
+        }
+         .size-style{
+          width:var(--desktop-style-width);
+          height:var(--desktop-style-height);
+        }
+        @media (max-width:575.98px){
+          .size-style-width{
+            width:var(--mobile-style-width);
+            flex-direction: column;
+          }
+        }
+  
+        /* btn-style width */
+        .btn-style-width{
+          width:var(--desktop-style-width);
+        }
+         .btn-style-width{
+          width:var(--desktop-style-width);
+          height:var(--desktop-style-height);
+        }
+        @media (max-width:575.98px){
+          .btn-style-width{
+            width:var(--mobile-style-width);
+          }
+        }
+  
+  
+      /*content-height*/
+      .size-style-height-fill, .size-style-height-custom{
+          height:var(--desktop-style-height);
+        }
+        .size-style-height-fit{ height: auto; flex: 0 1 auto; }
+  
+        /* button, a.btn{
+          min-width: fit-content;
+        } */
+  
+      /*border-style*/
+      .border-style {
+        border-width: var(--border-width);
+        border-style: var(--border-style);
+        border-color: var(--border-child-color);
+        border-radius: var(--border-radius);
+        overflow:hidden;
+        }
+  
+  
+  
+      /* Theme spacing classes */
+  
+      /* Four corner padding, style like product card, blog card etc... */
+  
+     .padding-space {
+        padding-top: var(--block-pt);
+        padding-bottom: var(--block-pb);
+        padding-left: var(--block-pl);
+        padding-right: var(--block-pr);
+      }
+  
+      /* block padding, like heading, text, etc...  */
+  
+      .top-bottom-spacing {
+        padding-top: var(--block-pt);
+        padding-bottom: var(--block-pb);
+      }
+  
+      /* section top and bottom spacing  */
+  
+      .section-top-bottom-space{
+        padding-top: var(--section-pt);
+        padding-bottom: var(--section-pb);
+      }
+  
+      /* grid space like collctions page search page, etc... */
+  
+      .grid-layout-space{
+        column-gap: var(--column-gap);
+        row-gap: var(--row-gap);
+      }
+  
+  
+  {% endstyle %}
+  
