@@ -100,6 +100,66 @@
         "default": 1
       },
       {
+        "type": "range",
+        "id": "h1_heading",
+        "min": 64,
+        "max": 90,
+        "step": 1,
+        "unit": "%",
+        "label": "t:settings.font_size_scale",
+        "default": 64
+      },
+      {
+        "type": "range",
+        "id": "h2_heading",
+        "min": 48,
+        "max": 64,
+        "step": 1,
+        "unit": "%",
+        "label": "t:settings.font_size_scale",
+        "default": 48
+      },
+      {
+        "type": "range",
+        "id": "h3_heading",
+        "min": 32,
+        "max": 48,
+        "step": 1,
+        "unit": "%",
+        "label": "t:settings.font_size_scale",
+        "default": 32
+      },
+      {
+        "type": "range",
+        "id": "h4_heading",
+        "min": 22,
+        "max": 32,
+        "step": 1,
+        "unit": "%",
+        "label": "t:settings.font_size_scale",
+        "default": 22
+      },
+      {
+        "type": "range",
+        "id": "h5_heading",
+        "min": 18,
+        "max": 26,
+        "step": 1,
+        "unit": "%",
+        "label": "t:settings.font_size_scale",
+        "default": 18
+      },
+      {
+        "type": "range",
+        "id": "h6_heading",
+        "min": 14,
+        "max": 20,
+        "step": 1,
+        "unit": "%",
+        "label": "t:settings.font_size_scale",
+        "default": 16
+      },
+      {
         "type": "header",
         "content": "t:content.body"
       },
