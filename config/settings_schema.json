@@ -481,7 +481,7 @@
       {
         "type": "select",
         "id": "button_primary_padding",
-        "label": "t:settings.buttons.primary_padding",
+        "label": "t:settings.button_padding",
         "options": [
           {
             "value": "xs",
@@ -642,7 +642,7 @@
       {
         "type": "select",
         "id": "button_secondary_padding",
-        "label": "t:settings.buttons.secondary_padding",
+        "label": "t:settings.button_padding",
         "options": [
           {
             "value": "xs",
