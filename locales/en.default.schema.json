@@ -274,7 +274,7 @@
     "font": "Font",
     "font_size_scale": "Font size scale",
     "font_transform": "Text transform",
-    "heading_line_height": "Heading line height",
+    "heading_line_height": "Line height",
     "body_line_height": "Body line height",
     "background": "Background",
     "text": "Text",
