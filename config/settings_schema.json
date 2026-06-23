@@ -988,46 +988,6 @@
         "label": "t:settings.text",
         "default": "#ffffff",
         "visible_if": "{{ settings.badge_soldout_show == true }}"
-      },
-      {
-        "type": "header",
-        "content": "t:settings_schema.badges.sale_header"
-      },
-      {
-        "type": "color",
-        "id": "badge_sale_color",
-        "label": "t:settings_schema.badges.text_color",
-        "default": "#FFFFFF"
-      },
-      {
-        "type": "header",
-        "content": "t:settings_schema.badges.new_header"
-      },
-      {
-        "type": "color",
-        "id": "badge_new_color",
-        "label": "t:settings_schema.badges.text_color",
-        "default": "#FFFFFF"
-      },
-      {
-        "type": "header",
-        "content": "t:settings_schema.badges.sold_out_header"
-      },
-      {
-        "type": "color",
-        "id": "badge_sold_out_background",
-        "label": "t:settings_schema.badges.background",
-        "default": "#AAAAAA"
-      },
-      {
-        "type": "color",
-        "id": "badge_sold_out_color",
-        "label": "t:settings_schema.badges.text_color",
-        "default": "#FFFFFF"
-      },
-      {
-        "type": "header",
-        "content": "t:settings_schema.badges.shape_header"
       }
     ]
   },
