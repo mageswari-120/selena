@@ -27,9 +27,6 @@
       when 'xl'
         assign primary_btn_pad_y = 22
         assign primary_btn_pad_x = 44
-      else
-        assign primary_btn_pad_y = 8
-        assign primary_btn_pad_x = 16
     endcase
 
     case settings.button_secondary_padding
@@ -45,9 +42,6 @@
       when 'xl'
         assign secondary_btn_pad_y = 22
         assign secondary_btn_pad_x = 44
-      else
-        assign secondary_btn_pad_y = 8
-        assign secondary_btn_pad_x = 16
     endcase
   %}
   
@@ -165,7 +159,7 @@
           --h4-font-size: {{ settings.h4_heading }}px;
           --h5-font-size: {{ settings.h5_heading }}px;
           --h6-font-size: {{ settings.h6_heading }}px;
-          
+
           /* Typography end */
   
   
