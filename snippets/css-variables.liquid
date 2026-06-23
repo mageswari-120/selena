@@ -6,6 +6,26 @@
   the font object is nil and font_face / font_url will throw a Liquid error.
 {% endcomment %}
 
+{% liquid
+  case settings.button_primary_padding
+    when 'sm'
+      assign primary_btn_pad_y = 10
+      assign primary_btn_pad_x = 20
+    when 'md'
+      assign primary_btn_pad_y = 14
+      assign primary_btn_pad_x = 28
+    when 'lg'
+      assign primary_btn_pad_y = 18
+      assign primary_btn_pad_x = 36
+    when 'xl'
+      assign primary_btn_pad_y = 22
+      assign primary_btn_pad_x = 44
+    else
+      assign primary_btn_pad_y = 8
+      assign primary_btn_pad_x = 16
+  endcase
+%}
+
 {% style %}
 
   {% comment %} ── Font @font-face declarations ── {% endcomment %}
@@ -61,8 +81,8 @@
 
     {% comment %} ── Buttons ── {% endcomment %}
     --button-border-radius:      {{ settings.button_border_radius      | default: 0 }}px;
-    --button-padding-vertical:   {{ settings.button_padding_vertical   | default: 14 }}px;
-    --button-padding-horizontal: {{ settings.button_padding_horizontal | default: 28 }}px;
+    --button-padding-vertical:   {{ primary_btn_pad_y }}px;
+    --button-padding-horizontal: {{ primary_btn_pad_x }}px;
 
     --button-primary-bg:           {{ settings.color_primary        | default: '#1A1A1A' }};
     --button-primary-color:        {{ settings.color_background      | default: '#FFFFFF' }};

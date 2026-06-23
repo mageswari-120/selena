@@ -112,6 +112,11 @@
       "large": "Large",
       "small": "Small"
     },
+    "xs": "XS",
+    "sm": "SM",
+    "md": "MD",
+    "lg": "LG",
+    "xl": "XL",
     "text_style": {
       "title": "Title",
       "subtitle": "Subtitle",
@@ -293,7 +298,18 @@
       "border_radius": "Border radius",
       "padding_header": "Padding",
       "padding_vertical": "Vertical padding",
-      "padding_horizontal": "Horizontal padding"
+      "padding_horizontal": "Horizontal padding",
+      "primary_padding": "Padding",
+      "secondary_padding": "Padding"
+    },
+    "animation": {
+      "name": "Animation",
+      "reveal_on_scroll": "Reveal sections on scroll"
+    },
+    "swatches": {
+      "name": "Swatches",
+      "color_options_name": "Color options name",
+      "color_options_name_info": "Comma-separated option names treated as color swatches (e.g. color,colour,couleur)"
     },
     "inputs": {
       "name": "Inputs",
@@ -350,7 +366,7 @@
       "show_rating": "Show rating",
       "show_rating_info": "Requires a reviews app that writes to product.metafields.reviews.rating",
       "show_swatches": "Show color swatches",
-      "show_swatches_info": "Reads variants with option name 'Color' or 'Colour'",
+      "show_swatches_info": "Uses color option names from Theme settings > Swatches",
       "show_wishlist": "Show wishlist button",
       "show_quick_add": "Show quick add on hover"
     },
@@ -568,6 +584,8 @@
     "colors": "Colors",
     "currency_display": "Currency display",
     "button": "Buttons",
+    "animation": "Animation",
+    "swatches": "Swatches",
     "form_fields": "Form fields",
     "product_badges": "Product badges",
     "drawers": "Drawers",

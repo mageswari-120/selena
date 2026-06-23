@@ -1,0 +1,24 @@
+{% comment %}
+  Finds the color option index for a product based on Theme settings > Swatches.
+  Outputs the zero-based option index, or nothing if not found.
+
+  @param {product} product
+{% endcomment %}
+{% liquid
+  assign color_option_index = nil
+  assign color_names = settings.swatch_color_options | default: 'color,colour' | split: ','
+
+  for option in product.options_with_values
+    unless color_option_index != nil
+      assign option_down = option.name | downcase | strip
+      for color_name in color_names
+        assign color_name_clean = color_name | downcase | strip
+        if color_name_clean != blank and option_down == color_name_clean
+          assign color_option_index = forloop.parentloop.index0
+          break
+        endif
+      endfor
+    endunless
+  endfor
+%}
+{%- if color_option_index != nil -%}{{ color_option_index }}{%- endif -%}

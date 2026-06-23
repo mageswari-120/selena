@@ -50,6 +50,10 @@
     {{ 'swiper-bundle.min.css' | asset_url | stylesheet_tag }}
     {{ 'bootstrap.min.css' | asset_url | stylesheet_tag }}
 
+    {%- if settings.animations_reveal_on_scroll -%}
+      {{ 'animations.css' | asset_url | stylesheet_tag }}
+    {%- endif -%}
+
     {{ content_for_header }}
 
     {%- unless settings.type_body_font.system? -%}
@@ -72,7 +76,7 @@
     </script>
   </head>
 
-  <body class="active-template-{{ template }}">
+  <body class="active-template-{{ template }}{% if settings.animations_reveal_on_scroll %} scroll-animations-enabled{% endif %}">
     <a class="skip-to-content-link button visually-hidden btn btn-primary position-absolute start-0 w-auto py-2 px-3" href="#MainContent">
       {{ 'accessibility.skip_to_text' | t }}
     </a>
@@ -100,5 +104,8 @@
     <script src="{{ 'bootstrap.bundle.min.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'cart-drawer.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'collection-list-carousel.js' | asset_url }}" defer="defer"></script>
+    {%- if settings.animations_reveal_on_scroll -%}
+      <script src="{{ 'animations.js' | asset_url }}" defer="defer"></script>
+    {%- endif -%}
   </body>
 </html>

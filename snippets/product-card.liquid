@@ -233,15 +233,14 @@
 
     {%- comment -%}━━ Color swatches (variant preview) ━━{%- endcomment -%}
     {%- if show_swatches -%}
+      {%- capture color_option_index_capture -%}
+        {%- render 'color-option-for-product', product: product -%}
+      {%- endcapture -%}
       {%- liquid
         assign color_option_index = nil
-        for option in product.options_with_values
-          assign option_down = option.name | downcase
-          if option_down == 'color' or option_down == 'colour'
-            assign color_option_index = forloop.index0
-            break
-          endif
-        endfor
+        if color_option_index_capture != blank
+          assign color_option_index = color_option_index_capture | strip | plus: 0
+        endif
       -%}
       {%- if color_option_index != nil -%}
         {%- assign color_option = product.options_with_values[color_option_index] -%}

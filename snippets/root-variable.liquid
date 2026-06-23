@@ -13,6 +13,42 @@
     assign body_font_bold = settings.body_font | font_modify: 'weight', 'bold'
     assign body_font_italic = settings.body_font | font_modify: 'style', 'italic'
     assign body_font_bold_italic = body_font_bold | font_modify: 'style', 'italic'
+
+    case settings.button_primary_padding
+      when 'sm'
+        assign primary_btn_pad_y = 10
+        assign primary_btn_pad_x = 20
+      when 'md'
+        assign primary_btn_pad_y = 14
+        assign primary_btn_pad_x = 28
+      when 'lg'
+        assign primary_btn_pad_y = 18
+        assign primary_btn_pad_x = 36
+      when 'xl'
+        assign primary_btn_pad_y = 22
+        assign primary_btn_pad_x = 44
+      else
+        assign primary_btn_pad_y = 8
+        assign primary_btn_pad_x = 16
+    endcase
+
+    case settings.button_secondary_padding
+      when 'sm'
+        assign secondary_btn_pad_y = 10
+        assign secondary_btn_pad_x = 20
+      when 'md'
+        assign secondary_btn_pad_y = 14
+        assign secondary_btn_pad_x = 28
+      when 'lg'
+        assign secondary_btn_pad_y = 18
+        assign secondary_btn_pad_x = 36
+      when 'xl'
+        assign secondary_btn_pad_y = 22
+        assign secondary_btn_pad_x = 44
+      else
+        assign secondary_btn_pad_y = 8
+        assign secondary_btn_pad_x = 16
+    endcase
   %}
   
   {% style %}
@@ -396,7 +432,19 @@
         column-gap: var(--column-gap);
         row-gap: var(--row-gap);
       }
-  
-  
+
+      .btn-primary,
+      .btn-outline-primary {
+        --btn-padding-y: {{ primary_btn_pad_y }}px;
+        --btn-padding-x: {{ primary_btn_pad_x }}px;
+      }
+
+      .btn-secondary,
+      .btn-outline-secondary {
+        --btn-padding-y: {{ secondary_btn_pad_y }}px;
+        --btn-padding-x: {{ secondary_btn_pad_x }}px;
+      }
+
+
   {% endstyle %}
   
