@@ -60,7 +60,6 @@
         "type": "font_picker",
         "id": "heading_font",
         "label": "t:settings.font",
-        "info": "t:info.typography_font_info",
         "default": "assistant_n4"
       },
       {
