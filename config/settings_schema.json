@@ -76,8 +76,7 @@
           }
         ],
         "default": "none",
-        "label": "t:settings.font_transform",
-        "info": "t:info.font_transform"
+        "label": "t:settings.font_transform"
       },
       {
         "type": "range",

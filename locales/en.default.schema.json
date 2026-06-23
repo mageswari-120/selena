@@ -350,7 +350,6 @@
     "social_accounts": "Social accounts"
   },
   "info": {
-    "font_transform": "Apply uppercase transformation to heading text.",
     "favicon_info": "Will be scaled down to 32×32px. Supported formats: .ico, .png, .svg",
     "shipping_bar_info": "Enter the minimum cart total for free shipping in your store currency.",
     "cart_upsell_fallback_collection_info": "Products shown when the cart is empty or no upsell products match.",
