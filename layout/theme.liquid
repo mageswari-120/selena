@@ -53,19 +53,13 @@
 
     {{ content_for_header }}
 
-    {%- unless settings.type_body_font.system? -%}
-      {{ settings.type_body_font | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
+   {%- unless settings.type_body_font.system? -%}
+      <link rel="preload" as="font" href="{{ settings.type_body_font | font_url }}" type="font/woff2" crossorigin>
     {%- endunless -%}
-    {%- unless settings.type_heading_font.system? -%}
-      {{ settings.type_heading_font | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
+    {%- unless settings.type_header_font.system? -%}
+      <link rel="preload" as="font" href="{{ settings.type_header_font | font_url }}" type="font/woff2" crossorigin>
     {%- endunless -%}
-    {%- unless settings.body_font.system? -%}
-      {{ settings.body_font | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
-    {%- endunless -%}
-    {%- unless settings.heading_font.system? -%}
-      {{ settings.heading_font | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
-    {%- endunless -%}
-
+    
     <script>
       if (Shopify.designMode) {
         document.documentElement.classList.add('shopify-design-mode');
