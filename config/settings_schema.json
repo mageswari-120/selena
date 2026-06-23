@@ -804,7 +804,7 @@
       {
         "type": "checkbox",
         "id": "animations_reveal_on_scroll",
-        "label": "t:settings_schema.animation.reveal_on_scroll",
+        "label": "t:settings.reveal_on_scroll",
         "default": false
       }
     ]
