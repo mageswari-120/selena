@@ -149,7 +149,7 @@
           --heading-font-weight: {{ settings.heading_font.weight }};
           --heading-line-height: {{ settings.heading_line_height }};
           --heading-font-transform: {{ settings.heading_transform }};
-          --heading-font-scale:{{ settings.heading_scale | divided_by: 100.0 }};
+          --heading-font-scale:{{ 1 | divided_by: 100.0 }};
   
   
           --h1-size:calc(clamp(2.25rem, 2.2rem + 0.25vw, 2.5rem) * var(--heading-font-scale)); /*36 to 40*/
