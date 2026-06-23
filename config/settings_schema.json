@@ -360,60 +360,6 @@
           "on_secondary_button": "secondary_button_label",
           "secondary_button_border": "secondary_border"
         }
-      },
-      {
-        "type": "header",
-        "content": "t:settings_schema.colors.primary_header"
-      },
-      {
-        "type": "color",
-        "id": "color_primary",
-        "label": "t:settings_schema.colors.primary",
-        "default": "#1A1A1A"
-      },
-      {
-        "type": "color",
-        "id": "color_primary_hover",
-        "label": "t:settings_schema.colors.primary_hover",
-        "default": "#333333"
-      },
-      {
-        "type": "color",
-        "id": "color_primary_border",
-        "label": "t:settings_schema.colors.primary_border",
-        "default": "#1A1A1A"
-      },
-      {
-        "type": "header",
-        "content": "t:settings_schema.colors.secondary_header"
-      },
-      {
-        "type": "color",
-        "id": "color_secondary",
-        "label": "t:settings_schema.colors.secondary",
-        "default": "#6B6B6B"
-      },
-      {
-        "type": "color",
-        "id": "color_secondary_hover",
-        "label": "t:settings_schema.colors.secondary_hover",
-        "default": "#888888"
-      },
-      {
-        "type": "header",
-        "content": "t:settings_schema.colors.page_header"
-      },
-      {
-        "type": "color",
-        "id": "color_background",
-        "label": "t:settings_schema.colors.background",
-        "default": "#FFFFFF"
-      },
-      {
-        "type": "color",
-        "id": "color_foreground",
-        "label": "t:settings_schema.colors.foreground",
-        "default": "#1A1A1A"
       }
     ]
   },
@@ -575,7 +521,7 @@
       {
         "type": "select",
         "id": "button_primary_padding",
-        "label": "t:settings_schema.buttons.primary_padding",
+        "label": "t:settings.buttons.primary_padding",
         "options": [
           {
             "value": "xs",
@@ -736,7 +682,7 @@
       {
         "type": "select",
         "id": "button_secondary_padding",
-        "label": "t:settings_schema.buttons.secondary_padding",
+        "label": "t:settings.buttons.secondary_padding",
         "options": [
           {
             "value": "xs",
