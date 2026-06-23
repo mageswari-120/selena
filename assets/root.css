@@ -4500,7 +4500,7 @@ fieldset:disabled .btn {
 .badge {
   --badge-padding-x: 0.65em;
   --badge-padding-y: 0.35em;
-  --badge-font-size: calc(var(--body-font-scale) * 100%);
+  --badge-font-size: var(--body-font-size);
   --badge-font-weight: var(--body-font-weight);
   --badge-line-height: var(--body-line-height);
   --badge-background: rgb(var(--background-color));
