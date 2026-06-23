@@ -298,6 +298,7 @@
     "border_radius": "Border radius",
     "shadow_horizontal_offset": "Shadow horizontal offset",
     "shadow_vertical_offset": "Shadow vertical offset",
+    "primary_padding":"Button padding",
     "corner_radius": "Corner radius",
     "product_sale_badge": "Sale badge",
     "badge_sale_show": "Show sale badge",
