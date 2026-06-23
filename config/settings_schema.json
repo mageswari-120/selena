@@ -636,6 +636,30 @@
         "default": "fade"
       },
       {
+        "type": "select",
+        "id": "button_secondary_padding",
+        "label": "t:settings.button_padding",
+        "options": [
+          {
+            "value": "sm",
+            "label": "t:options.sm"
+          },
+          {
+            "value": "md",
+            "label": "t:options.md"
+          },
+          {
+            "value": "lg",
+            "label": "t:options.lg"
+          },
+          {
+            "value": "xl",
+            "label": "t:options.xl"
+          }
+        ],
+        "default": "sm"
+      },
+      {
         "type": "range",
         "id": "secondary_border_width",
         "min": 0,
@@ -684,30 +708,6 @@
         "unit": "px",
         "label": "t:settings.shadow_vertical_offset",
         "default": 0
-      },
-      {
-        "type": "select",
-        "id": "button_secondary_padding",
-        "label": "t:settings.button_padding",
-        "options": [
-          {
-            "value": "sm",
-            "label": "t:options.sm"
-          },
-          {
-            "value": "md",
-            "label": "t:options.md"
-          },
-          {
-            "value": "lg",
-            "label": "t:options.lg"
-          },
-          {
-            "value": "xl",
-            "label": "t:options.xl"
-          }
-        ],
-        "default": "sm"
       },
       {
         "type": "header",
