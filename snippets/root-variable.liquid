@@ -152,13 +152,20 @@
           --heading-font-scale:{{ 1 | divided_by: 100.0 }};
   
   
-          --h1-size:calc(clamp(2.25rem, 2.2rem + 0.25vw, 2.5rem) * var(--heading-font-scale)); /*36 to 40*/
+          {% comment %} --h1-size:calc(clamp(2.25rem, 2.2rem + 0.25vw, 2.5rem) * var(--heading-font-scale)); /*36 to 40*/
           --h2-size:calc(clamp(1.875rem, 1.8rem + 0.375vw, 2.25rem) * var(--heading-font-scale));  /*30 to 36*/
           --h3-size:calc(clamp(1.75rem, 1.725rem + 0.125vw, 1.875rem) * var(--heading-font-scale));  /*28 to 30*/
           --h4-size:calc(clamp(1.5rem, 1.5rem + 0vw, 1.5rem) * var(--heading-font-scale)); /* 24 */
           --h5-size:calc(clamp(1.125rem, 1.125rem + 0vw, 1.125rem) * var(--heading-font-scale));  /* 18 */
-          --h6-size:calc(clamp(1rem, 1rem + 0vw, 1rem) * var(--heading-font-scale));  /* 16 */
-  
+          --h6-size:calc(clamp(1rem, 1rem + 0vw, 1rem) * var(--heading-font-scale)); /* 16 */ {% endcomment %} 
+
+          --h1-font-size: {{ settings.h1_heading }}px;
+          --h2-font-size: {{ settings.h2_heading }}px;
+          --h3-font-size: {{ settings.h3_heading }}px;
+          --h4-font-size: {{ settings.h4_heading }}px;
+          --h5-font-size: {{ settings.h5_heading }}px;
+          --h6-font-size: {{ settings.h6_heading }}px;
+          
           /* Typography end */
   
   
