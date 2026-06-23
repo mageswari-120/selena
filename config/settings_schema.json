@@ -46,36 +46,6 @@
         "id": "enable_scroll_to_top",
         "default": false,
         "label": "t:settings.scroll_top"
-      },
-      {
-        "type": "select",
-        "id": "max_page_width",
-        "label": "t:settings_schema.layout.page_width",
-        "options": [
-          {
-            "value": "1200px",
-            "label": "Narrow (1200px)"
-          },
-          {
-            "value": "1400px",
-            "label": "Wide (1400px)"
-          },
-          {
-            "value": "1600px",
-            "label": "Full (1600px)"
-          }
-        ],
-        "default": "1400px"
-      },
-      {
-        "type": "range",
-        "id": "min_page_margin",
-        "min": 10,
-        "max": 100,
-        "step": 1,
-        "unit": "px",
-        "label": "t:settings_schema.layout.page_margin",
-        "default": 20
       }
     ]
   },
@@ -463,12 +433,6 @@
         "id": "currency_indicator_enabled",
         "label": "t:settings.show_currency_indicator",
         "default": true
-      },
-      {
-        "type": "checkbox",
-        "id": "currency_codes_enabled",
-        "label": "t:settings_schema.currency_format.show_currency_codes",
-        "default": false
       }
     ]
   },
@@ -831,64 +795,6 @@
         ],
         "default": "default",
         "label": "t:settings.testcase"
-      },
-      {
-        "type": "header",
-        "content": "t:settings_schema.buttons.style_header"
-      },
-      {
-        "type": "select",
-        "id": "button_primary_style",
-        "label": "t:settings_schema.buttons.primary_style",
-        "options": [
-          {
-            "value": "solid",
-            "label": "t:settings_schema.buttons.style_solid"
-          },
-          {
-            "value": "outline",
-            "label": "t:settings_schema.buttons.style_outline"
-          },
-          {
-            "value": "link",
-            "label": "t:settings_schema.buttons.style_link"
-          }
-        ],
-        "default": "solid"
-      },
-      {
-        "type": "select",
-        "id": "button_secondary_style",
-        "label": "t:settings_schema.buttons.secondary_style",
-        "options": [
-          {
-            "value": "solid",
-            "label": "t:settings_schema.buttons.style_solid"
-          },
-          {
-            "value": "outline",
-            "label": "t:settings_schema.buttons.style_outline"
-          },
-          {
-            "value": "link",
-            "label": "t:settings_schema.buttons.style_link"
-          }
-        ],
-        "default": "outline"
-      },
-      {
-        "type": "header",
-        "content": "t:settings_schema.buttons.shape_header"
-      },
-      {
-        "type": "range",
-        "id": "button_border_radius",
-        "min": 0,
-        "max": 50,
-        "step": 1,
-        "unit": "px",
-        "label": "t:settings_schema.buttons.border_radius",
-        "default": 0
       }
     ]
   },
