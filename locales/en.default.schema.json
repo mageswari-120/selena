@@ -217,7 +217,7 @@
     "social_accounts": "Social accounts"
   },
   "info": {
-    "favicon_info": "Will be scaled down to 32×32px. Supported formats: .ico, .png, .svg",
+    "favicon_info": "Will be scaled down to 32×32px.",
     "shipping_bar_info": "Enter the minimum cart total for free shipping in your store currency.",
     "cart_upsell_fallback_collection_info": "Products shown when the cart is empty or no upsell products match.",
     "color_options_name_info": "Comma-separated option names treated as color swatches (e.g. color,colour,couleur)",
