@@ -64,16 +64,6 @@
         "default": "assistant_n4"
       },
       {
-        "type": "range",
-        "id": "heading_scale",
-        "min": 90,
-        "max": 125,
-        "step": 1,
-        "unit": "%",
-        "label": "t:settings.font_size_scale",
-        "default": 100
-      },
-      {
         "type": "select",
         "id": "heading_transform",
         "options": [
