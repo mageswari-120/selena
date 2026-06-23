@@ -198,8 +198,7 @@
           {
             "type": "color_background",
             "id": "background_gradient",
-            "label": "Background gradient",
-            "info": "Leave blank to use the solid background color."
+            "label": "Background gradient"
           },
           {
             "type": "color",
