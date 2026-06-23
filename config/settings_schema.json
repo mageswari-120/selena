@@ -815,9 +815,9 @@
       {
         "type": "text",
         "id": "swatch_color_options",
-        "label": "t:settings_schema.swatches.color_options_name",
+        "label": "t:settings.color_options_name",
         "default": "color,colour",
-        "info": "t:settings_schema.swatches.color_options_name_info"
+        "info": "t:info.color_options_name_info"
       }
     ]
   },
@@ -894,12 +894,12 @@
       {
         "type": "range",
         "id": "badge_border_radius",
-        "label": "t:settings_schema.badges.border_radius",
+        "label": "t:settings.border_radius",
         "unit": "px",
         "min": 0,
         "max": 50,
         "step": 1,
-        "default": 4
+        "default": 0
       },
       {
         "type": "select",
@@ -930,8 +930,8 @@
       {
         "type": "color",
         "id": "badge_sale_background",
-        "label": "t:settings_schema.badges.background",
-        "default": "#D9534F",
+        "label": "t:settings.background",
+        "default": "#419441",
         "visible_if": "{{ settings.badge_sale_show == true }}"
       },
       {
@@ -954,8 +954,8 @@
       {
         "type": "color",
         "id": "badge_new_background",
-        "label": "t:settings_schema.badges.background",
-        "default": "#1A1A1A",
+        "label": "t:settings.background",
+        "default": "#FF632E",
         "visible_if": "{{ settings.badge_new_show == true }}"
       },
       {
