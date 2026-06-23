@@ -211,7 +211,7 @@
     "form_control": "Form controls",
     "link_button": "Link button",
     "currency_indicator": "Currency indicator",
-    "currency_indicator_info": "Show the customer's local currency code alongside prices.",
+    "currency_indicator_info": "Cart and checkout prices always show currency codes. Example: $1.00 USD.",
     "shipping_bar": "Free shipping bar",
     "cart_upsell_heading": "Cart upsell",
     "social_accounts": "Social accounts"
