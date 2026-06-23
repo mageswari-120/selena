@@ -136,7 +136,7 @@
           --body-font-weight: {{ settings.body_font.weight }};
           --body-line-height: {{ settings.body_line_height }};
           --body-font-weight-bold: {{ settings.body_font.weight | plus: 300 | at_most: 1000 }};
-          --body-font-scale: {{ 1 | divided_by: 100.0 }};
+          --body-font-scale: {{ 100 | divided_by: 100.0 }};
           --body-font-size:{{ settings.body_fontsize }};
   
           --heading-font-family: {{ settings.heading_font.family }};
@@ -144,7 +144,7 @@
           --heading-font-weight: {{ settings.heading_font.weight }};
           --heading-line-height: {{ settings.heading_line_height }};
           --heading-font-transform: {{ settings.heading_transform }};
-          --heading-font-scale:{{ 1 | divided_by: 100.0 }};
+          --heading-font-scale:{{ 100 | divided_by: 100.0 }};
   
   
           {% comment %} --h1-size:calc(clamp(2.25rem, 2.2rem + 0.25vw, 2.5rem) * var(--heading-font-scale)); /*36 to 40*/
