@@ -94,142 +94,6 @@
     "text": "Text"
   },
   "options": {
-    "alignment": {
-      "left": "Left",
-      "center": "Center",
-      "right": "Right"
-    },
-    "direction": {
-      "horizontal": "Horizontal",
-      "vertical": "Vertical"
-    },
-    "page_width": {
-      "narrow": "Narrow",
-      "wide": "Wide"
-    },
-    "size": {
-      "large": "Large",
-      "small": "Small"
-    },
-    "xs": "XS",
-    "sm": "SM",
-    "md": "MD",
-    "lg": "LG",
-    "xl": "XL",
-    "text_style": {
-      "title": "Title",
-      "subtitle": "Subtitle",
-      "normal": "Normal text"
-    },
-    "border": {
-      "none": "None",
-      "solid": "Solid"
-    },
-    "text_case": {
-      "default": "Default",
-      "uppercase": "Uppercase"
-    },
-    "layout": {
-      "grid": "Grid",
-      "carousel": "Carousel"
-    },
-    "navigation": {
-      "arrows": "Arrows",
-      "dots": "Dots",
-      "both": "Both",
-      "none": "None"
-    },
-    "width": {
-      "full": "Full width",
-      "full_width": "Full width",
-      "container_fluid": "Container fluid"
-    },
-    "vertical_position": {
-      "top": "Top",
-      "center": "Center",
-      "bottom": "Bottom"
-    },
-    "image_position": {
-      "top": "Top",
-      "center": "Center",
-      "bottom": "Bottom"
-    },
-    "image_ratio": {
-      "square": "Square",
-      "landscape": "Landscape",
-      "portrait": "Portrait",
-      "adapt": "Adapt to image"
-    },
-    "image_fit": {
-      "cover": "Cover",
-      "contain": "Contain"
-    },
-    "image_shape": {
-      "default": "Default",
-      "arch": "Arch",
-      "rounded_arch": "Rounded arch",
-      "oval": "Oval",
-      "circle": "Circle",
-      "pill": "Pill",
-      "rounded_rectangle": "Rounded rectangle",
-      "custom_radius": "Custom corner radius"
-    },
-    "content_placement": {
-      "on_image": "Overlaid on image",
-      "below_image": "Below image"
-    },
-    "button_style": {
-      "primary": "Primary",
-      "secondary": "Secondary",
-      "link": "Link",
-      "arrow": "Arrow button"
-    },
-    "display_style": {
-      "heading": "Heading",
-      "badge": "Badge"
-    },
-    "heading_level": {
-      "h3": "H3",
-      "h4": "H4",
-      "h5": "H5",
-      "h6": "H6"
-    },
-    "arrow_style": {
-      "filled_circle": "Filled circle",
-      "outline_circle": "Outline circle",
-      "square": "Square",
-      "minimal": "Minimal"
-    },
-    "card_layout": {
-      "grid": "Grid",
-      "overlay": "Overlay"
-    },
-    "image_position_card": {
-      "top": "Top",
-      "bottom": "Bottom",
-      "left": "Left",
-      "right": "Right"
-    },
-    "overlay_style": {
-      "solid": "Solid",
-      "gradient": "Gradient"
-    },
-    "overlay_direction": {
-      "top_bottom": "Top → Bottom",
-      "bottom_top": "Bottom → Top"
-    },
-    "heading_variant": {
-      "section": "Section heading",
-      "card": "Card heading"
-    },
-    "text_variant": {
-      "section": "Section description",
-      "card": "Card text"
-    },
-    "client_image_position": {
-      "top": "Top",
-      "left": "Left"
-    },
     "uppercase": "Uppercase",
     "default": "Default",
     "body": "Body",
@@ -248,7 +112,11 @@
     "left": "Left",
     "right": "Right",
     "drawer": "Drawer",
-    "page": "Page"
+    "page": "Page",
+    "sm": "Sm",
+    "md": "Md",
+    "lg": "Lg",
+    "xl": "Xl",
   },
   "name": {
     "favicon": "Favicon",
