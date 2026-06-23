@@ -799,7 +799,7 @@
     ]
   },
   {
-    "name": "t:settings_schema.animation.name",
+    "name": "t:settings_schema.animation",
     "settings": [
       {
         "type": "checkbox",
@@ -810,7 +810,7 @@
     ]
   },
   {
-    "name": "t:settings_schema.swatches.name",
+    "name": "t:settings_schema.swatches",
     "settings": [
       {
         "type": "text",
