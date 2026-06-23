@@ -1046,28 +1046,6 @@
         "max": 30,
         "step": 1,
         "default": 0
-      },
-      {
-        "type": "select",
-        "id": "drawer_position",
-        "label": "t:settings_schema.drawers.position",
-        "options": [
-          {
-            "value": "left",
-            "label": "t:settings_schema.drawers.position_left"
-          },
-          {
-            "value": "right",
-            "label": "t:settings_schema.drawers.position_right"
-          }
-        ],
-        "default": "right"
-      },
-      {
-        "type": "checkbox",
-        "id": "drawer_overlay",
-        "label": "t:settings_schema.drawers.overlay",
-        "default": true
       }
     ]
   },
@@ -1080,19 +1058,15 @@
         "options": [
           {
             "value": "drawer",
-            "label": "t:settings_schema.cart.type_drawer"
+            "label": "t:options.drawer"
           },
           {
             "value": "page",
-            "label": "t:settings_schema.cart.type_page"
-          },
-          {
-            "value": "notification",
-            "label": "t:settings_schema.cart.type_notification"
+            "label": "t:options.page"
           }
         ],
         "default": "drawer",
-        "label": "t:settings_schema.cart.type"
+        "label": "t:settings.cart_type"
       },
       {
         "type": "checkbox",
@@ -1207,35 +1181,6 @@
         "id": "cart_upsell_fallback_collection",
         "label": "t:settings.cart_upsell_fallback_collection",
         "info": "t:info.cart_upsell_fallback_collection_info"
-      },
-      {
-        "type": "checkbox",
-        "id": "cart_show_note",
-        "label": "t:settings_schema.cart.show_note",
-        "default": false
-      },
-      {
-        "type": "checkbox",
-        "id": "cart_show_payment_icons",
-        "label": "t:settings_schema.cart.show_payment_icons",
-        "default": true
-      },
-      {
-        "type": "header",
-        "content": "t:settings_schema.cart.free_shipping_header"
-      },
-      {
-        "type": "checkbox",
-        "id": "cart_free_shipping_bar",
-        "label": "t:settings_schema.cart.free_shipping_bar",
-        "default": false
-      },
-      {
-        "type": "text",
-        "id": "cart_free_shipping_threshold",
-        "label": "t:settings_schema.cart.free_shipping_threshold",
-        "default": "100",
-        "info": "t:settings_schema.cart.free_shipping_threshold_info"
       }
     ]
   },
