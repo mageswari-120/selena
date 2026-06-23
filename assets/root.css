@@ -174,7 +174,7 @@ body {
   min-height: 100%;
   margin: 0;
   font-family: var(--body-font-family);
-  font-size: calc(var(--body-font-scale) * 100%);
+  font-size: var(--body-font-size);
   font-weight: var(--body-font-weight);
   font-style: var(--body-font-style);
   line-height: var(--body-line-height);

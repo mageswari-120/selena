@@ -136,7 +136,8 @@
           --body-font-weight: {{ settings.body_font.weight }};
           --body-line-height: {{ settings.body_line_height }};
           --body-font-weight-bold: {{ settings.body_font.weight | plus: 300 | at_most: 1000 }};
-          --body-font-scale: {{ settings.body_scale | divided_by: 100.0 }};
+          --body-font-scale: {{ 1 | divided_by: 100.0 }};
+          --body-font-size:{{ settings.body_fontsize }};
   
           --heading-font-family: {{ settings.heading_font.family }};
           --heading-font-style: {{ settings.heading_font.style }};
