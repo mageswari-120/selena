@@ -534,10 +534,6 @@
         "label": "t:settings.button_padding",
         "options": [
           {
-            "value": "xs",
-            "label": "t:options.xs"
-          },
-          {
             "value": "sm",
             "label": "t:options.sm"
           },
@@ -554,7 +550,7 @@
             "label": "t:options.xl"
           }
         ],
-        "default": "xs"
+        "default": "sm"
       },
       {
         "type": "header",
@@ -695,10 +691,6 @@
         "label": "t:settings.button_padding",
         "options": [
           {
-            "value": "xs",
-            "label": "t:options.xs"
-          },
-          {
             "value": "sm",
             "label": "t:options.sm"
           },
@@ -715,7 +707,7 @@
             "label": "t:options.xl"
           }
         ],
-        "default": "xs"
+        "default": "sm"
       },
       {
         "type": "header",
