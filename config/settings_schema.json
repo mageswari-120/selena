@@ -1311,46 +1311,6 @@
         "id": "vimeo_url",
         "label": "t:settings.vimeo_profile",
         "info": "t:info.vimeo_profile"
-      },
-      {
-        "type": "header",
-        "content": "t:settings_schema.social_profiles.accounts_header"
-      },
-      {
-        "type": "text",
-        "id": "social_instagram_link",
-        "label": "t:settings_schema.social_profiles.instagram",
-        "placeholder": "https://www.instagram.com/yourstore"
-      },
-      {
-        "type": "text",
-        "id": "social_facebook_link",
-        "label": "t:settings_schema.social_profiles.facebook",
-        "placeholder": "https://www.facebook.com/yourstore"
-      },
-      {
-        "type": "text",
-        "id": "social_tiktok_link",
-        "label": "t:settings_schema.social_profiles.tiktok",
-        "placeholder": "https://www.tiktok.com/@yourstore"
-      },
-      {
-        "type": "text",
-        "id": "social_twitter_link",
-        "label": "t:settings_schema.social_profiles.twitter",
-        "placeholder": "https://www.twitter.com/yourstore"
-      },
-      {
-        "type": "text",
-        "id": "social_youtube_link",
-        "label": "t:settings_schema.social_profiles.youtube",
-        "placeholder": "https://www.youtube.com/@yourstore"
-      },
-      {
-        "type": "text",
-        "id": "social_pinterest_link",
-        "label": "t:settings_schema.social_profiles.pinterest",
-        "placeholder": "https://www.pinterest.com/yourstore"
       }
     ]
   }
