@@ -843,32 +843,6 @@
         "id": "field_corner_radius",
         "label": "t:settings.corner_radius",
         "default": 10
-      },
-      {
-        "type": "range",
-        "id": "input_border_radius",
-        "min": 0,
-        "max": 20,
-        "step": 1,
-        "unit": "px",
-        "label": "t:settings_schema.inputs.border_radius",
-        "default": 0
-      },
-      {
-        "type": "select",
-        "id": "input_border_style",
-        "label": "t:settings_schema.inputs.border_style",
-        "options": [
-          {
-            "value": "solid",
-            "label": "t:settings_schema.inputs.border_solid"
-          },
-          {
-            "value": "bottom-only",
-            "label": "t:settings_schema.inputs.border_bottom_only"
-          }
-        ],
-        "default": "solid"
       }
     ]
   },
