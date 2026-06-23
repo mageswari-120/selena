@@ -43,10 +43,8 @@
 
     {% render 'meta-tags' %}
     {% render 'root-variable' %}
-    {% render 'css-variables' %}
 
     {{ 'root.css' | asset_url | stylesheet_tag }}
-    {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
     {{ 'swiper-bundle.min.css' | asset_url | stylesheet_tag }}
     {{ 'bootstrap.min.css' | asset_url | stylesheet_tag }}
 
